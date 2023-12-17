@@ -5,9 +5,23 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
+    
+    <ItemGroup>
+        <PackageReference Include="Mapster" Version="7.4.0" />
+        <PackageReference Include="MediatR" Version="12.2.0" />
+        <PackageReference Include="NightTasker.Common.Messaging" Version="1.0.2" />
+    </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\NightTasker.UserHub.Core.Domain\NightTasker.UserHub.Core.Domain.csproj" />
+
+
+
+
+
     </ItemGroup>
+
+
+
 
 </Project>

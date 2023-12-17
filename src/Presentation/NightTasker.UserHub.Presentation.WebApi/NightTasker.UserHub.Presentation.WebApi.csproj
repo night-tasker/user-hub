@@ -9,6 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Mapster" Version="7.4.0" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.0"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0">
           <PrivateAssets>all</PrivateAssets>
@@ -18,13 +19,15 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Content Include="..\.dockerignore">
-        <Link>.dockerignore</Link>
-      </Content>
+      <ProjectReference Include="..\..\Infrastructure\NightTasker.UserHub.Infrastructure.Messaging\NightTasker.UserHub.Infrastructure.Messaging.csproj" />
+      <ProjectReference Include="..\..\Infrastructure\NightTasker.UserHub.Infrastructure.Persistence\NightTasker.UserHub.Infrastructure.Persistence.csproj" />
     </ItemGroup>
 
+
     <ItemGroup>
-      <ProjectReference Include="..\..\Infrastructure\NightTasker.UserHub.Infrastructure.Persistence\NightTasker.UserHub.Infrastructure.Persistence.csproj" />
+      <Content Include="..\..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
     </ItemGroup>
 
 </Project>

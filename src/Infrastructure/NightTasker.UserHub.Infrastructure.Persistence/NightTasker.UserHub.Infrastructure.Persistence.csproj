@@ -21,9 +21,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Core\NightTasker.UserHub.Core.Domain\NightTasker.UserHub.Core.Domain.csproj" />
+      <ProjectReference Include="..\..\Core\NightTasker.UserHub.Core.Application\NightTasker.UserHub.Core.Application.csproj" />
     </ItemGroup>
-
 
 
 </Project>
