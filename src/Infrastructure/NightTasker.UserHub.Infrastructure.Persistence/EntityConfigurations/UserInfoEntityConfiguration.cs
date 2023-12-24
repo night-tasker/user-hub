@@ -11,6 +11,8 @@ public class UserInfoEntityConfiguration : IEntityTypeConfiguration<UserInfo>
 {
     public void Configure(EntityTypeBuilder<UserInfo> builder)
     {
+        builder.ToTable(name: "user_infos");
+        
         builder.HasKey(userInfo => userInfo.Id);
 
         builder.Property(userInfo => userInfo.UserName)

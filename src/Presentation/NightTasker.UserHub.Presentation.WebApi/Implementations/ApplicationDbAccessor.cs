@@ -8,15 +8,20 @@ using NightTasker.UserHub.Infrastructure.Persistence.Contracts;
 namespace NightTasker.UserHub.Presentation.WebApi.Implementations;
 
 /// <inheritdoc /> 
-public class ApplicationDbAccessor(ApplicationDbContext dbContext, IIdentityService identityService) : IApplicationDbAccessor
+public class ApplicationDbAccessor : IApplicationDbAccessor
 {
-    private readonly ApplicationDbContext _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
-
-    private readonly IIdentityService _identityService =
-        identityService ?? throw new ArgumentNullException(nameof(identityService));
+    private readonly ApplicationDbContext _dbContext;
+    private readonly IIdentityService _identityService;
+    
+    public ApplicationDbAccessor(ApplicationDbContext dbContext, IIdentityService identityService)
+    {
+        _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+        _identityService = identityService ?? throw new ArgumentNullException(nameof(identityService));
+        UserInfos = new ApplicationDbSet<UserInfo, Guid>(_dbContext, GetUserInfos(_dbContext.Set<UserInfo>()));
+    }
 
     /// <inheritdoc />
-    public ApplicationDbSet<UserInfo, Guid> UserInfos => new(_dbContext, GetUserInfos(_dbContext.Set<UserInfo>()));
+    public ApplicationDbSet<UserInfo, Guid> UserInfos { get; }
 
     private IQueryable<UserInfo> GetUserInfos(DbSet<UserInfo> query)
     {

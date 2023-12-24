@@ -12,8 +12,4 @@ public class IdentitySettings
     public string Issuer { get; set; } = null!;
 
     public string Audience { get; set; } = null!;
-
-    public int NotBeforeMinutes { get; set; }
-    
-    public int ExpirationMinutes { get; set; }
 }
