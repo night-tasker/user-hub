@@ -9,6 +9,14 @@ namespace NightTasker.UserHub.Core.Application.Features.UserInfo.Services.Contra
 public interface IUserInfoService
 {
     /// <summary>
+    /// Получить <see cref="UserInfo"/> по ИД.
+    /// </summary>
+    /// <param name="userInfoId">ИД сведений о пользователе.</param>
+    /// <param name="cancellationToken">Токен отмены.</param>
+    /// <returns>Сведения о пользователе.</returns>
+    Task<UserInfoDto> GetUserInfoById(Guid userInfoId, CancellationToken cancellationToken);
+    
+    /// <summary>
     /// Создать <see cref="UserInfo"/>.
     /// </summary>
     /// <param name="createUserInfoDto"><see cref="CreateUserInfoDto"/></param>

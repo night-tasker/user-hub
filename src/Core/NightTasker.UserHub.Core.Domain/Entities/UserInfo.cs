@@ -41,5 +41,5 @@ public class UserInfo : IEntityWithId<Guid>, IDateTimeOffsetModification
     public DateTimeOffset CreatedDateTimeOffset { get; set; }
     
     /// <inheritdoc />
-    public DateTimeOffset UpdatedDateTimeOffset { get; set; }
+    public DateTimeOffset? UpdatedDateTimeOffset { get; set; }
 }

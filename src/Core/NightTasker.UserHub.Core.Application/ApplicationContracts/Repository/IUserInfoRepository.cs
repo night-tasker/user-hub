@@ -8,5 +8,11 @@ namespace NightTasker.UserHub.Core.Application.ApplicationContracts.Repository;
 /// </summary>
 public interface IUserInfoRepository : IRepository<UserInfo, Guid>
 {
-    
+    /// <summary>
+    /// Получить <see cref="UserInfo"/> по идентификатору.
+    /// </summary>
+    /// <param name="id">Идентификатор.</param>
+    /// <param name="cancellationToken">Токен отмены.</param>
+    /// <returns><see cref="UserInfo"/></returns>
+    Task<UserInfo?> TryGetById(Guid id, CancellationToken cancellationToken);
 }

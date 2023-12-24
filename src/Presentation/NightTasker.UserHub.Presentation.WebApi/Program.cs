@@ -1,3 +1,4 @@
+using NightTasker.Common.Core.Exceptions.Middlewares;
 using NightTasker.UserHub.Core.Application.Configuration;
 using NightTasker.UserHub.Infrastructure.Messaging.Configuration;
 using NightTasker.UserHub.Infrastructure.Persistence.Configuration;
@@ -11,11 +12,15 @@ builder.Services
     .RegisterApplicationServices()
     .RegisterPersistenceServices(builder.Configuration)
     .RegisterMessagingServices(builder.Configuration)
-    .RegisterApiServices();
+    .RegisterApiServices(builder.Configuration);
+
+builder.Services.AddControllers();
 
 var app = builder.Build();
 
 await app.ApplyDatabaseMigrations(CancellationToken.None);
+
+app.UseMiddleware<ExceptionHandlerMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {
@@ -23,6 +28,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+app.UseAuthorization();
+
+app.MapControllers();
 
 app.Run();

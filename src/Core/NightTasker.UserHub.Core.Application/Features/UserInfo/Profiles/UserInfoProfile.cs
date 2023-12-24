@@ -10,5 +10,6 @@ public class UserInfoProfile : IRegister
     {
         config.ForType<CreateUserInfoCommand, CreateUserInfoDto>();
         config.ForType<CreateUserInfoDto, Domain.Entities.UserInfo>();
+        config.ForType<Domain.Entities.UserInfo, UserInfoDto>();
     }
 }
