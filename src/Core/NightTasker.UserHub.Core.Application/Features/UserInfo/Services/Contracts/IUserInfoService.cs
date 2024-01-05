@@ -21,6 +21,12 @@ public interface IUserInfoService
     /// </summary>
     /// <param name="createUserInfoDto"><see cref="CreateUserInfoDto"/></param>
     /// <param name="cancellationToken">Токен отмены.</param>
-    /// <returns></returns>
     Task CreateUserInfoWithSaving(CreateUserInfoDto createUserInfoDto, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Обновить <see cref="UserInfo"/>
+    /// </summary>
+    /// <param name="updateUserInfoDto"><see cref="UpdateUserInfoDto"/></param>
+    /// <param name="cancellationToken">Токен отмены.</param>
+    Task UpdateUserInfoWithSaving(UpdateUserInfoDto updateUserInfoDto, CancellationToken cancellationToken);
 }

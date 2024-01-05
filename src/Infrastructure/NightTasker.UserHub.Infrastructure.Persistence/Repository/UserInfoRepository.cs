@@ -10,8 +10,18 @@ public class UserInfoRepository
     (ApplicationDbSet<UserInfo, Guid> dbSet) : BaseRepository<UserInfo, Guid>(dbSet), IUserInfoRepository
 {
     /// <inheritdoc />
-    public Task<UserInfo?> TryGetById(Guid id, CancellationToken cancellationToken)
+    public Task<UserInfo?> TryGetById(
+        Guid id, 
+        bool trackChanges, 
+        CancellationToken cancellationToken)
     {
-        return Entities.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+        var entities = Entities;
+        if (!trackChanges)
+        {
+            entities = entities.AsNoTracking();
+        }
+        
+        return entities
+            .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
     }
 }

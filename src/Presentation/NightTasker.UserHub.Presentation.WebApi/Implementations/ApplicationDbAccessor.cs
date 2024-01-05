@@ -25,9 +25,21 @@ public class ApplicationDbAccessor : IApplicationDbAccessor
 
     private IQueryable<UserInfo> GetUserInfos(DbSet<UserInfo> query)
     {
-        var currentUserId = _identityService.CurrentUserId!.Value;
-        return query.Where(x => x.Id == currentUserId);
+        if (_identityService.IsSystem)
+        {
+            return query;
+        }
+
+        if (_identityService.IsAuthenticated)
+        {
+            var currentUserId = _identityService.CurrentUserId!.Value;
+            return query.Where(x => x.Id == currentUserId);
+        }
+
+        return EmptyQuery(query);
     }
+    
+    private IQueryable<T> EmptyQuery<T>(IQueryable<T> query) => Enumerable.Empty<T>().AsQueryable();
     
     /// <inheritdoc />
     public Task SaveChanges(CancellationToken cancellationToken)

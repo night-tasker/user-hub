@@ -12,7 +12,8 @@ public interface IUserInfoRepository : IRepository<UserInfo, Guid>
     /// Получить <see cref="UserInfo"/> по идентификатору.
     /// </summary>
     /// <param name="id">Идентификатор.</param>
+    /// <param name="trackChanges">Отслеживать изменения.</param>
     /// <param name="cancellationToken">Токен отмены.</param>
     /// <returns><see cref="UserInfo"/></returns>
-    Task<UserInfo?> TryGetById(Guid id, CancellationToken cancellationToken);
+    Task<UserInfo?> TryGetById(Guid id, bool trackChanges, CancellationToken cancellationToken);
 }

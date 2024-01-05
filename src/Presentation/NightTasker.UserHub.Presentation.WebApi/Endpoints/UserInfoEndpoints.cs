@@ -10,5 +10,13 @@ public static class UserInfoEndpoints
     /// </summary>
     public const string UserInfoResource = "user-info";
     
-    public const string CurrentUserInfo = "current-user";
+    /// <summary>
+    /// Путь для получения информации о текущем пользователе.
+    /// </summary>
+    public const string CurrentUserInfo = "current";
+    
+    /// <summary>
+    /// Путь для обновления <see cref="UserInfo"/>.
+    /// </summary>
+    public const string UpdateUserInfo = "current";
 }
