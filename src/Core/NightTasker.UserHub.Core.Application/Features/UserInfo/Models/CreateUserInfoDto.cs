@@ -5,4 +5,5 @@
 /// </summary>
 /// <param name="Id">ИД (UserId).</param>
 /// <param name="UserName">Имя пользователя.</param>
-public record CreateUserInfoDto(Guid Id, string UserName);
+/// <param name="Email">Адрес электронной почты.</param>
+public record CreateUserInfoDto(Guid Id, string UserName, string Email);

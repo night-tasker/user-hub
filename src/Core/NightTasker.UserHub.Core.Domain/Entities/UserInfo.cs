@@ -37,6 +37,16 @@ public class UserInfo : IEntityWithId<Guid>, IDateTimeOffsetModification
     /// </summary>
     public string? LastName { get; set; }
 
+    /// <summary>
+    /// ИД фотографии.
+    /// </summary>
+    public Guid UserInfoImageId { get; set; }
+
+    /// <summary>
+    /// Фотография пользователя.
+    /// </summary>
+    public UserInfoImage? UserInfoImage { get; set; }
+
     /// <inheritdoc />
     public DateTimeOffset CreatedDateTimeOffset { get; set; }
     

@@ -7,4 +7,5 @@ namespace NightTasker.UserHub.Core.Application.Features.UserInfo.Commands.Create
 /// </summary>
 /// <param name="Id">ИД пользователя.</param>
 /// <param name="UserName">Имя пользователя.</param>
-public record CreateUserInfoCommand(Guid Id, string UserName) : IRequest;
+/// <param name="Email">Адрес электронной почты.</param>
+public record CreateUserInfoCommand(Guid Id, string UserName, string Email) : IRequest;

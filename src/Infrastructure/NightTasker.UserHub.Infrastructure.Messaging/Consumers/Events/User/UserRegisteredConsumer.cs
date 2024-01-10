@@ -16,7 +16,10 @@ public class UserRegisteredConsumer(
 
     public Task Consume(ConsumeContext<IUserRegistered> context)
     {
-        var createUserInfoCommand = new CreateUserInfoCommand(context.Message.Id, context.Message.UserName);
+        var createUserInfoCommand = new CreateUserInfoCommand(
+            context.Message.Id, 
+            context.Message.UserName,
+            context.Message.Email);
         return _sender.Send(createUserInfoCommand, context.CancellationToken);
     }
 }

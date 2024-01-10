@@ -33,5 +33,9 @@ public class UserInfoEntityConfiguration : IEntityTypeConfiguration<UserInfo>
         builder.Property(userInfo => userInfo.CreatedDateTimeOffset);
         
         builder.Property(userInfo => userInfo.UpdatedDateTimeOffset);
+
+        builder.HasOne(userInfo => userInfo.UserInfoImage)
+            .WithOne(userInfoImage => userInfoImage.UserInfo)
+            .HasForeignKey<UserInfo>(userInfo => userInfo.UserInfoImageId);
     }
 }
