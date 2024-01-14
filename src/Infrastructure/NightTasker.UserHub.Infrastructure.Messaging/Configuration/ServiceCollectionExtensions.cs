@@ -1,7 +1,7 @@
 ﻿using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using NightTasker.Identity.Infrastructure.Messaging.Settings;
+using NightTasker.UserHub.Infrastructure.Messaging.Settings;
 
 namespace NightTasker.UserHub.Infrastructure.Messaging.Configuration;
 
@@ -11,7 +11,7 @@ namespace NightTasker.UserHub.Infrastructure.Messaging.Configuration;
 public static class ServiceCollectionExtensions
 {
     /// <summary>
-    /// Регистрация служб для слоя <see cref="NightTasker.Identity.Infrastructure.Messaging"/>.
+    /// Регистрация служб для слоя <see cref="NightTasker.UserHub.Infrastructure.Messaging"/>.
     /// </summary>
     /// <param name="services">Коллекция сервисов.</param>
     /// <param name="configuration">Конфигурация.</param>

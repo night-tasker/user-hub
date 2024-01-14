@@ -22,6 +22,47 @@ namespace NightTasker.UserHub.Infrastructure.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("NightTasker.UserHub.Core.Domain.Entities.UserImage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("ContentType")
+                        .HasColumnType("text")
+                        .HasColumnName("content_type");
+
+                    b.Property<DateTimeOffset>("CreatedDateTimeOffset")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_date_time_offset");
+
+                    b.Property<string>("Extension")
+                        .HasColumnType("text")
+                        .HasColumnName("extension");
+
+                    b.Property<string>("FileName")
+                        .HasColumnType("text")
+                        .HasColumnName("file_name");
+
+                    b.Property<long>("FileSize")
+                        .HasColumnType("bigint")
+                        .HasColumnName("file_size");
+
+                    b.Property<DateTimeOffset?>("UpdatedDateTimeOffset")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_date_time_offset");
+
+                    b.Property<Guid>("UserInfoId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_info_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_user_image");
+
+                    b.ToTable("user_image", (string)null);
+                });
+
             modelBuilder.Entity("NightTasker.UserHub.Core.Domain.Entities.UserInfo", b =>
                 {
                     b.Property<Guid>("Id")
@@ -57,7 +98,7 @@ namespace NightTasker.UserHub.Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_date_time_offset");
 
-                    b.Property<Guid>("UserInfoImageId")
+                    b.Property<Guid?>("UserInfoImageId")
                         .HasColumnType("uuid")
                         .HasColumnName("user_info_image_id");
 
@@ -76,49 +117,17 @@ namespace NightTasker.UserHub.Infrastructure.Persistence.Migrations
                     b.ToTable("user_infos", (string)null);
                 });
 
-            modelBuilder.Entity("NightTasker.UserHub.Core.Domain.Entities.UserInfoImage", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<DateTimeOffset>("CreatedDateTimeOffset")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_date_time_offset");
-
-                    b.Property<string>("Extension")
-                        .HasMaxLength(32)
-                        .HasColumnType("character varying(32)")
-                        .HasColumnName("extension");
-
-                    b.Property<DateTimeOffset?>("UpdatedDateTimeOffset")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_date_time_offset");
-
-                    b.Property<Guid>("UserInfoId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("user_info_id");
-
-                    b.HasKey("Id")
-                        .HasName("pk_user_info_images");
-
-                    b.ToTable("user_info_images", (string)null);
-                });
-
             modelBuilder.Entity("NightTasker.UserHub.Core.Domain.Entities.UserInfo", b =>
                 {
-                    b.HasOne("NightTasker.UserHub.Core.Domain.Entities.UserInfoImage", "UserInfoImage")
+                    b.HasOne("NightTasker.UserHub.Core.Domain.Entities.UserImage", "UserInfoImage")
                         .WithOne("UserInfo")
                         .HasForeignKey("NightTasker.UserHub.Core.Domain.Entities.UserInfo", "UserInfoImageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_user_infos_user_info_image_user_info_image_id1");
+                        .HasConstraintName("fk_user_infos_user_image_user_info_image_id1");
 
                     b.Navigation("UserInfoImage");
                 });
 
-            modelBuilder.Entity("NightTasker.UserHub.Core.Domain.Entities.UserInfoImage", b =>
+            modelBuilder.Entity("NightTasker.UserHub.Core.Domain.Entities.UserImage", b =>
                 {
                     b.Navigation("UserInfo");
                 });

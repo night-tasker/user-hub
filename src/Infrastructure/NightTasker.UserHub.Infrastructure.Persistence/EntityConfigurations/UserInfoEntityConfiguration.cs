@@ -36,6 +36,7 @@ public class UserInfoEntityConfiguration : IEntityTypeConfiguration<UserInfo>
 
         builder.HasOne(userInfo => userInfo.UserInfoImage)
             .WithOne(userInfoImage => userInfoImage.UserInfo)
-            .HasForeignKey<UserInfo>(userInfo => userInfo.UserInfoImageId);
+            .HasForeignKey<UserInfo>(userInfo => userInfo.UserInfoImageId)
+            .IsRequired(false);
     }
 }

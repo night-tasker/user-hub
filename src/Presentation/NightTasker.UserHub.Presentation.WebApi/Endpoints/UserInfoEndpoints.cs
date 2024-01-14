@@ -1,4 +1,6 @@
-﻿namespace NightTasker.UserHub.Presentation.WebApi.Endpoints;
+﻿using NightTasker.UserHub.Core.Domain.Entities;
+
+namespace NightTasker.UserHub.Presentation.WebApi.Endpoints;
 
 /// <summary>
 /// Пути эндпоинтов для работы со сведениями пользователей.

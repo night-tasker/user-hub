@@ -6,15 +6,11 @@ using NightTasker.UserHub.Core.Domain.Entities;
 
 namespace NightTasker.UserHub.Infrastructure.Persistence.Repository;
 
-/// <inheritdoc cref="NightTasker.UserHub.Core.Application.ApplicationContracts.Repository.IUserInfoRepository" />
-public class UserInfoRepository
-    (ApplicationDbSet<UserInfo, Guid> dbSet) : BaseRepository<UserInfo, Guid>(dbSet), IUserInfoRepository
+/// <inheritdoc cref="NightTasker.UserHub.Core.Application.ApplicationContracts.Repository.IUserImageRepository" />
+public class UserImageRepository(ApplicationDbSet<UserImage, Guid> dbSet) 
+    : BaseRepository<UserImage, Guid>(dbSet), IUserImageRepository
 {
-    /// <inheritdoc />
-    public Task<UserInfo?> TryGetById(
-        Guid id, 
-        bool trackChanges, 
-        CancellationToken cancellationToken)
+    public Task<UserImage?> TryGetByUserInfoId(Guid userInfoId, bool trackChanges, CancellationToken cancellationToken)
     {
         var entities = Entities;
         if (!trackChanges)
@@ -23,6 +19,6 @@ public class UserInfoRepository
         }
         
         return entities
-            .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+            .FirstOrDefaultAsync(userImage => userImage.UserInfoId == userInfoId, cancellationToken);
     }
 }

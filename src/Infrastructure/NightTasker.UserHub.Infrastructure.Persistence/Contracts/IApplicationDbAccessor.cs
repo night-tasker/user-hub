@@ -14,6 +14,11 @@ public interface IApplicationDbAccessor
     ApplicationDbSet<UserInfo, Guid> UserInfos { get; }
     
     /// <summary>
+    /// Сведения о фотографиях пользователей.
+    /// </summary>
+    ApplicationDbSet<UserImage, Guid> UserImages { get; }
+    
+    /// <summary>
     /// Сохранить изменения.
     /// </summary>
     /// <param name="cancellationToken">Токен отмены.</param>

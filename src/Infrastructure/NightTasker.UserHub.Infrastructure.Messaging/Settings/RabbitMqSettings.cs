@@ -1,4 +1,4 @@
-﻿namespace NightTasker.Identity.Infrastructure.Messaging.Settings;
+﻿namespace NightTasker.UserHub.Infrastructure.Messaging.Settings;
 
 /// <summary>
 /// Настройки подключения к RabbitMQ.

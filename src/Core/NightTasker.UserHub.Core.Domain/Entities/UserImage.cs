@@ -5,7 +5,7 @@ namespace NightTasker.UserHub.Core.Domain.Entities;
 /// <summary>
 /// Фотография пользователя.
 /// </summary>
-public class UserInfoImage : IEntityWithId<Guid>, IDateTimeOffsetModification
+public class UserImage : IEntityWithId<Guid>, IDateTimeOffsetModification
 {
     /// <summary>
     /// ИД фотографии.
@@ -13,9 +13,24 @@ public class UserInfoImage : IEntityWithId<Guid>, IDateTimeOffsetModification
     public Guid Id { get; set; }
 
     /// <summary>
+    /// Название файла.
+    /// </summary>
+    public string? FileName { get; set; }
+    
+    /// <summary>
     /// Расширение файла.
     /// </summary>
     public string? Extension { get; set; }
+    
+    /// <summary>
+    /// Тип содержимого.
+    /// </summary>
+    public string? ContentType { get; set; }
+    
+    /// <summary>
+    /// Размер файла.
+    /// </summary>
+    public long FileSize { get; set; }
         
     /// <summary>
     /// ИД пользователя.

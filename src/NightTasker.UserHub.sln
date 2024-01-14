@@ -16,6 +16,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NightTasker.UserHub.Infrast
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NightTasker.UserHub.Infrastructure.Messaging", "Infrastructure\NightTasker.UserHub.Infrastructure.Messaging\NightTasker.UserHub.Infrastructure.Messaging.csproj", "{C9595775-50F3-447B-820D-B9CA8E20E78B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NightTasker.UserHub.Infrastructure.Grpc", "Infrastructure\NightTasker.UserHub.Infrastructure.Grpc\NightTasker.UserHub.Infrastructure.Grpc.csproj", "{3F8D1BB3-EEFF-4EF1-8FE2-BC757501BCD0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,6 +44,10 @@ Global
 		{C9595775-50F3-447B-820D-B9CA8E20E78B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C9595775-50F3-447B-820D-B9CA8E20E78B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C9595775-50F3-447B-820D-B9CA8E20E78B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F8D1BB3-EEFF-4EF1-8FE2-BC757501BCD0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F8D1BB3-EEFF-4EF1-8FE2-BC757501BCD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F8D1BB3-EEFF-4EF1-8FE2-BC757501BCD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F8D1BB3-EEFF-4EF1-8FE2-BC757501BCD0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{1101D6CB-8464-4B6C-B7DE-452229BA1EA9} = {5354CDA5-5363-4C75-A0AE-B282528C0061}
@@ -49,5 +55,6 @@ Global
 		{E0E8AD2B-6FE0-412E-99ED-D33D3EBEE65A} = {9D9C9C9C-C8B6-45DE-ADB8-0ABCE918A7A1}
 		{365C61FA-6EB9-4022-A1EE-F65A78EE8817} = {CEAAA14C-17AE-4E39-8B1B-F1EAB6325C23}
 		{C9595775-50F3-447B-820D-B9CA8E20E78B} = {CEAAA14C-17AE-4E39-8B1B-F1EAB6325C23}
+		{3F8D1BB3-EEFF-4EF1-8FE2-BC757501BCD0} = {CEAAA14C-17AE-4E39-8B1B-F1EAB6325C23}
 	EndGlobalSection
 EndGlobal

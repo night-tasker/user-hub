@@ -18,10 +18,13 @@ public class ApplicationDbAccessor : IApplicationDbAccessor
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         _identityService = identityService ?? throw new ArgumentNullException(nameof(identityService));
         UserInfos = new ApplicationDbSet<UserInfo, Guid>(_dbContext, GetUserInfos(_dbContext.Set<UserInfo>()));
+        UserImages = new ApplicationDbSet<UserImage, Guid>(_dbContext, GetUserImages(_dbContext.Set<UserImage>()));
     }
 
     /// <inheritdoc />
     public ApplicationDbSet<UserInfo, Guid> UserInfos { get; }
+
+    public ApplicationDbSet<UserImage, Guid> UserImages { get; }
 
     private IQueryable<UserInfo> GetUserInfos(DbSet<UserInfo> query)
     {
@@ -38,7 +41,23 @@ public class ApplicationDbAccessor : IApplicationDbAccessor
 
         return EmptyQuery(query);
     }
-    
+
+    private IQueryable<UserImage> GetUserImages(DbSet<UserImage> query)
+    {
+        if (_identityService.IsSystem)
+        {
+            return query;
+        }
+
+        if (_identityService.IsAuthenticated)
+        {
+            var currentUserId = _identityService.CurrentUserId!.Value;
+            return query.Where(x => x.UserInfoId == currentUserId);
+        }
+        
+        return EmptyQuery(query);
+    }
+
     private IQueryable<T> EmptyQuery<T>(IQueryable<T> query) => Enumerable.Empty<T>().AsQueryable();
     
     /// <inheritdoc />

@@ -1,5 +1,6 @@
 using NightTasker.Common.Core.Exceptions.Middlewares;
 using NightTasker.UserHub.Core.Application.Configuration;
+using NightTasker.UserHub.Infrastructure.Grpc.Configuration;
 using NightTasker.UserHub.Infrastructure.Messaging.Configuration;
 using NightTasker.UserHub.Infrastructure.Persistence.Configuration;
 using NightTasker.UserHub.Presentation.WebApi.Configuration;
@@ -12,6 +13,7 @@ builder.Services
     .RegisterApplicationServices()
     .RegisterPersistenceServices(builder.Configuration)
     .RegisterMessagingServices(builder.Configuration)
+    .RegisterGrpcServices(builder.Configuration)
     .RegisterApiServices(builder.Configuration);
 
 builder.Services.AddControllers();
