@@ -2,10 +2,13 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NightTasker.Common.Core.Identity.Contracts;
+using NightTasker.Common.Grpc.StorageFiles;
 using NightTasker.UserHub.Core.Application.Features.UserImage.Commands.UploadUserImage;
-using NightTasker.UserHub.Core.Application.Features.UserImage.Queries.GetByUserId;
+using NightTasker.UserHub.Core.Application.Features.UserImage.Queries.DownloadByUserId;
+using NightTasker.UserHub.Core.Application.Features.UserImage.Queries.GetUserImageUrl;
 using NightTasker.UserHub.Presentation.WebApi.Constants;
 using NightTasker.UserHub.Presentation.WebApi.Endpoints;
+using NightTasker.UserHub.Presentation.WebApi.Responses.UserImage;
 
 namespace NightTasker.UserHub.Presentation.WebApi.Controllers.V1;
 
@@ -33,7 +36,7 @@ public class UserImageController(
         CancellationToken cancellationToken)
     {
         var currentUserId = _identityService.CurrentUserId!.Value;
-        var query = new GetUserImageByUserInfoIdQuery(currentUserId);
+        var query = new DownloadUserImageByUserInfoIdQuery(currentUserId);
         var result = await _mediator.Send(query, cancellationToken);
         return File(result.Stream, result.ContentType, $"{result.FileName}.{result.Extension}");
     }
@@ -52,5 +55,20 @@ public class UserImageController(
         var command = new UploadUserImageCommand(currentUserId, file.OpenReadStream(), file.FileName, file.ContentType, file.Length);
         await _mediator.Send(command, cancellationToken);
         return Ok();
+    }
+
+    /// <summary>
+    /// Получить ссылку на фотографию текущего пользователя.
+    /// </summary>
+    /// <param name="cancellationToken">Токен отмены.</param>
+    /// <returns>Ссылка на фотографию.</returns>
+    [HttpGet(UserImageEndpoints.GetCurrentUserImageUrl)]
+    public async Task<ActionResult<GetCurrentUserImageUrlResponse>> GetFileUrl(CancellationToken cancellationToken)
+    {
+        var currentUserId = _identityService.CurrentUserId!.Value;
+        var query = new GetUserImageUrlByUserInfoIdQuery(currentUserId);
+        var result = await _mediator.Send(query, cancellationToken);
+        var response = new GetCurrentUserImageUrlResponse(result);
+        return Ok(response);
     }
 }

@@ -19,4 +19,16 @@ public interface IUserImageRepository : IRepository<UserImage, Guid>
     /// В случае отсутствия фото у пользователя вернет null.
     /// </returns>
     Task<UserImage?> TryGetByUserInfoId(Guid userInfoId, bool trackChanges, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Установить не активные фото пользователя кроме одного.
+    /// </summary>
+    /// <param name="userInfoId">ИД пользователя.</param>
+    /// <param name="activeUserImageId">ИД активного фото пользователя.</param>
+    /// <param name="cancellationToken">Токен отмены.</param>
+    /// <returns></returns>
+    Task SetUnActiveImagesForUserInfoIdExcludeOne(
+        Guid userInfoId,
+        Guid activeUserImageId,
+        CancellationToken cancellationToken);
 }

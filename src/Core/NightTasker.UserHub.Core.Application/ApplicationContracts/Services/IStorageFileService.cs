@@ -22,4 +22,12 @@ public interface IStorageFileService
     /// <param name="uploadFileDto">DTO загружаемого файла.</param>
     /// <param name="cancellationToken">Токен отмены.</param>
     Task UploadFile(UploadFileDto uploadFileDto, CancellationToken cancellationToken);
+    
+    /// <summary>
+    /// Получить ссылку на файл.
+    /// </summary>
+    /// <param name="fileId">ИД файла.</param>
+    /// <param name="cancellationToken">Токен отмены.</param>
+    /// <returns>Ссылка на файл.</returns>
+    Task<string> GetFileUrl(Guid fileId, CancellationToken cancellationToken);
 }

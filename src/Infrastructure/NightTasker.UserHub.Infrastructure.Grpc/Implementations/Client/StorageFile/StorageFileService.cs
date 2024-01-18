@@ -36,7 +36,7 @@ public class StorageFileService(
     /// <inheritdoc />
     public async Task UploadFile(UploadFileDto uploadFileDto, CancellationToken cancellationToken)
     {
-        var uploadFileRequest = new UploadFileRequest()
+        var uploadFileRequest = new UploadFileRequest
         {
             BucketName = _storageGrpcSettings.BucketName,
             FileName = uploadFileDto.FileName,
@@ -45,5 +45,19 @@ public class StorageFileService(
             FileSize = uploadFileDto.Length
         };
         await _storageFileClient.UploadFileAsync(uploadFileRequest, cancellationToken: cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public async Task<string> GetFileUrl(Guid fileId, CancellationToken cancellationToken)
+    {
+        var getFileUrlRequest = new GetFileUrlRequest()
+        {
+            BucketName = _storageGrpcSettings.BucketName,
+            FileName = fileId.ToString()
+        };
+        
+        var callOptions = new CallOptions(cancellationToken: cancellationToken);
+        var response = await _storageFileClient.GetFileUrlAsync(getFileUrlRequest, callOptions);
+        return response.Url;
     }
 }

@@ -12,13 +12,26 @@ public class UserImageRepository(ApplicationDbSet<UserImage, Guid> dbSet)
 {
     public Task<UserImage?> TryGetByUserInfoId(Guid userInfoId, bool trackChanges, CancellationToken cancellationToken)
     {
-        var entities = Entities;
+        var entities = Entities
+            .Where(x => x.IsActive);
+        
         if (!trackChanges)
         {
             entities = entities.AsNoTracking();
         }
         
         return entities
-            .FirstOrDefaultAsync(userImage => userImage.UserInfoId == userInfoId, cancellationToken);
+            .SingleOrDefaultAsync(userImage => userImage.UserInfoId == userInfoId, cancellationToken);
+    }
+
+    public Task SetUnActiveImagesForUserInfoIdExcludeOne(
+        Guid userInfoId,
+        Guid activeUserImageId,
+        CancellationToken cancellationToken)
+    {
+        return Entities
+            .Where(x => x.UserInfoId == userInfoId && x.Id != activeUserImageId && x.IsActive)
+            .ExecuteUpdateAsync(setPropertyCall => 
+                setPropertyCall.SetProperty(prop => prop.IsActive, false), cancellationToken);
     }
 }

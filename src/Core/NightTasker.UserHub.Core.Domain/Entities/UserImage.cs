@@ -13,6 +13,11 @@ public class UserImage : IEntityWithId<Guid>, IDateTimeOffsetModification
     public Guid Id { get; set; }
 
     /// <summary>
+    /// Активна ли фотография (активна может быть только одна).
+    /// </summary>
+    public bool IsActive { get; set; }
+
+    /// <summary>
     /// Название файла.
     /// </summary>
     public string? FileName { get; set; }

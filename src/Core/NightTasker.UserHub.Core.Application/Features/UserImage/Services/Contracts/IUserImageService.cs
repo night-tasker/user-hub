@@ -16,10 +16,18 @@ public interface IUserImageService
     Task<Guid> CreateUserImage(CreateUserImageDto createUserImageDto, CancellationToken cancellationToken);
 
     /// <summary>
-    /// Создать <see cref="UserImage"/> сохранением.
+    /// Скачать <see cref="UserImage"/> по идентификатору пользователя.
     /// </summary>
-    /// <param name="createUserImageDto">DTO для создания <see cref="UserImage"/>.</param>
+    /// <param name="userInfoId">ИД пользователя.</param>
     /// <param name="cancellationToken">Токен отмены.</param>
-    /// <returns>ИД созданного <see cref="UserImage"/>.</returns>
-    Task<Guid> CreateUserImageWithSaving(CreateUserImageDto createUserImageDto, CancellationToken cancellationToken);
+    /// <returns>Скачиваемый <see cref="UserImage"/>.</returns>
+    Task<UserImageDto> DownloadUserImageByUserInfoId(Guid userInfoId, CancellationToken cancellationToken);
+    
+    /// <summary>
+    /// Получить ссылку на <see cref="UserImage"/> по идентификатору пользователя.
+    /// </summary>
+    /// <param name="userInfoId">ИД пользователя.</param>
+    /// <param name="cancellationToken">Токен отмены.</param>
+    /// <returns>Ссылка на <see cref="UserImage"/>.</returns>
+    Task<string> GetUserImageUrlByUserInfoId(Guid userInfoId, CancellationToken cancellationToken);
 }

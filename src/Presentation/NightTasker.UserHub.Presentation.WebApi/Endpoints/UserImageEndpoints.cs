@@ -19,4 +19,9 @@ public class UserImageEndpoints
     /// Путь для загрузки фотографии текущего пользователя.
     /// </summary>
     public const string UploadCurrentUserImage = "upload-current-user-image";
+
+    /// <summary>
+    /// Путь для получения ссылки на фотографию пользователя.
+    /// </summary>
+    public const string GetCurrentUserImageUrl = "current-user/url";
 }
