@@ -2,10 +2,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NightTasker.Common.Core.Identity.Contracts;
-using NightTasker.Common.Grpc.StorageFiles;
+using NightTasker.UserHub.Core.Application.Features.UserImage.Commands.RemoveUserImage;
+using NightTasker.UserHub.Core.Application.Features.UserImage.Commands.SetActiveUserImage;
 using NightTasker.UserHub.Core.Application.Features.UserImage.Commands.UploadUserImage;
 using NightTasker.UserHub.Core.Application.Features.UserImage.Queries.DownloadByUserId;
-using NightTasker.UserHub.Core.Application.Features.UserImage.Queries.GetUserImageUrl;
+using NightTasker.UserHub.Core.Application.Features.UserImage.Queries.GetUserActiveImageUrlByUserInfoId;
+using NightTasker.UserHub.Core.Application.Features.UserImage.Queries.GetUserImagesWithUrlByUserInfoId;
 using NightTasker.UserHub.Presentation.WebApi.Constants;
 using NightTasker.UserHub.Presentation.WebApi.Endpoints;
 using NightTasker.UserHub.Presentation.WebApi.Responses.UserImage;
@@ -58,17 +60,63 @@ public class UserImageController(
     }
 
     /// <summary>
-    /// Получить ссылку на фотографию текущего пользователя.
+    /// Получить ссылку на активную фотографию текущего пользователя.
     /// </summary>
     /// <param name="cancellationToken">Токен отмены.</param>
-    /// <returns>Ссылка на фотографию.</returns>
-    [HttpGet(UserImageEndpoints.GetCurrentUserImageUrl)]
-    public async Task<ActionResult<GetCurrentUserImageUrlResponse>> GetFileUrl(CancellationToken cancellationToken)
+    /// <returns>Ссылка на активную фотографию.</returns>
+    [HttpGet(UserImageEndpoints.GetCurrentUserActiveImageUrl)]
+    public async Task<ActionResult<GetCurrentUserActiveImageUrlResponse>> GetCurrentUserActiveImageUrl(
+        CancellationToken cancellationToken)
     {
         var currentUserId = _identityService.CurrentUserId!.Value;
-        var query = new GetUserImageUrlByUserInfoIdQuery(currentUserId);
+        var query = new GetUserActiveImageUrlByUserInfoIdQuery(currentUserId);
         var result = await _mediator.Send(query, cancellationToken);
-        var response = new GetCurrentUserImageUrlResponse(result);
+        var response = new GetCurrentUserActiveImageUrlResponse(result);
         return Ok(response);
+    }
+    
+    /// <summary>
+    /// Получить ссылки на фотографии текущего пользователя.
+    /// </summary>
+    /// <param name="cancellationToken">Токен отмены.</param>
+    /// <returns>Ссылки на фотографии.</returns>
+    [HttpGet(UserImageEndpoints.GetCurrentUserImagesUrl)]
+    public async Task<ActionResult<GetCurrentUserImagesUrlResponse>> GetCurrentUserImagesUrl(
+        CancellationToken cancellationToken)
+    {
+        var currentUserId = _identityService.CurrentUserId!.Value;
+        var query = new GetUserImagesWithUrlByUserInfoIdQuery(currentUserId);
+        var result = await _mediator.Send(query, cancellationToken);
+        var response = new GetCurrentUserImagesUrlResponse(result);
+        return Ok(response);
+    }
+
+    /// <summary>
+    /// Эндпоинт для удаления фотографии текущего пользователя.
+    /// </summary>
+    /// <param name="userImageId">Идентификатор фотографии.</param>
+    /// <param name="cancellationToken">Токен отмены.</param>
+    [HttpDelete(UserImageEndpoints.RemoveCurrentUserImageById)]
+    public async Task<IActionResult> RemoveCurrentUserImageById(
+        Guid userImageId, CancellationToken cancellationToken)
+    {
+        var command = new RemoveUserImageCommand(userImageId);
+        await _mediator.Send(command, cancellationToken);
+        return Ok();
+    }
+
+    /// <summary>
+    /// Эндпоинт для установки активной фотографии текущего пользователя.
+    /// </summary>
+    /// <param name="userImageId">Идентификатор фотографии.</param>
+    /// <param name="cancellationToken">Токен отмены.</param>
+    [HttpPost(UserImageEndpoints.SetActiveUserImage)]
+    public async Task<IActionResult> SetActiveUserImage(
+        [FromRoute] Guid userImageId, CancellationToken cancellationToken)
+    {
+        var currentUserId = _identityService.CurrentUserId!.Value;
+        var command = new SetActiveImageForUserCommand(currentUserId, userImageId);
+        await _mediator.Send(command, cancellationToken);
+        return Ok();
     }
 }

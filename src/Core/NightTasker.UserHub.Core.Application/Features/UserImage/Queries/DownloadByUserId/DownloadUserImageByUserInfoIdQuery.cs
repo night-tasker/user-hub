@@ -7,4 +7,4 @@ namespace NightTasker.UserHub.Core.Application.Features.UserImage.Queries.Downlo
 /// Запрос для получения фотографии пользователя по идентификатору.
 /// </summary>
 /// <param name="UserInfoId">ИД пользователя.</param>
-public record DownloadUserImageByUserInfoIdQuery(Guid UserInfoId) : IRequest<UserImageDto>;
+public record DownloadUserImageByUserInfoIdQuery(Guid UserInfoId) : IRequest<UserImageWithStreamDto>;

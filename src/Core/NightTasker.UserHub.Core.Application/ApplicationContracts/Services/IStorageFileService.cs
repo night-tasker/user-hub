@@ -30,4 +30,20 @@ public interface IStorageFileService
     /// <param name="cancellationToken">Токен отмены.</param>
     /// <returns>Ссылка на файл.</returns>
     Task<string> GetFileUrl(Guid fileId, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Получить ссылки на файлы.
+    /// </summary>
+    /// <param name="fileIds">Идентификаторы файлов.</param>
+    /// <param name="cancellationToken">Токен отмены.</param>
+    /// <returns>Ссылки на файлы.</returns>
+    Task<IDictionary<Guid, string>> GetFilesUrls(
+        HashSet<Guid> fileIds, CancellationToken cancellationToken);
+    
+    /// <summary>
+    /// Удалить файл.
+    /// </summary>
+    /// <param name="fileId">ИД файла.</param>
+    /// <param name="cancellationToken">Токен отмены.</param>
+    Task RemoveFile(Guid fileId, CancellationToken cancellationToken);
 }

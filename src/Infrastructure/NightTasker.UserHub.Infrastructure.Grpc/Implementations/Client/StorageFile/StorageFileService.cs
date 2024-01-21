@@ -1,8 +1,10 @@
 ﻿using Google.Protobuf;
+using Google.Protobuf.Collections;
 using Grpc.Core;
 using Microsoft.Extensions.Options;
 using NightTasker.Common.Grpc.StorageFiles;
 using NightTasker.UserHub.Core.Application.ApplicationContracts.Services;
+using NightTasker.UserHub.Core.Application.Exceptions.NotFound;
 using NightTasker.UserHub.Core.Application.Models.StorageFile;
 using NightTasker.UserHub.Infrastructure.Grpc.Settings;
 
@@ -59,5 +61,56 @@ public class StorageFileService(
         var callOptions = new CallOptions(cancellationToken: cancellationToken);
         var response = await _storageFileClient.GetFileUrlAsync(getFileUrlRequest, callOptions);
         return response.Url;
+    }
+
+    /// <inheritdoc />
+    public async Task<IDictionary<Guid, string>> GetFilesUrls(
+        HashSet<Guid> fileIds, CancellationToken cancellationToken)
+    {
+        var request = new GetFilesUrlRequest();
+        var requestFiles = fileIds
+            .Select(fileId => new GetFileUrlRequest
+            {
+                BucketName = _storageGrpcSettings.BucketName,
+                FileName = fileId.ToString()
+            })
+            .ToList();
+        request.Files.AddRange(requestFiles);
+        
+        var callOptions = new CallOptions(cancellationToken: cancellationToken);
+        var response = await _storageFileClient.GetFilesUrlAsync(request, callOptions);
+        
+        var dictionary = response.Files.ToDictionary(file => Guid.Parse(file.FileName), file => file.Url);
+        ValidateFilesCount(fileIds, dictionary.Keys.ToHashSet());
+
+        return dictionary;
+    }
+
+    /// <inheritdoc />
+    public async Task RemoveFile(Guid fileId, CancellationToken cancellationToken)
+    {
+        var removeFileRequest = new RemoveFileRequest
+        {
+            BucketName = _storageGrpcSettings.BucketName,
+            FileName = fileId.ToString()
+        };
+        var callOptions = new CallOptions(cancellationToken: cancellationToken);
+        await _storageFileClient.RemoveFileAsync(removeFileRequest, callOptions);
+    }
+
+    /// <summary>
+    /// Проверка количества найденных файлов.
+    /// </summary>
+    /// <param name="lookingForFileIds">Идентификаторы искомых файлов.</param>
+    /// <param name="foundFileIds">Идентификаторы найденных файлов.</param>
+    /// <exception cref="StorageFilesNotFoundException"/>
+    private void ValidateFilesCount(
+        HashSet<Guid> lookingForFileIds, HashSet<Guid> foundFileIds)
+    {
+        if (lookingForFileIds.Count != foundFileIds.Count)
+        {
+            var notFoundFileIds = lookingForFileIds.Except(foundFileIds).ToList();
+            throw new StorageFilesNotFoundException(notFoundFileIds);
+        }
     }
 }

@@ -10,7 +10,8 @@ namespace NightTasker.UserHub.Infrastructure.Persistence.Repository;
 public class UserImageRepository(ApplicationDbSet<UserImage, Guid> dbSet) 
     : BaseRepository<UserImage, Guid>(dbSet), IUserImageRepository
 {
-    public Task<UserImage?> TryGetByUserInfoId(Guid userInfoId, bool trackChanges, CancellationToken cancellationToken)
+    public Task<UserImage?> TryGetActiveImageByUserInfoId(
+        Guid userInfoId, bool trackChanges, CancellationToken cancellationToken)
     {
         var entities = Entities
             .Where(x => x.IsActive);
@@ -24,6 +25,41 @@ public class UserImageRepository(ApplicationDbSet<UserImage, Guid> dbSet)
             .SingleOrDefaultAsync(userImage => userImage.UserInfoId == userInfoId, cancellationToken);
     }
 
+    /// <inheritdoc />
+    public Task<UserImage?> TryGetImageById(Guid userImageId, bool trackChanges, CancellationToken cancellationToken)
+    {
+        var entities = Entities
+            .Where(x => x.Id == userImageId);
+        
+        if (!trackChanges)
+        {
+            entities = entities.AsNoTracking();
+        }
+        
+        return entities
+            .SingleOrDefaultAsync(cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public async Task<IDictionary<Guid, bool>> GetImageIdsWithActiveByUserInfoId(
+        Guid userInfoId, CancellationToken cancellationToken)
+    {
+        var query = Entities
+            .Where(x => x.UserInfoId == userInfoId);
+        
+        return await query
+            .ToDictionaryAsync(x => x.Id, x => x.IsActive, cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public Task RemoveUserImageById(Guid userImageId, CancellationToken cancellationToken)
+    {
+        return Entities
+            .Where(x => x.Id == userImageId)
+            .ExecuteDeleteAsync(cancellationToken);
+    }
+
+    /// <inheritdoc />
     public Task SetUnActiveImagesForUserInfoIdExcludeOne(
         Guid userInfoId,
         Guid activeUserImageId,
