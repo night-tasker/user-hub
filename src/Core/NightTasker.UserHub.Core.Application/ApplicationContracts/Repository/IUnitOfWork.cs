@@ -10,6 +10,9 @@ public interface IUnitOfWork
     
     /// <inheritdoc cref="IUserImageRepository"/>
     IUserImageRepository UserImageRepository { get; }
+    
+    /// <inheritdoc cref="IOrganizationRepository"/>
+    IOrganizationRepository OrganizationRepository { get; }
 
     Task SaveChanges(CancellationToken cancellationToken);
 }

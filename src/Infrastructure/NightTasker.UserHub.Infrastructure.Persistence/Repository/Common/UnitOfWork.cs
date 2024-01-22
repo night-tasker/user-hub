@@ -9,6 +9,8 @@ public class UnitOfWork(IApplicationDbAccessor applicationDbAccessor) : IUnitOfW
     public IUserInfoRepository UserInfoRepository { get; } = new UserInfoRepository(applicationDbAccessor.UserInfos);
     
     public IUserImageRepository UserImageRepository { get; } = new UserImageRepository(applicationDbAccessor.UserImages);
+    
+    public IOrganizationRepository OrganizationRepository { get; } = new OrganizationRepository(applicationDbAccessor.Organizations);
 
     public Task SaveChanges(CancellationToken cancellationToken)
     {

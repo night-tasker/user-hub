@@ -14,9 +14,14 @@ public interface IApplicationDbAccessor
     ApplicationDbSet<UserInfo, Guid> UserInfos { get; }
     
     /// <summary>
-    /// Сведения о фотографиях пользователей.
+    /// Фотографии пользователей.
     /// </summary>
     ApplicationDbSet<UserImage, Guid> UserImages { get; }
+    
+    /// <summary>
+    /// Организации.
+    /// </summary>
+    ApplicationDbSet<Organization, Guid> Organizations { get; }
     
     /// <summary>
     /// Сохранить изменения.

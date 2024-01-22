@@ -1,7 +1,7 @@
 ﻿using MassTransit;
 using MediatR;
 using NightTasker.Common.Messaging.Events.Contracts;
-using NightTasker.UserHub.Core.Application.Features.UserInfo.Commands.CreateUserInfo;
+using NightTasker.UserHub.Core.Application.Features.UserInfos.Commands.CreateUserInfo;
 
 namespace NightTasker.UserHub.Infrastructure.Messaging.Consumers.Events.User;
 

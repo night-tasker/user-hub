@@ -1,6 +1,6 @@
 ﻿using Mapster;
-using NightTasker.UserHub.Core.Application.Features.UserInfo.Commands.UpdateUserInfo;
-using NightTasker.UserHub.Core.Application.Features.UserInfo.Models;
+using NightTasker.UserHub.Core.Application.Features.UserInfos.Commands.UpdateUserInfo;
+using NightTasker.UserHub.Core.Application.Features.UserInfos.Models;
 using NightTasker.UserHub.Presentation.WebApi.Requests.UserInfo;
 
 namespace NightTasker.UserHub.Presentation.WebApi.Profiles.UserInfo;

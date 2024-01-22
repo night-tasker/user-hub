@@ -2,12 +2,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NightTasker.Common.Core.Identity.Contracts;
-using NightTasker.UserHub.Core.Application.Features.UserImage.Commands.RemoveUserImage;
-using NightTasker.UserHub.Core.Application.Features.UserImage.Commands.SetActiveUserImage;
-using NightTasker.UserHub.Core.Application.Features.UserImage.Commands.UploadUserImage;
-using NightTasker.UserHub.Core.Application.Features.UserImage.Queries.DownloadByUserId;
-using NightTasker.UserHub.Core.Application.Features.UserImage.Queries.GetUserActiveImageUrlByUserInfoId;
-using NightTasker.UserHub.Core.Application.Features.UserImage.Queries.GetUserImagesWithUrlByUserInfoId;
+using NightTasker.UserHub.Core.Application.Features.UserImages.Commands.RemoveUserImage;
+using NightTasker.UserHub.Core.Application.Features.UserImages.Commands.SetActiveUserImage;
+using NightTasker.UserHub.Core.Application.Features.UserImages.Commands.UploadUserImage;
+using NightTasker.UserHub.Core.Application.Features.UserImages.Queries.DownloadByUserId;
+using NightTasker.UserHub.Core.Application.Features.UserImages.Queries.GetUserActiveImageUrlByUserInfoId;
+using NightTasker.UserHub.Core.Application.Features.UserImages.Queries.GetUserImagesWithUrlByUserInfoId;
 using NightTasker.UserHub.Presentation.WebApi.Constants;
 using NightTasker.UserHub.Presentation.WebApi.Endpoints;
 using NightTasker.UserHub.Presentation.WebApi.Responses.UserImage;
@@ -54,7 +54,10 @@ public class UserImageController(
         CancellationToken cancellationToken)
     {
         var currentUserId = _identityService.CurrentUserId!.Value;
-        var command = new UploadUserImageCommand(currentUserId, file.OpenReadStream(), file.FileName, file.ContentType, file.Length);
+        var fileName = Path.GetFileNameWithoutExtension(file.FileName);
+        var fileExtension = Path.GetExtension(file.FileName);
+        var command = new UploadUserImageCommand(
+            currentUserId, file.OpenReadStream(), fileName, fileExtension, file.ContentType, file.Length);
         await _mediator.Send(command, cancellationToken);
         return Ok();
     }

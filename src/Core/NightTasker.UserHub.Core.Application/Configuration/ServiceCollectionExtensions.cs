@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using NightTasker.UserHub.Core.Application.Features.UserImage.Services.Contracts;
-using NightTasker.UserHub.Core.Application.Features.UserImage.Services.Implementations;
-using NightTasker.UserHub.Core.Application.Features.UserInfo.Services.Contracts;
-using NightTasker.UserHub.Core.Application.Features.UserInfo.Services.Implementations;
+using NightTasker.UserHub.Core.Application.Features.UserImages.Services.Contracts;
+using NightTasker.UserHub.Core.Application.Features.UserImages.Services.Implementations;
+using NightTasker.UserHub.Core.Application.Features.UserInfos.Services.Contracts;
+using NightTasker.UserHub.Core.Application.Features.UserInfos.Services.Implementations;
 
 namespace NightTasker.UserHub.Core.Application.Configuration;
 

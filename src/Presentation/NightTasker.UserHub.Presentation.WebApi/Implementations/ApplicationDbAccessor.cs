@@ -17,6 +17,7 @@ public class ApplicationDbAccessor : IApplicationDbAccessor
     {
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         _identityService = identityService ?? throw new ArgumentNullException(nameof(identityService));
+        Organizations = new ApplicationDbSet<Organization, Guid>(_dbContext, GetOrganizations(_dbContext.Set<Organization>()));
         UserInfos = new ApplicationDbSet<UserInfo, Guid>(_dbContext, GetUserInfos(_dbContext.Set<UserInfo>()));
         UserImages = new ApplicationDbSet<UserImage, Guid>(_dbContext, GetUserImages(_dbContext.Set<UserImage>()));
     }
@@ -25,6 +26,8 @@ public class ApplicationDbAccessor : IApplicationDbAccessor
     public ApplicationDbSet<UserInfo, Guid> UserInfos { get; }
 
     public ApplicationDbSet<UserImage, Guid> UserImages { get; }
+    
+    public ApplicationDbSet<Organization, Guid> Organizations { get; }
 
     private IQueryable<UserInfo> GetUserInfos(DbSet<UserInfo> query)
     {
@@ -53,6 +56,21 @@ public class ApplicationDbAccessor : IApplicationDbAccessor
         {
             var currentUserId = _identityService.CurrentUserId!.Value;
             return query.Where(x => x.UserInfoId == currentUserId);
+        }
+        
+        return EmptyQuery(query);
+    }
+
+    private IQueryable<Organization> GetOrganizations(DbSet<Organization> query)
+    {
+        if (_identityService.IsSystem)
+        {
+            return query;
+        }
+
+        if (_identityService.IsAuthenticated)
+        {
+            return query.Where(organization => organization.Id == _identityService.CurrentUserId!.Value);
         }
         
         return EmptyQuery(query);

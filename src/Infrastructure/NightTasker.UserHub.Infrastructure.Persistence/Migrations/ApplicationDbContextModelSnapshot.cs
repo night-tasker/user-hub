@@ -22,6 +22,51 @@ namespace NightTasker.UserHub.Infrastructure.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("NightTasker.UserHub.Core.Domain.Entities.Organization", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset>("CreatedDateTimeOffset")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_date_time_offset");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(254)
+                        .HasColumnType("character varying(254)")
+                        .HasColumnName("name");
+
+                    b.Property<DateTimeOffset?>("UpdatedDateTimeOffset")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_date_time_offset");
+
+                    b.HasKey("Id")
+                        .HasName("pk_organization");
+
+                    b.ToTable("organization", (string)null);
+                });
+
+            modelBuilder.Entity("NightTasker.UserHub.Core.Domain.Entities.OrganizationUser", b =>
+                {
+                    b.Property<Guid>("OrganizationId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("organization_id");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("OrganizationId", "UserId")
+                        .HasName("pk_organization_user");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_organization_user_user_id");
+
+                    b.ToTable("organization_user", (string)null);
+                });
+
             modelBuilder.Entity("NightTasker.UserHub.Core.Domain.Entities.UserImage", b =>
                 {
                     b.Property<Guid>("Id")
@@ -101,6 +146,10 @@ namespace NightTasker.UserHub.Infrastructure.Persistence.Migrations
                         .HasColumnType("character varying(32)")
                         .HasColumnName("middle_name");
 
+                    b.Property<Guid?>("OrganizationId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("organization_id");
+
                     b.Property<DateTimeOffset?>("UpdatedDateTimeOffset")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_date_time_offset");
@@ -113,7 +162,31 @@ namespace NightTasker.UserHub.Infrastructure.Persistence.Migrations
                     b.HasKey("Id")
                         .HasName("pk_user_infos");
 
+                    b.HasIndex("OrganizationId")
+                        .HasDatabaseName("ix_user_infos_organization_id");
+
                     b.ToTable("user_infos", (string)null);
+                });
+
+            modelBuilder.Entity("NightTasker.UserHub.Core.Domain.Entities.OrganizationUser", b =>
+                {
+                    b.HasOne("NightTasker.UserHub.Core.Domain.Entities.Organization", "Organization")
+                        .WithMany("OrganizationUsers")
+                        .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_organization_user_organization_organization_id");
+
+                    b.HasOne("NightTasker.UserHub.Core.Domain.Entities.UserInfo", "UserInfo")
+                        .WithMany("OrganizationUsers")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_organization_user_user_info_user_info_id");
+
+                    b.Navigation("Organization");
+
+                    b.Navigation("UserInfo");
                 });
 
             modelBuilder.Entity("NightTasker.UserHub.Core.Domain.Entities.UserImage", b =>
@@ -128,6 +201,23 @@ namespace NightTasker.UserHub.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("NightTasker.UserHub.Core.Domain.Entities.UserInfo", b =>
                 {
+                    b.HasOne("NightTasker.UserHub.Core.Domain.Entities.Organization", null)
+                        .WithMany("Users")
+                        .HasForeignKey("OrganizationId")
+                        .HasConstraintName("fk_user_infos_organization_organization_id");
+                });
+
+            modelBuilder.Entity("NightTasker.UserHub.Core.Domain.Entities.Organization", b =>
+                {
+                    b.Navigation("OrganizationUsers");
+
+                    b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("NightTasker.UserHub.Core.Domain.Entities.UserInfo", b =>
+                {
+                    b.Navigation("OrganizationUsers");
+
                     b.Navigation("UserInfoImages");
                 });
 #pragma warning restore 612, 618

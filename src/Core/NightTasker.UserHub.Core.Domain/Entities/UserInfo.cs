@@ -42,6 +42,8 @@ public class UserInfo : IEntityWithId<Guid>, IDateTimeOffsetModification
     /// </summary>
     public List<UserImage> UserInfoImages { get; set; } = null!;
 
+    public List<OrganizationUser> OrganizationUsers { get; set; } = null!;
+
     /// <inheritdoc />
     public DateTimeOffset CreatedDateTimeOffset { get; set; }
     

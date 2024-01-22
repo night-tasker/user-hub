@@ -1,4 +1,4 @@
-﻿using NightTasker.UserHub.Core.Application.Features.UserImage.Models;
+﻿using NightTasker.UserHub.Core.Application.Features.UserImages.Models;
 
 namespace NightTasker.UserHub.Presentation.WebApi.Responses.UserImage;
 
