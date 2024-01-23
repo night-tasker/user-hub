@@ -7,7 +7,7 @@ using NightTasker.UserHub.Core.Domain.Entities;
 namespace NightTasker.UserHub.Core.Application.Features.Organizations.Services.Implementations;
 
 /// <inheritdoc />
-public class OrganizationService(
+internal class OrganizationService(
     IUnitOfWork unitOfWork,
     IMapper mapper) : IOrganizationService
 {

@@ -70,7 +70,8 @@ public class ApplicationDbAccessor : IApplicationDbAccessor
 
         if (_identityService.IsAuthenticated)
         {
-            return query.Where(organization => organization.Id == _identityService.CurrentUserId!.Value);
+            return query.Where(organization => organization.OrganizationUsers
+                .Any(organizationUser => organizationUser.UserId == _identityService.CurrentUserId));
         }
         
         return EmptyQuery(query);
