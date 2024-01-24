@@ -9,4 +9,9 @@ public static class OrganizationEndpoints
     /// Базовый путь для получения организации по идентификатору.
     /// </summary>
     public const string BaseResource = "organizations";
+    
+    /// <summary>
+    /// Путь для получения организации по идентификатору.
+    /// </summary>
+    public const string GetById = "{organizationId}";
 }

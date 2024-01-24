@@ -16,5 +16,13 @@ public interface IOrganizationRepository : IRepository<Organization, Guid>
     /// <param name="cancellationToken">Токен отмены.</param>
     /// <returns>Список организаций.</returns>
     Task<IReadOnlyCollection<Organization>> GetUserOrganizations(
-        Guid userInfoId, bool trackChanges, CancellationToken cancellationToken);   
+        Guid userInfoId, bool trackChanges, CancellationToken cancellationToken);
+    
+    /// <summary>
+    /// Получить организацию по ИД.
+    /// </summary>
+    /// <param name="id">ИД организации.</param>
+    /// <param name="trackChanges">Отслеживание изменений.</param>
+    /// <param name="cancellationToken">Токен отмены.</param>
+    Task<Organization?> TryGetById(Guid id, bool trackChanges, CancellationToken cancellationToken);
 }

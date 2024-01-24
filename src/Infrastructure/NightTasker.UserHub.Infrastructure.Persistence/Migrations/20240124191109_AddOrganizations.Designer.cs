@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace NightTasker.UserHub.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240122201407_AddOrganizations")]
+    [Migration("20240124191109_AddOrganizations")]
     partial class AddOrganizations
     {
         /// <inheritdoc />
@@ -36,7 +36,13 @@ namespace NightTasker.UserHub.Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_date_time_offset");
 
+                    b.Property<string>("Description")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)")
+                        .HasColumnName("description");
+
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasMaxLength(254)
                         .HasColumnType("character varying(254)")
                         .HasColumnName("name");
@@ -61,8 +67,18 @@ namespace NightTasker.UserHub.Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("user_id");
 
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("text")
+                        .HasDefaultValue("Member")
+                        .HasColumnName("role");
+
                     b.HasKey("OrganizationId", "UserId")
                         .HasName("pk_organization_user");
+
+                    b.HasIndex("Role")
+                        .HasDatabaseName("ix_organization_user_role");
 
                     b.HasIndex("UserId")
                         .HasDatabaseName("ix_organization_user_user_id");
@@ -149,10 +165,6 @@ namespace NightTasker.UserHub.Infrastructure.Persistence.Migrations
                         .HasColumnType("character varying(32)")
                         .HasColumnName("middle_name");
 
-                    b.Property<Guid?>("OrganizationId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("organization_id");
-
                     b.Property<DateTimeOffset?>("UpdatedDateTimeOffset")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_date_time_offset");
@@ -164,9 +176,6 @@ namespace NightTasker.UserHub.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_user_infos");
-
-                    b.HasIndex("OrganizationId")
-                        .HasDatabaseName("ix_user_infos_organization_id");
 
                     b.ToTable("user_infos", (string)null);
                 });
@@ -202,19 +211,9 @@ namespace NightTasker.UserHub.Infrastructure.Persistence.Migrations
                     b.Navigation("UserInfo");
                 });
 
-            modelBuilder.Entity("NightTasker.UserHub.Core.Domain.Entities.UserInfo", b =>
-                {
-                    b.HasOne("NightTasker.UserHub.Core.Domain.Entities.Organization", null)
-                        .WithMany("Users")
-                        .HasForeignKey("OrganizationId")
-                        .HasConstraintName("fk_user_infos_organization_organization_id");
-                });
-
             modelBuilder.Entity("NightTasker.UserHub.Core.Domain.Entities.Organization", b =>
                 {
                     b.Navigation("OrganizationUsers");
-
-                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("NightTasker.UserHub.Core.Domain.Entities.UserInfo", b =>

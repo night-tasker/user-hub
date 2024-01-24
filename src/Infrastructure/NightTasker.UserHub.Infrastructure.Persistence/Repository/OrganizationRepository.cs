@@ -24,4 +24,18 @@ public class OrganizationRepository(ApplicationDbSet<Organization, Guid> dbSet)
         
         return await query.ToListAsync(cancellationToken);
     }
+
+    /// <inheritdoc />
+    public Task<Organization?> TryGetById(Guid id, bool trackChanges, CancellationToken cancellationToken)
+    {
+        var query = Entities
+            .Where(x => x.Id == id);
+        
+        if (!trackChanges)
+        {
+            query = query.AsNoTracking();
+        }
+        
+        return query.FirstOrDefaultAsync(cancellationToken);
+    }
 }

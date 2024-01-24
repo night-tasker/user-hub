@@ -1,10 +1,18 @@
-﻿namespace NightTasker.UserHub.Core.Domain.Entities;
+﻿using NightTasker.Common.Core.Abstractions;
+using NightTasker.UserHub.Core.Domain.Enums;
+
+namespace NightTasker.UserHub.Core.Domain.Entities;
 
 /// <summary>
 /// Связь пользователя с организацией.
 /// </summary>
-public class OrganizationUser
+public class OrganizationUser : IEntity
 {
+    /// <summary>
+    /// Роль пользователя в организации.
+    /// </summary>
+    public OrganizationUserRole Role { get; set; }
+    
     /// <summary>
     /// ИД пользователя.
     /// </summary>

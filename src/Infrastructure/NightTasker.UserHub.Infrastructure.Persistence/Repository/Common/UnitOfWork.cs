@@ -12,6 +12,9 @@ public class UnitOfWork(IApplicationDbAccessor applicationDbAccessor) : IUnitOfW
     
     public IOrganizationRepository OrganizationRepository { get; } = new OrganizationRepository(applicationDbAccessor.Organizations);
 
+    public IOrganizationUserRepository OrganizationUserRepository { get; } =
+        new OrganizationUserRepository(applicationDbAccessor.OrganizationUsers);
+
     public Task SaveChanges(CancellationToken cancellationToken)
     {
         return applicationDbAccessor.SaveChanges(cancellationToken);

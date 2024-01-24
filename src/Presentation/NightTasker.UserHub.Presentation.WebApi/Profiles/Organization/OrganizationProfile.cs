@@ -9,8 +9,8 @@ public class OrganizationProfile : IRegister
 {
     public void Register(TypeAdapterConfig config)
     {
-        config.ForType<CreateOrganizationRequest, CreateOrganizationCommand>();
-        config.ForType<CreateOrganizationCommand, CreateOrganizationDto>();
+        config.ForType<CreateOrganizationRequest, CreateOrganizationAsUserCommand>();
+        config.ForType<CreateOrganizationAsUserCommand, CreateOrganizationDto>();
         config.ForType<CreateOrganizationDto, Core.Domain.Entities.Organization>();
         
         config.ForType<Core.Domain.Entities.Organization, OrganizationDto>();

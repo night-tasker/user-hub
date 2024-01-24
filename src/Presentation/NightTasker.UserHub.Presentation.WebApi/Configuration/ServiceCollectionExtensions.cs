@@ -1,4 +1,6 @@
 ﻿using System.Text;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -85,5 +87,18 @@ public static class ServiceCollectionExtensions
         });
 
         return services;
+    }
+    
+    /// <summary>
+    /// Добавить валидацию.
+    /// </summary>
+    /// <param name="services">Коллекция сервисов.</param>
+    public static void AddValidation(this IServiceCollection services)
+    {
+        services.AddValidatorsFromAssemblyContaining<Program>();
+        services.AddFluentValidationAutoValidation(configuration =>
+        {
+            configuration.DisableDataAnnotationsValidation = true;
+        });
     }
 }

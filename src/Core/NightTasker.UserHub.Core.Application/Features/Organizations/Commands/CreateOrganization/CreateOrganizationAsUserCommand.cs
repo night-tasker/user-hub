@@ -6,4 +6,6 @@ namespace NightTasker.UserHub.Core.Application.Features.Organizations.Commands.C
 /// Команда на создание организации.
 /// </summary>
 /// <param name="Name">Имя организации.</param>
-public record CreateOrganizationCommand(string Name) : IRequest<Guid>;
+/// <param name="Description">Описание организации.</param>
+/// <param name="UserId">ИД пользователя.</param>
+public record CreateOrganizationAsUserCommand(string Name, string? Description, Guid UserId) : IRequest<Guid>;

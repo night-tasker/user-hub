@@ -16,6 +16,11 @@ public class Organization : IEntityWithId<Guid>, IDateTimeOffsetModification
     public string? Name { get; set; }
 
     /// <summary>
+    /// Описание организации.
+    /// </summary>
+    public string? Description { get; set; }
+
+    /// <summary>
     /// Список связей пользователя с организацией.
     /// </summary>
     public List<OrganizationUser> OrganizationUsers { get; set; } = null!;

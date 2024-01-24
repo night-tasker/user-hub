@@ -14,5 +14,5 @@ public interface IOrganizationService
     /// <param name="createOrganizationDto">DTO для создания организации.</param>
     /// <param name="cancellationToken">Токен отмены.</param>
     /// <returns>Идентификатор созданной организации.</returns>
-    Task<Guid> CreateOrganization(CreateOrganizationDto createOrganizationDto, CancellationToken cancellationToken);
+    Task<Guid> CreateOrganizationWithOutSaving(CreateOrganizationDto createOrganizationDto, CancellationToken cancellationToken);
 }

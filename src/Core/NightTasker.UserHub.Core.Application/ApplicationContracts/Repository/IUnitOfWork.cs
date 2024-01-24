@@ -13,6 +13,9 @@ public interface IUnitOfWork
     
     /// <inheritdoc cref="IOrganizationRepository"/>
     IOrganizationRepository OrganizationRepository { get; }
+    
+    /// <inheritdoc cref="IOrganizationUserRepository"/>
+    IOrganizationUserRepository OrganizationUserRepository { get; }
 
     Task SaveChanges(CancellationToken cancellationToken);
 }

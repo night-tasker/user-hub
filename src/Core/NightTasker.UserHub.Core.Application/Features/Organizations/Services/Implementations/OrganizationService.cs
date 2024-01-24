@@ -15,11 +15,12 @@ internal class OrganizationService(
     private readonly IMapper _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
 
     /// <inheritdoc />
-    public async Task<Guid> CreateOrganization(CreateOrganizationDto createOrganizationDto, CancellationToken cancellationToken)
+    public async Task<Guid> CreateOrganizationWithOutSaving(
+        CreateOrganizationDto createOrganizationDto,
+        CancellationToken cancellationToken)
     {
         var organization = _mapper.Map<Organization>(createOrganizationDto);
         await _unitOfWork.OrganizationRepository.Add(organization, cancellationToken);
-        await _unitOfWork.SaveChanges(cancellationToken);
         return organization.Id;
     }
 }

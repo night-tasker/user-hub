@@ -24,6 +24,11 @@ public interface IApplicationDbAccessor
     ApplicationDbSet<Organization, Guid> Organizations { get; }
     
     /// <summary>
+    /// Связь пользователя с организацией.
+    /// </summary>
+    ApplicationDbSet<OrganizationUser, Guid> OrganizationUsers { get; }
+    
+    /// <summary>
     /// Сохранить изменения.
     /// </summary>
     /// <param name="cancellationToken">Токен отмены.</param>

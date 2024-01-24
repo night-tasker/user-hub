@@ -20,6 +20,7 @@ public class ApplicationDbAccessor : IApplicationDbAccessor
         Organizations = new ApplicationDbSet<Organization, Guid>(_dbContext, GetOrganizations(_dbContext.Set<Organization>()));
         UserInfos = new ApplicationDbSet<UserInfo, Guid>(_dbContext, GetUserInfos(_dbContext.Set<UserInfo>()));
         UserImages = new ApplicationDbSet<UserImage, Guid>(_dbContext, GetUserImages(_dbContext.Set<UserImage>()));
+        OrganizationUsers = new ApplicationDbSet<OrganizationUser, Guid>(_dbContext, GetOrganizationUsers(_dbContext.Set<OrganizationUser>()));
     }
 
     /// <inheritdoc />
@@ -28,6 +29,8 @@ public class ApplicationDbAccessor : IApplicationDbAccessor
     public ApplicationDbSet<UserImage, Guid> UserImages { get; }
     
     public ApplicationDbSet<Organization, Guid> Organizations { get; }
+    
+    public ApplicationDbSet<OrganizationUser, Guid> OrganizationUsers { get; }
 
     private IQueryable<UserInfo> GetUserInfos(DbSet<UserInfo> query)
     {
@@ -72,6 +75,21 @@ public class ApplicationDbAccessor : IApplicationDbAccessor
         {
             return query.Where(organization => organization.OrganizationUsers
                 .Any(organizationUser => organizationUser.UserId == _identityService.CurrentUserId));
+        }
+        
+        return EmptyQuery(query);
+    }
+
+    private IQueryable<OrganizationUser> GetOrganizationUsers(DbSet<OrganizationUser> query)
+    {
+        if (_identityService.IsSystem)
+        {
+            return query;
+        }
+
+        if (_identityService.IsAuthenticated)
+        {
+            return query.Where(organizationUser => organizationUser.UserId == _identityService.CurrentUserId);
         }
         
         return EmptyQuery(query);

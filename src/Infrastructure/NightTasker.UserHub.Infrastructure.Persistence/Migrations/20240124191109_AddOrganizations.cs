@@ -11,18 +11,13 @@ namespace NightTasker.UserHub.Infrastructure.Persistence.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<Guid>(
-                name: "organization_id",
-                table: "user_infos",
-                type: "uuid",
-                nullable: true);
-
             migrationBuilder.CreateTable(
                 name: "organization",
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
-                    name = table.Column<string>(type: "character varying(254)", maxLength: 254, nullable: true),
+                    name = table.Column<string>(type: "character varying(254)", maxLength: 254, nullable: false),
+                    description = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
                     created_date_time_offset = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     updated_date_time_offset = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
@@ -36,7 +31,8 @@ namespace NightTasker.UserHub.Infrastructure.Persistence.Migrations
                 columns: table => new
                 {
                     user_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    organization_id = table.Column<Guid>(type: "uuid", nullable: false)
+                    organization_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    role = table.Column<string>(type: "text", nullable: false, defaultValue: "Member")
                 },
                 constraints: table =>
                 {
@@ -56,43 +52,24 @@ namespace NightTasker.UserHub.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "ix_user_infos_organization_id",
-                table: "user_infos",
-                column: "organization_id");
+                name: "ix_organization_user_role",
+                table: "organization_user",
+                column: "role");
 
             migrationBuilder.CreateIndex(
                 name: "ix_organization_user_user_id",
                 table: "organization_user",
                 column: "user_id");
-
-            migrationBuilder.AddForeignKey(
-                name: "fk_user_infos_organization_organization_id",
-                table: "user_infos",
-                column: "organization_id",
-                principalTable: "organization",
-                principalColumn: "id");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "fk_user_infos_organization_organization_id",
-                table: "user_infos");
-
             migrationBuilder.DropTable(
                 name: "organization_user");
 
             migrationBuilder.DropTable(
                 name: "organization");
-
-            migrationBuilder.DropIndex(
-                name: "ix_user_infos_organization_id",
-                table: "user_infos");
-
-            migrationBuilder.DropColumn(
-                name: "organization_id",
-                table: "user_infos");
         }
     }
 }
