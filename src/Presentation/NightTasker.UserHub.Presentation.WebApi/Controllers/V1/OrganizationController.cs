@@ -7,10 +7,12 @@ using NightTasker.UserHub.Core.Application.Features.Organizations.Commands.Creat
 using NightTasker.UserHub.Core.Application.Features.Organizations.Models;
 using NightTasker.UserHub.Core.Application.Features.Organizations.Queries.GetOrganizationById;
 using NightTasker.UserHub.Core.Application.Features.Organizations.Queries.GetUserOrganizations;
+using NightTasker.UserHub.Core.Application.Features.OrganizationUsers.Queries.GetOrganizationUserRole;
 using NightTasker.UserHub.Core.Domain.Entities;
 using NightTasker.UserHub.Presentation.WebApi.Constants;
 using NightTasker.UserHub.Presentation.WebApi.Endpoints;
 using NightTasker.UserHub.Presentation.WebApi.Requests.Organization;
+using NightTasker.UserHub.Presentation.WebApi.Responses.Organization;
 
 namespace NightTasker.UserHub.Presentation.WebApi.Controllers.V1;
 
@@ -58,6 +60,17 @@ public class OrganizationController(
         var query = new GetUserOrganizationsQuery(currentUserId);
         var result = await _mediator.Send(query, cancellationToken);
         return Ok(result);
+    }
+
+    [HttpGet(OrganizationEndpoints.GetUserOrganizationRole)]
+    public async Task<IActionResult> GetOrganizationUserRole(
+        [FromRoute] Guid organizationId, CancellationToken cancellationToken)
+    {
+        var currentUserId = _identityService.CurrentUserId!.Value;
+        var query = new GetOrganizationUserRoleQuery(OrganizationId: organizationId, UserId: currentUserId);
+        var result = await _mediator.Send(query, cancellationToken);
+        var response = new GetOrganizationUserRoleResponse(result);
+        return Ok(response);
     }
     
     /// <summary>

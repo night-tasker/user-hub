@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Text.Json.Serialization;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Mapster;
@@ -15,6 +16,18 @@ namespace NightTasker.UserHub.Presentation.WebApi.Configuration;
 
 public static class ServiceCollectionExtensions
 {
+    public static IServiceCollection ConfigureControllers(
+        this IServiceCollection services)
+    {
+        services.AddControllers()
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            });
+
+        return services;
+    }
+    
     public static IServiceCollection RegisterApiServices(
         this IServiceCollection services,
         IConfiguration configuration)

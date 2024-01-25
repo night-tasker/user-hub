@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using NightTasker.Common.Core.Exceptions.Middlewares;
 using NightTasker.UserHub.Core.Application.Configuration;
 using NightTasker.UserHub.Infrastructure.Grpc.Configuration;
@@ -16,7 +17,7 @@ builder.Services
     .RegisterGrpcServices(builder.Configuration)
     .RegisterApiServices(builder.Configuration);
 
-builder.Services.AddControllers();
+builder.Services.ConfigureControllers();
 
 var app = builder.Build();
 

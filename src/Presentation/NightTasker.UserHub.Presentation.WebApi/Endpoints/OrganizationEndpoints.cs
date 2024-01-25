@@ -14,4 +14,9 @@ public static class OrganizationEndpoints
     /// Путь для получения организации по идентификатору.
     /// </summary>
     public const string GetById = "{organizationId}";
+    
+    /// <summary>
+    /// Путь для получения роли пользователя в организации.
+    /// </summary>
+    public const string GetUserOrganizationRole = "{organizationId}/role";
 }
