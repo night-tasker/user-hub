@@ -1,4 +1,5 @@
 ﻿using NightTasker.Common.Core.Persistence.Repository;
+using NightTasker.UserHub.Core.Application.Models.Organization;
 using NightTasker.UserHub.Core.Domain.Entities;
 
 namespace NightTasker.UserHub.Core.Application.ApplicationContracts.Repository;
@@ -25,4 +26,11 @@ public interface IOrganizationRepository : IRepository<Organization, Guid>
     /// <param name="trackChanges">Отслеживание изменений.</param>
     /// <param name="cancellationToken">Токен отмены.</param>
     Task<Organization?> TryGetById(Guid id, bool trackChanges, CancellationToken cancellationToken);
+    
+    /// <summary>
+    /// Получить организацию с информацией.
+    /// </summary>
+    /// <param name="id">ИД организации.</param>
+    /// <param name="cancellationToken">Токен отмены.</param>
+    Task<OrganizationWithInfoDto?> TryGetOrganizationWithInfo(Guid id, CancellationToken cancellationToken);
 }

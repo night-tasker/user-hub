@@ -1,6 +1,7 @@
 ﻿using Mapster;
 using NightTasker.UserHub.Core.Application.Features.Organizations.Commands.CreateOrganization;
 using NightTasker.UserHub.Core.Application.Features.Organizations.Models;
+using NightTasker.UserHub.Core.Application.Models.Organization;
 using NightTasker.UserHub.Presentation.WebApi.Requests.Organization;
 
 namespace NightTasker.UserHub.Presentation.WebApi.Profiles.Organization;
@@ -14,5 +15,6 @@ public class OrganizationProfile : IRegister
         config.ForType<CreateOrganizationDto, Core.Domain.Entities.Organization>();
         
         config.ForType<Core.Domain.Entities.Organization, OrganizationDto>();
+        config.ForType<OrganizationWithInfoDto, OrganizationDto>();
     }
 }

@@ -15,5 +15,11 @@
     <ItemGroup>
       <ProjectReference Include="..\NightTasker.UserHub.Core.Domain\NightTasker.UserHub.Core.Domain.csproj" />
     </ItemGroup>
+    
+    <ItemGroup>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>NightTasker.UserHub.Core.Application.UnitTests</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
 
 </Project>

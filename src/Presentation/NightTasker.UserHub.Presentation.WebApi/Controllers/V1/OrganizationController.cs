@@ -8,6 +8,7 @@ using NightTasker.UserHub.Core.Application.Features.Organizations.Models;
 using NightTasker.UserHub.Core.Application.Features.Organizations.Queries.GetOrganizationById;
 using NightTasker.UserHub.Core.Application.Features.Organizations.Queries.GetUserOrganizations;
 using NightTasker.UserHub.Core.Application.Features.OrganizationUsers.Queries.GetOrganizationUserRole;
+using NightTasker.UserHub.Core.Application.Models.Organization;
 using NightTasker.UserHub.Core.Domain.Entities;
 using NightTasker.UserHub.Presentation.WebApi.Constants;
 using NightTasker.UserHub.Presentation.WebApi.Endpoints;
@@ -39,7 +40,7 @@ public class OrganizationController(
     /// <param name="cancellationToken">Токен отмены.</param>
     /// <returns>Организация.</returns>
     [HttpGet(OrganizationEndpoints.GetById)]
-    public async Task<ActionResult<OrganizationDto>> GetOrganizationById(
+    public async Task<ActionResult<OrganizationWithInfoDto>> GetOrganizationById(
         [FromRoute] Guid organizationId, CancellationToken cancellationToken)
     {
         var query = new GetOrganizationByIdQuery(organizationId);

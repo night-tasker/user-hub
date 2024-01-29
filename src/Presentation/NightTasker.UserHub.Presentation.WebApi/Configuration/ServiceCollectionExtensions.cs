@@ -44,7 +44,7 @@ public static class ServiceCollectionExtensions
     /// Добавить Маппер.
     /// </summary>
     /// <param name="services">Коллекция сервисов.</param>
-    private static IServiceCollection AddMapper(this IServiceCollection services)
+    public static IServiceCollection AddMapper(this IServiceCollection services)
     {
         var typeAdapterConfig = TypeAdapterConfig.GlobalSettings;
         typeAdapterConfig.Scan(
