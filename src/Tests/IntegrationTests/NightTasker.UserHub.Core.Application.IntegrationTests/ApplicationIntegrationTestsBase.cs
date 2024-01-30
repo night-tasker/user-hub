@@ -7,7 +7,7 @@ using NightTasker.UserHub.Presentation.WebApi.Configuration;
 
 namespace NightTasker.UserHub.Core.Application.IntegrationTests;
 
-public abstract class ApplicationIntegrationTestsBase
+public abstract class ApplicationIntegrationTestsBase : IAsyncDisposable
 {
     protected readonly TestNpgSql TestNpgSql;
     private readonly IServiceCollection _serviceCollection;
@@ -48,5 +48,10 @@ public abstract class ApplicationIntegrationTestsBase
     protected T GetService<T>() where T : notnull
     {
         return _serviceProvider.GetRequiredService<T>();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await TestNpgSql.DisposeAsync();
     }
 }

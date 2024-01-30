@@ -22,7 +22,7 @@ using Xunit;
 
 namespace NightTasker.UserHub.Presentation.WebApi.IntegrationTests.Controllers.V1;
 
-public class OrganizationControllerTests() : BaseIntegrationTests(CreateMockedServices(), true)
+public class OrganizationControllerTest() : BaseIntegrationTests(CreateMockedServices(), true)
 {
     private readonly Faker _faker = new();
     private static readonly Guid UserId = Guid.NewGuid();

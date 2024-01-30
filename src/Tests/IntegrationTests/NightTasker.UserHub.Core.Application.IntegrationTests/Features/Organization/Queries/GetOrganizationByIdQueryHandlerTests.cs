@@ -15,48 +15,63 @@ using NightTasker.UserHub.Infrastructure.Persistence.Repository.Common;
 using NightTasker.UserHub.IntegrationTests.Framework;
 using NightTasker.UserHub.Presentation.WebApi.Implementations;
 using NSubstitute;
+using Xunit;
 
-namespace NightTasker.UserHub.Core.Application.IntegrationTests.Features.Organization.Queries.GetOrganizationById;
+namespace NightTasker.UserHub.Core.Application.IntegrationTests.Features.Organization.Queries;
 
 public class GetOrganizationByIdQueryHandlerTests : ApplicationIntegrationTestsBase
 {
-    private ISender _sender = null!;
+    private readonly ISender _sender;
     private static readonly Guid UserId = Guid.NewGuid();
-    private IIdentityService _identityService = null!;
-    private Faker _faker = null!; 
-
-    [SetUp]
-    public async Task Setup()
+    private readonly Faker _faker; 
+    
+    public GetOrganizationByIdQueryHandlerTests()
     {
-        _identityService = Substitute.For<IIdentityService>();
-        RegisterService(new ServiceForRegister(typeof(IIdentityService), _ => _identityService, ServiceLifetime.Scoped));
+        var identityService = Substitute.For<IIdentityService>();
+        RegisterService(new ServiceForRegister(typeof(IIdentityService), _ => identityService, ServiceLifetime.Scoped));
         RegisterService(new ServiceForRegister(typeof(IApplicationDbAccessor), serviceProvider => new ApplicationDbAccessor(
             serviceProvider.GetRequiredService<ApplicationDbContext>(), serviceProvider.GetRequiredService<IIdentityService>()), ServiceLifetime.Scoped));
         RegisterService(new ServiceForRegister(typeof(IUnitOfWork), 
             serviceProvider => new UnitOfWork(serviceProvider.GetRequiredService<IApplicationDbAccessor>()), ServiceLifetime.Scoped));
         
         BuildServiceProvider();
+        
+        identityService.CurrentUserId.Returns(UserId);
+        identityService.IsAuthenticated.Returns(true);
 
         var dbContext = GetService<ApplicationDbContext>();
-        await dbContext.Database.MigrateAsync();
+        dbContext.Database.Migrate();
         _sender = GetService<ISender>();
         _faker = new Faker();
     }
 
-    [Test]
-    public async Task Handle_OrganizationWithOneUser_ReturnsRightUsersCount()
+    [Theory]
+    [InlineData(OrganizationUserRole.Admin)]
+    [InlineData(OrganizationUserRole.Member)]
+    public async Task Handle_UserWithRoleInOrganization_ReturnsRightUsersCount(OrganizationUserRole currentUserRoleInOrganization)
     {
         // Arrange
         var dbContext = GetService<ApplicationDbContext>();
-        dbContext.Set<UserInfo>().Add(SetupUserInfo(UserId));
+        var users = new List<UserInfo>
+        {
+            SetupUserInfo(UserId), SetupUserInfo(Guid.NewGuid()), SetupUserInfo(Guid.NewGuid()), SetupUserInfo(Guid.NewGuid())
+        };
+        
+        dbContext.Set<UserInfo>().AddRange(users);
+        
         var organization = SetupOrganization();
         dbContext.Set<Domain.Entities.Organization>().Add(organization);
-        dbContext.Set<OrganizationUser>().Add(SetupOrganizationUser(organization.Id, UserId, OrganizationUserRole.Admin));
+        
+        var organizationUsers = new List<OrganizationUser>
+        {
+            SetupOrganizationUser(organization.Id, users[0].Id, currentUserRoleInOrganization),
+            SetupOrganizationUser(organization.Id, users[1].Id, OrganizationUserRole.Member),
+            SetupOrganizationUser(organization.Id, users[2].Id, OrganizationUserRole.Admin),
+            SetupOrganizationUser(organization.Id, users[3].Id, OrganizationUserRole.Member)
+        };
+        dbContext.Set<OrganizationUser>().AddRange(organizationUsers);
         
         await dbContext.SaveChangesAsync();
-        
-        _identityService.CurrentUserId.Returns(UserId);
-        _identityService.IsAuthenticated.Returns(true);
         
         // Act
         var query = new GetOrganizationByIdQuery(organization.Id);
@@ -67,18 +82,15 @@ public class GetOrganizationByIdQueryHandlerTests : ApplicationIntegrationTestsB
         result.Id.Should().Be(organization.Id);
         result.Name.Should().Be(organization.Name);
         result.Description.Should().Be(organization.Description);
-        result.UsersCount.Should().Be(1);
+        result.UsersCount.Should().Be(4);
     }
 
-    [Test]
+    [Fact]
     public async Task Handle_OrganizationDoesNotExist_OrganizationNotFoundException()
     {
         // Arrange
         var notExistingOrganizationId = Guid.NewGuid();
-        
-        _identityService.CurrentUserId.Returns(UserId);
-        _identityService.IsAuthenticated.Returns(true);
-        
+
         // Act
         var query = new GetOrganizationByIdQuery(notExistingOrganizationId);
         Func<Task> act = async () => await _sender.Send(query);
@@ -87,7 +99,7 @@ public class GetOrganizationByIdQueryHandlerTests : ApplicationIntegrationTestsB
         await act.Should().ThrowAsync<OrganizationNotFoundException>();
     }
     
-    [Test]
+    [Fact]
     public async Task Handle_OrganizationExistsButUserIsNotOrganizationUser_OrganizationNotFoundException()
     {
         // Arrange
@@ -98,9 +110,6 @@ public class GetOrganizationByIdQueryHandlerTests : ApplicationIntegrationTestsB
         
         await dbContext.SaveChangesAsync();
         
-        _identityService.CurrentUserId.Returns(UserId);
-        _identityService.IsAuthenticated.Returns(true);
-        
         // Act
         var query = new GetOrganizationByIdQuery(organization.Id);
         Func<Task> act = async () => await _sender.Send(query);
@@ -108,7 +117,7 @@ public class GetOrganizationByIdQueryHandlerTests : ApplicationIntegrationTestsB
         // Assert
         await act.Should().ThrowAsync<OrganizationNotFoundException>();
     }
-
+    
     private OrganizationUser SetupOrganizationUser(Guid organizationId, Guid userId, OrganizationUserRole role)
     {
         return new OrganizationUser
