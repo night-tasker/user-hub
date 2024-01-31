@@ -1,8 +1,5 @@
 ﻿namespace NightTasker.UserHub.Presentation.WebApi.Settings;
 
-/// <summary>
-/// Конфигурационные настройки для Identity.
-/// </summary>
 public class IdentitySettings
 {
     public string SecretKey { get; set; } = null!;

@@ -5,12 +5,7 @@ using NightTasker.UserHub.Core.Application.Features.UserInfos.Services.Contracts
 
 namespace NightTasker.UserHub.Core.Application.Features.UserInfos.Commands.CreateUserInfo;
 
-/// <summary>
-/// Хэндлер для <see cref="CreateUserInfoCommand"/>.
-/// </summary>
-/// <param name="userInfoService"><see cref="IUserInfoService"/></param>
-/// <param name="mapper">Маппер.</param>
-public class CreateUserInfoCommandHandler(
+internal class CreateUserInfoCommandHandler(
     IUserInfoService userInfoService,
     IMapper mapper) : IRequestHandler<CreateUserInfoCommand>
 {
@@ -21,6 +16,6 @@ public class CreateUserInfoCommandHandler(
     public async Task Handle(CreateUserInfoCommand request, CancellationToken cancellationToken)
     {
         var createUserInfoDto = _mapper.Map<CreateUserInfoDto>(request);
-        await _userInfoService.CreateUserInfoWithSaving(createUserInfoDto, cancellationToken);
+        await _userInfoService.CreateUserInfo(createUserInfoDto, cancellationToken);
     }
 }

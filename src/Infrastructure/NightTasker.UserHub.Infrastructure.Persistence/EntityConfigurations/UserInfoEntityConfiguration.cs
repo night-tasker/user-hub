@@ -4,9 +4,6 @@ using NightTasker.UserHub.Core.Domain.Entities;
 
 namespace NightTasker.UserHub.Infrastructure.Persistence.EntityConfigurations;
 
-/// <summary>
-/// Конфигурация сущности <see cref="UserInfo"/>
-/// </summary>
 public class UserInfoEntityConfiguration : IEntityTypeConfiguration<UserInfo>
 {
     public void Configure(EntityTypeBuilder<UserInfo> builder)

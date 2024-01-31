@@ -7,34 +7,36 @@ using NightTasker.UserHub.Presentation.WebApi.Configuration;
 
 namespace NightTasker.UserHub.Core.Application.IntegrationTests;
 
-public abstract class ApplicationIntegrationTestsBase : IAsyncDisposable
+public abstract class ApplicationIntegrationTestsBase
 {
-    protected readonly TestNpgSql TestNpgSql;
     private readonly IServiceCollection _serviceCollection;
     private IServiceProvider _serviceProvider = null!;
 
     protected ApplicationIntegrationTestsBase()
     {
-        TestNpgSql = new TestNpgSql();
-        _serviceCollection = new ServiceCollection();
-        _serviceCollection.AddDbContext<ApplicationDbContext>(
-            (_, option) => option.UseNpgsql(TestNpgSql.NpgSqlContainer.GetConnectionString()));
-        _serviceCollection.AddMediatR(
-            conf => conf.RegisterServicesFromAssembly(typeof(GetOrganizationByIdQuery).Assembly));
-        _serviceCollection.AddMapper();
+        lock (this)
+        {
+            var testNpgSql = new TestNpgSql();
+            _serviceCollection = new ServiceCollection();
+            _serviceCollection.AddDbContext<ApplicationDbContext>(
+                (_, option) => option.UseNpgsql($"{testNpgSql.NpgSqlContainer.GetConnectionString()};Include Error Detail=true"));
+            _serviceCollection.AddMediatR(
+                conf => conf.RegisterServicesFromAssembly(typeof(GetOrganizationByIdAsUserQuery).Assembly));
+            _serviceCollection.AddMapper();
+        }
     }
 
     protected void RegisterService(ServiceForRegister serviceForRegister)
     {
-        switch (serviceForRegister.Lifetime)
+        switch (serviceForRegister)
         {
-            case ServiceLifetime.Singleton:
+            case { Lifetime: ServiceLifetime.Singleton }:
                 _serviceCollection.AddSingleton(serviceForRegister.Type, serviceForRegister.Factory);
                 break;
-            case ServiceLifetime.Scoped:
+            case { Lifetime: ServiceLifetime.Scoped }:
                 _serviceCollection.AddScoped(serviceForRegister.Type, serviceForRegister.Factory);
                 break;
-            case ServiceLifetime.Transient:
+            case { Lifetime: ServiceLifetime.Transient }:
                 _serviceCollection.AddTransient(serviceForRegister.Type, serviceForRegister.Factory);
                 break;
         }
@@ -48,10 +50,5 @@ public abstract class ApplicationIntegrationTestsBase : IAsyncDisposable
     protected T GetService<T>() where T : notnull
     {
         return _serviceProvider.GetRequiredService<T>();
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        await TestNpgSql.DisposeAsync();
     }
 }

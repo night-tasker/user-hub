@@ -7,26 +7,20 @@ namespace NightTasker.UserHub.Presentation.WebApi.IntegrationTests;
 
 public abstract class BaseIntegrationTests
 {
-    protected readonly TestWebApplicationFactory WebApplicationFactory;
+    private readonly TestWebApplicationFactory _webApplicationFactory;
     protected readonly HttpClient HttpClient;
 
     protected BaseIntegrationTests(IReadOnlyCollection<ServiceForRegister>? mockServices = null, bool mockAuthorization = false)
     {
         var clientOptions = new WebApplicationFactoryClientOptions();
         var testNpgSql = new TestNpgSql();
-        WebApplicationFactory = new TestWebApplicationFactory(testNpgSql, mockServices, mockAuthorization);
-        HttpClient = WebApplicationFactory.CreateClient(clientOptions);
+        _webApplicationFactory = new TestWebApplicationFactory(testNpgSql, mockServices, mockAuthorization);
+        HttpClient = _webApplicationFactory.CreateClient(clientOptions);
     }
     
     protected ApplicationDbContext GetDbContextService()
     {
-        var scope = WebApplicationFactory.Services.CreateScope();
+        var scope = _webApplicationFactory.Services.CreateScope();
         return scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        await WebApplicationFactory.DisposeAsync();
-        HttpClient.Dispose();
     }
 }

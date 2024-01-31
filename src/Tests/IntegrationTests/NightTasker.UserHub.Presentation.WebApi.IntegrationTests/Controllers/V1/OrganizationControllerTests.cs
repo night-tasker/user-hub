@@ -11,7 +11,6 @@ using NightTasker.UserHub.Core.Application.Features.Organizations.Models;
 using NightTasker.UserHub.Core.Application.Models.Organization;
 using NightTasker.UserHub.Core.Domain.Entities;
 using NightTasker.UserHub.Core.Domain.Enums;
-using NightTasker.UserHub.Infrastructure.Persistence;
 using NightTasker.UserHub.IntegrationTests.Framework;
 using NightTasker.UserHub.Presentation.WebApi.Constants;
 using NightTasker.UserHub.Presentation.WebApi.Endpoints;
@@ -27,7 +26,7 @@ public class OrganizationControllerTest() : BaseIntegrationTests(CreateMockedSer
     private readonly Faker _faker = new();
     private static readonly Guid UserId = Guid.NewGuid();
 
-    private static IReadOnlyCollection<ServiceForRegister> CreateMockedServices()
+    private static List<ServiceForRegister> CreateMockedServices()
     {
         var substitutedIdentityService = Substitute.For<IIdentityService>();
         substitutedIdentityService.IsAuthenticated.Returns(true);
@@ -100,7 +99,7 @@ public class OrganizationControllerTest() : BaseIntegrationTests(CreateMockedSer
         await dbContext.Set<UserInfo>().AddAsync(userInfo);
         await dbContext.SaveChangesAsync();
         
-        var url = $"{ApiConstants.DefaultPrefix}/{ApiConstants.V1}/{OrganizationEndpoints.BaseResource}";
+        const string url = $"{ApiConstants.DefaultPrefix}/{ApiConstants.V1}/{OrganizationEndpoints.BaseResource}";
         
         // Act
         var response = await HttpClient.GetAsync(url);
@@ -190,7 +189,7 @@ public class OrganizationControllerTest() : BaseIntegrationTests(CreateMockedSer
         var name = _faker.Random.AlphaNumeric(8);
         var description = _faker.Random.AlphaNumeric(32);
         var request = new CreateOrganizationRequest(name, description);
-        var postUrl = $"{ApiConstants.DefaultPrefix}/{ApiConstants.V1}/{OrganizationEndpoints.BaseResource}";
+        const string postUrl = $"{ApiConstants.DefaultPrefix}/{ApiConstants.V1}/{OrganizationEndpoints.BaseResource}";
         await CreateUserInDatabase(dbContext, UserId);
         
         // Act
@@ -204,7 +203,7 @@ public class OrganizationControllerTest() : BaseIntegrationTests(CreateMockedSer
         
         returnedOrganizationId.Should().Be(organization!.Id);
         organization.Should().NotBeNull();
-        organization!.Name.Should().Be(name);
+        organization.Name.Should().Be(name);
         organization.Description.Should().Be(description);
         
         var organizationUsers = await dbContext.Set<OrganizationUser>().ToListAsync();
@@ -225,15 +224,15 @@ public class OrganizationControllerTest() : BaseIntegrationTests(CreateMockedSer
         };
     }
 
-    private UserInfo SetupUserInfo(Guid userId)
+    private static UserInfo SetupUserInfo(Guid userId)
     {
-        return new UserInfo()
+        return new UserInfo
         {
             Id = userId
         };
     }
     
-    private OrganizationUser SetupOrganizationUser(
+    private static OrganizationUser SetupOrganizationUser(
         Guid userId,
         Guid organizationId, 
         OrganizationUserRole role)
@@ -246,7 +245,7 @@ public class OrganizationControllerTest() : BaseIntegrationTests(CreateMockedSer
         };
     }
     
-    private async Task CreateUserInDatabase(ApplicationDbContext applicationDbContext, Guid userId)
+    private static async Task CreateUserInDatabase(DbContext applicationDbContext, Guid userId)
     {
         var user = new UserInfo
         {
@@ -256,7 +255,7 @@ public class OrganizationControllerTest() : BaseIntegrationTests(CreateMockedSer
         await applicationDbContext.SaveChangesAsync();
     }
 
-    private JsonSerializerOptions SetupJsonSerializerOptions()
+    private static JsonSerializerOptions SetupJsonSerializerOptions()
     {
         return new JsonSerializerOptions
         {

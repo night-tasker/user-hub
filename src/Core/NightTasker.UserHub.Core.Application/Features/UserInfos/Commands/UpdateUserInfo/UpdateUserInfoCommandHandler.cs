@@ -5,10 +5,7 @@ using NightTasker.UserHub.Core.Application.Features.UserInfos.Services.Contracts
 
 namespace NightTasker.UserHub.Core.Application.Features.UserInfos.Commands.UpdateUserInfo;
 
-/// <summary>
-/// Хэндлер для <see cref="UpdateUserInfoCommand"/>
-/// </summary>
-public class UpdateUserInfoCommandHandler(
+internal class UpdateUserInfoCommandHandler(
     IUserInfoService userInfoService,
     IMapper mapper) : IRequestHandler<UpdateUserInfoCommand, Unit>
 {
@@ -18,7 +15,7 @@ public class UpdateUserInfoCommandHandler(
     public async Task<Unit> Handle(UpdateUserInfoCommand request, CancellationToken cancellationToken)
     {
         var updateUserInfoDto = _mapper.Map<UpdateUserInfoDto>(request);
-        await _userInfoService.UpdateUserInfoWithSaving(updateUserInfoDto, cancellationToken);
+        await _userInfoService.UpdateUserInfo(updateUserInfoDto, cancellationToken);
         return Unit.Value;
     }
 }

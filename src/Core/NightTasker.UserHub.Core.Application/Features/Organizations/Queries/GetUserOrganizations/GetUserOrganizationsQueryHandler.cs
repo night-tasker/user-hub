@@ -5,9 +5,6 @@ using NightTasker.UserHub.Core.Application.Features.Organizations.Models;
 
 namespace NightTasker.UserHub.Core.Application.Features.Organizations.Queries.GetUserOrganizations;
 
-/// <summary>
-/// Хэндлер для получения организаций пользователя (<see cref="GetUserOrganizationsQuery"/>).
-/// </summary>
 public class GetUserOrganizationsQueryHandler(
     IUnitOfWork unitOfWork,
     IMapper mapper)

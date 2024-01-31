@@ -6,18 +6,8 @@ using NightTasker.UserHub.Infrastructure.Persistence.Repository.Common;
 
 namespace NightTasker.UserHub.Infrastructure.Persistence.Configuration;
 
-/// <summary>
-/// Класс для методов расширения для коллекций сервисов.
-/// </summary>
 public static class ServiceCollectionExtensions
 {
-    /// <summary>
-    /// Зарегистрировать сервисы для <see cref="NightTasker.UserHub.Infrastructure.Persistence"/> слоя.
-    /// </summary>
-    /// <param name="services">Коллекция сервисов.</param>
-    /// <param name="configuration">Конфигурация.</param>
-    /// <returns>Коллекция сервисов.</returns>
-    
     public static IServiceCollection RegisterPersistenceServices(
         this IServiceCollection services, 
         IConfiguration configuration)

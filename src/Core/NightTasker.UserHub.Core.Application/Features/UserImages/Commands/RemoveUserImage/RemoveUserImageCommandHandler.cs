@@ -3,16 +3,13 @@ using NightTasker.UserHub.Core.Application.Features.UserImages.Services.Contract
 
 namespace NightTasker.UserHub.Core.Application.Features.UserImages.Commands.RemoveUserImage;
 
-/// <summary>
-/// Хэндлер <see cref="RemoveUserImageCommand"/>.
-/// </summary>
-public class RemoveUserImageCommandHandler(IUserImageService userImageService) : IRequestHandler<RemoveUserImageCommand>
+internal class RemoveUserImageCommandHandler(IUserImageService userImageService) : IRequestHandler<RemoveUserImageCommand>
 {
     private readonly IUserImageService _userImageService = 
         userImageService ?? throw new ArgumentNullException(nameof(userImageService));
 
     public Task Handle(RemoveUserImageCommand request, CancellationToken cancellationToken)
     {
-        return _userImageService.RemoveUserImageById(request.UserImageId, cancellationToken);
+        return _userImageService.RemoveUserImageById(request.UserId, request.UserImageId, cancellationToken);
     }
 }

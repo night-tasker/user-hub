@@ -3,9 +3,6 @@ using System.Runtime.CompilerServices;
 
 namespace NightTasker.UserHub.Infrastructure.Persistence.Configuration;
 
-/// <summary>
-/// Инициализатор модуля.
-/// </summary>
 public static class ModuleInitializer
 {
     [ModuleInitializer]

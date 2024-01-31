@@ -1,12 +1,10 @@
 ﻿using MediatR;
 using NightTasker.UserHub.Core.Application.ApplicationContracts.Repository;
+using NightTasker.UserHub.Core.Application.Exceptions.NotFound;
 using NightTasker.UserHub.Core.Domain.Enums;
 
 namespace NightTasker.UserHub.Core.Application.Features.OrganizationUsers.Queries.GetOrganizationUserRole;
 
-/// <summary>
-/// Хэндлер для <see cref="GetOrganizationUserRoleQuery"/>
-/// </summary>
 public class GetOrganizationUserRoleQueryHandler(IUnitOfWork unitOfWork)
     : IRequestHandler<GetOrganizationUserRoleQuery, OrganizationUserRole>
 {
@@ -14,7 +12,20 @@ public class GetOrganizationUserRoleQueryHandler(IUnitOfWork unitOfWork)
 
     public Task<OrganizationUserRole> Handle(GetOrganizationUserRoleQuery request, CancellationToken cancellationToken)
     {
-        return _unitOfWork.OrganizationUserRepository.GetUserOrganizationRole(
-            request.OrganizationId, request.UserId, cancellationToken);
+        return GetOrganizationUserRole(request.OrganizationId, request.UserId, cancellationToken);
+    }
+
+    private async Task<OrganizationUserRole> GetOrganizationUserRole(
+        Guid organizationId, Guid userId, CancellationToken cancellationToken)
+    {
+        var organizationUserRole = await _unitOfWork.OrganizationUserRepository.TryGetUserOrganizationRole(
+            organizationId, userId, cancellationToken);
+        
+        if(organizationUserRole is null)
+        {
+            throw new OrganizationUserNotFoundException(organizationId, userId);
+        }
+        
+        return organizationUserRole.Value;
     }
 }

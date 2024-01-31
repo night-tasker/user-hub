@@ -7,16 +7,13 @@ using NightTasker.UserHub.Core.Domain.Entities;
 
 namespace NightTasker.UserHub.Infrastructure.Persistence.Repository;
 
-/// <inheritdoc cref="IOrganizationRepository"/>
 public class OrganizationRepository(ApplicationDbSet<Organization, Guid> dbSet)
     : BaseRepository<Organization, Guid>(dbSet), IOrganizationRepository
 {
-    /// <inheritdoc />
     public async Task<IReadOnlyCollection<Organization>> GetUserOrganizations(
         Guid userInfoId, bool trackChanges, CancellationToken cancellationToken)
     {
-        var query = Entities
-            .Where(x => x.OrganizationUsers.Any(y => y.UserId == userInfoId));
+        var query = UserOrganizationsQuery(userInfoId);
 
         if (!trackChanges)
         {
@@ -26,24 +23,9 @@ public class OrganizationRepository(ApplicationDbSet<Organization, Guid> dbSet)
         return await query.ToListAsync(cancellationToken);
     }
 
-    /// <inheritdoc />
-    public Task<Organization?> TryGetById(Guid id, bool trackChanges, CancellationToken cancellationToken)
+    public async Task<OrganizationWithInfoDto?> TryGetOrganizationWithInfoForUser(Guid id, Guid userId, CancellationToken cancellationToken)
     {
-        var query = Entities
-            .Where(x => x.Id == id);
-        
-        if (!trackChanges)
-        {
-            query = query.AsNoTracking();
-        }
-        
-        return query.SingleOrDefaultAsync(cancellationToken);
-    }
-
-    /// <inheritdoc />
-    public async Task<OrganizationWithInfoDto?> TryGetOrganizationWithInfo(Guid id, CancellationToken cancellationToken)
-    {
-        var query = Entities
+        var query = UserOrganizationsQuery(userId)
             .Where(query => query.Id == id);
 
         var organization = await query
@@ -52,5 +34,24 @@ public class OrganizationRepository(ApplicationDbSet<Organization, Guid> dbSet)
             .SingleOrDefaultAsync(cancellationToken);
         
         return organization;
+    }
+
+    public Task<bool> CheckExistsByIdForUser(Guid userInfoId, Guid id, CancellationToken cancellationToken)
+    {
+        return Entities
+            .AnyAsync(x => x.Id == id 
+                           && x.OrganizationUsers.Any(y => y.UserId == userInfoId), cancellationToken);
+    }
+    
+    public Task<bool> CheckExistsById(Guid id, CancellationToken cancellationToken)
+    {
+        return Entities
+            .AnyAsync(x => x.Id == id, cancellationToken);
+    }
+
+    private IQueryable<Organization> UserOrganizationsQuery(Guid userId)
+    {
+        return Entities
+            .Where(x => x.OrganizationUsers.Any(y => y.UserId == userId));
     }
 }

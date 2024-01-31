@@ -45,8 +45,8 @@ public class TestWebApplicationFactory(
 
     }
 
-    private void MockServices(
-        IServiceCollection serviceCollection, IReadOnlyCollection<ServiceForRegister> mockedServicesCollection)
+    private static void MockServices(
+        IServiceCollection serviceCollection, IEnumerable<ServiceForRegister> mockedServicesCollection)
     {
         foreach (var mockedService in mockedServicesCollection)
         {
@@ -56,26 +56,24 @@ public class TestWebApplicationFactory(
         }
     }
     
-    private void MockAuthorization(IServiceCollection serviceCollection)
+    private static void MockAuthorization(IServiceCollection serviceCollection)
     {
         serviceCollection.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
     }
 
-    private void AddServiceDependingOnLifeTime(IServiceCollection services, ServiceForRegister serviceForRegister)
+    private static void AddServiceDependingOnLifeTime(IServiceCollection services, ServiceForRegister serviceForRegister)
     {
-        if (serviceForRegister.Lifetime == ServiceLifetime.Singleton)
+        switch (serviceForRegister)
         {
-            services.AddSingleton(serviceForRegister.Type, serviceForRegister.Factory);
-        }
-
-        if (serviceForRegister.Lifetime == ServiceLifetime.Scoped)
-        {
-            services.AddScoped(serviceForRegister.Type, serviceForRegister.Factory);
-        }
-
-        if (serviceForRegister.Lifetime == ServiceLifetime.Transient)
-        {
-            services.AddTransient(serviceForRegister.Type, serviceForRegister.Factory);
+            case { Lifetime: ServiceLifetime.Singleton }:
+                services.AddSingleton(serviceForRegister.Type, serviceForRegister.Factory);
+                break;
+            case { Lifetime: ServiceLifetime.Scoped }:
+                services.AddScoped(serviceForRegister.Type, serviceForRegister.Factory);
+                break;
+            case { Lifetime: ServiceLifetime.Transient }:
+                services.AddTransient(serviceForRegister.Type, serviceForRegister.Factory);
+                break;
         }
     }
 

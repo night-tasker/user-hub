@@ -16,7 +16,7 @@ using NightTasker.UserHub.Presentation.WebApi.Implementations;
 using NSubstitute;
 using Xunit;
 
-namespace NightTasker.UserHub.Core.Application.IntegrationTests.Features.Organization.Queries;
+namespace NightTasker.UserHub.Core.Application.IntegrationTests.Features.Organizations.Queries;
 
 public class GetUserOrganizationsQueryHandlerTests : ApplicationIntegrationTestsBase
 {
@@ -27,9 +27,8 @@ public class GetUserOrganizationsQueryHandlerTests : ApplicationIntegrationTests
     public GetUserOrganizationsQueryHandlerTests()
     {
         var identityService = Substitute.For<IIdentityService>();
-        RegisterService(new ServiceForRegister(typeof(IIdentityService), _ => identityService, ServiceLifetime.Scoped));
         RegisterService(new ServiceForRegister(typeof(IApplicationDbAccessor), serviceProvider => new ApplicationDbAccessor(
-            serviceProvider.GetRequiredService<ApplicationDbContext>(), serviceProvider.GetRequiredService<IIdentityService>()), ServiceLifetime.Scoped));
+            serviceProvider.GetRequiredService<ApplicationDbContext>()), ServiceLifetime.Scoped));
         RegisterService(new ServiceForRegister(typeof(IUnitOfWork), 
             serviceProvider => new UnitOfWork(serviceProvider.GetRequiredService<IApplicationDbAccessor>()), ServiceLifetime.Scoped));
         
@@ -54,13 +53,13 @@ public class GetUserOrganizationsQueryHandlerTests : ApplicationIntegrationTests
         var user = SetupUserInfo(UserId);
         await dbContext.Set<UserInfo>().AddAsync(user);
 
-        var organizations = new List<Domain.Entities.Organization>
+        var organizations = new List<Organization>
         {
             SetupOrganization(),
             SetupOrganization(),
             SetupOrganization()
         };
-        await dbContext.Set<Domain.Entities.Organization>().AddRangeAsync(organizations);
+        await dbContext.Set<Organization>().AddRangeAsync(organizations);
 
         var organizationUsers = new List<OrganizationUser>
         {
@@ -98,13 +97,13 @@ public class GetUserOrganizationsQueryHandlerTests : ApplicationIntegrationTests
         };
         await dbContext.Set<UserInfo>().AddRangeAsync(otherUsers);
 
-        var organizations = new List<Domain.Entities.Organization>
+        var organizations = new List<Organization>
         {
             SetupOrganization(),
             SetupOrganization(),
             SetupOrganization()
         };
-        await dbContext.Set<Domain.Entities.Organization>().AddRangeAsync(organizations);
+        await dbContext.Set<Organization>().AddRangeAsync(organizations);
 
         var organizationUsers = new List<OrganizationUser>
         {
@@ -127,7 +126,7 @@ public class GetUserOrganizationsQueryHandlerTests : ApplicationIntegrationTests
     }
 
     
-    private OrganizationUser SetupOrganizationUser(Guid organizationId, Guid userId, OrganizationUserRole role)
+    private static OrganizationUser SetupOrganizationUser(Guid organizationId, Guid userId, OrganizationUserRole role)
     {
         return new OrganizationUser
         {
@@ -137,9 +136,9 @@ public class GetUserOrganizationsQueryHandlerTests : ApplicationIntegrationTests
         };
     }
     
-    private Domain.Entities.Organization SetupOrganization()
+    private Organization SetupOrganization()
     {
-        return new Domain.Entities.Organization
+        return new Organization
         {
             Id = Guid.NewGuid(), 
             Name = _faker.Random.AlphaNumeric(8), 
@@ -147,7 +146,7 @@ public class GetUserOrganizationsQueryHandlerTests : ApplicationIntegrationTests
         };
     }
 
-    private UserInfo SetupUserInfo(Guid userId)
+    private static UserInfo SetupUserInfo(Guid userId)
     {
         return new UserInfo
         {

@@ -6,7 +6,6 @@ using NightTasker.UserHub.Core.Domain.Entities;
 
 namespace NightTasker.UserHub.Infrastructure.Persistence.Repository;
 
-/// <inheritdoc cref="NightTasker.UserHub.Core.Application.ApplicationContracts.Repository.IUserImageRepository" />
 public class UserImageRepository(ApplicationDbSet<UserImage, Guid> dbSet) 
     : BaseRepository<UserImage, Guid>(dbSet), IUserImageRepository
 {
@@ -25,11 +24,11 @@ public class UserImageRepository(ApplicationDbSet<UserImage, Guid> dbSet)
             .SingleOrDefaultAsync(userImage => userImage.UserInfoId == userInfoId, cancellationToken);
     }
 
-    /// <inheritdoc />
-    public Task<UserImage?> TryGetImageById(Guid userImageId, bool trackChanges, CancellationToken cancellationToken)
+    public Task<UserImage?> TryGetImageByIdForUser(
+        Guid userImageId, Guid userInfoId, bool trackChanges, CancellationToken cancellationToken)
     {
         var entities = Entities
-            .Where(x => x.Id == userImageId);
+            .Where(x => x.Id == userImageId && x.UserInfoId == userInfoId);
         
         if (!trackChanges)
         {
@@ -40,7 +39,6 @@ public class UserImageRepository(ApplicationDbSet<UserImage, Guid> dbSet)
             .SingleOrDefaultAsync(cancellationToken);
     }
 
-    /// <inheritdoc />
     public async Task<IDictionary<Guid, bool>> GetImageIdsWithActiveByUserInfoId(
         Guid userInfoId, CancellationToken cancellationToken)
     {
@@ -51,7 +49,6 @@ public class UserImageRepository(ApplicationDbSet<UserImage, Guid> dbSet)
             .ToDictionaryAsync(x => x.Id, x => x.IsActive, cancellationToken);
     }
 
-    /// <inheritdoc />
     public Task RemoveUserImageById(Guid userImageId, CancellationToken cancellationToken)
     {
         return Entities
@@ -59,7 +56,12 @@ public class UserImageRepository(ApplicationDbSet<UserImage, Guid> dbSet)
             .ExecuteDeleteAsync(cancellationToken);
     }
 
-    /// <inheritdoc />
+    public Task<bool> CheckImageForUserExists(Guid userInfoId, Guid userImageId, CancellationToken cancellationToken)
+    {
+        return Entities
+            .AnyAsync(x => x.UserInfoId == userInfoId && x.Id == userImageId, cancellationToken);
+    }
+
     public Task SetUnActiveImagesForUserInfoIdExcludeOne(
         Guid userInfoId,
         Guid activeUserImageId,

@@ -6,7 +6,6 @@ using NightTasker.UserHub.Core.Domain.Entities;
 
 namespace NightTasker.UserHub.Core.Application.Features.Organizations.Services.Implementations;
 
-/// <inheritdoc />
 internal class OrganizationService(
     IUnitOfWork unitOfWork,
     IMapper mapper) : IOrganizationService
@@ -14,13 +13,13 @@ internal class OrganizationService(
     private readonly IUnitOfWork _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
     private readonly IMapper _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
 
-    /// <inheritdoc />
-    public async Task<Guid> CreateOrganizationWithOutSaving(
+    public async Task<Guid> CreateOrganization(
         CreateOrganizationDto createOrganizationDto,
         CancellationToken cancellationToken)
     {
         var organization = _mapper.Map<Organization>(createOrganizationDto);
         await _unitOfWork.OrganizationRepository.Add(organization, cancellationToken);
+        await _unitOfWork.SaveChanges(cancellationToken);
         return organization.Id;
     }
 }

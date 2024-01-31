@@ -6,11 +6,9 @@ using NightTasker.UserHub.Core.Domain.Entities;
 
 namespace NightTasker.UserHub.Infrastructure.Persistence.Repository;
 
-/// <inheritdoc cref="NightTasker.UserHub.Core.Application.ApplicationContracts.Repository.IUserInfoRepository" />
 public class UserInfoRepository
     (ApplicationDbSet<UserInfo, Guid> dbSet) : BaseRepository<UserInfo, Guid>(dbSet), IUserInfoRepository
 {
-    /// <inheritdoc />
     public Task<UserInfo?> TryGetById(
         Guid id, 
         bool trackChanges, 
@@ -24,5 +22,11 @@ public class UserInfoRepository
         
         return entities
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+    }
+
+    public Task<bool> CheckExistsById(Guid id, CancellationToken cancellationToken)
+    {
+        return Entities
+            .AnyAsync(x => x.Id == id, cancellationToken);
     }
 }

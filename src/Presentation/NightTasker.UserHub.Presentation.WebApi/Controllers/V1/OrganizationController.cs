@@ -1,10 +1,8 @@
-﻿using MapsterMapper;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NightTasker.Common.Core.Identity.Contracts;
 using NightTasker.UserHub.Core.Application.Features.Organizations.Commands.CreateOrganization;
-using NightTasker.UserHub.Core.Application.Features.Organizations.Models;
 using NightTasker.UserHub.Core.Application.Features.Organizations.Queries.GetOrganizationById;
 using NightTasker.UserHub.Core.Application.Features.Organizations.Queries.GetUserOrganizations;
 using NightTasker.UserHub.Core.Application.Features.OrganizationUsers.Queries.GetOrganizationUserRole;
@@ -25,11 +23,9 @@ namespace NightTasker.UserHub.Presentation.WebApi.Controllers.V1;
 [Authorize]
 public class OrganizationController(
     IMediator mediator,
-    IMapper mapper,
     IIdentityService identityService) : ControllerBase
 {
     private readonly IMediator _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
-    private readonly IMapper _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     private readonly IIdentityService _identityService =
         identityService ?? throw new ArgumentNullException(nameof(identityService));
 
@@ -43,7 +39,8 @@ public class OrganizationController(
     public async Task<ActionResult<OrganizationWithInfoDto>> GetOrganizationById(
         [FromRoute] Guid organizationId, CancellationToken cancellationToken)
     {
-        var query = new GetOrganizationByIdQuery(organizationId);
+        var currentUserId = _identityService.CurrentUserId!.Value;
+        var query = new GetOrganizationByIdAsUserQuery(organizationId, currentUserId);
         var result = await _mediator.Send(query, cancellationToken);
         return Ok(result);
     }

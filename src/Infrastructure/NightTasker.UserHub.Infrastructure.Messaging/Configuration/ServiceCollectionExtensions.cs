@@ -5,17 +5,8 @@ using NightTasker.UserHub.Infrastructure.Messaging.Settings;
 
 namespace NightTasker.UserHub.Infrastructure.Messaging.Configuration;
 
-/// <summary>
-/// Класс методов расширений для коллекции сервисов.
-/// </summary>
 public static class ServiceCollectionExtensions
 {
-    /// <summary>
-    /// Регистрация служб для слоя <see cref="NightTasker.UserHub.Infrastructure.Messaging"/>.
-    /// </summary>
-    /// <param name="services">Коллекция сервисов.</param>
-    /// <param name="configuration">Конфигурация.</param>
-    /// <returns></returns>
     public static IServiceCollection RegisterMessagingServices(
         this IServiceCollection services,
         IConfiguration configuration)

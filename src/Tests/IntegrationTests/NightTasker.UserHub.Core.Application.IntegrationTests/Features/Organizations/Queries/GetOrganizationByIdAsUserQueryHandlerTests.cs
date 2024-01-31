@@ -17,20 +17,19 @@ using NightTasker.UserHub.Presentation.WebApi.Implementations;
 using NSubstitute;
 using Xunit;
 
-namespace NightTasker.UserHub.Core.Application.IntegrationTests.Features.Organization.Queries;
+namespace NightTasker.UserHub.Core.Application.IntegrationTests.Features.Organizations.Queries;
 
-public class GetOrganizationByIdQueryHandlerTests : ApplicationIntegrationTestsBase
+public class GetOrganizationByIdAsUserQueryHandlerTests : ApplicationIntegrationTestsBase
 {
     private readonly ISender _sender;
     private static readonly Guid UserId = Guid.NewGuid();
     private readonly Faker _faker; 
     
-    public GetOrganizationByIdQueryHandlerTests()
+    public GetOrganizationByIdAsUserQueryHandlerTests()
     {
         var identityService = Substitute.For<IIdentityService>();
-        RegisterService(new ServiceForRegister(typeof(IIdentityService), _ => identityService, ServiceLifetime.Scoped));
         RegisterService(new ServiceForRegister(typeof(IApplicationDbAccessor), serviceProvider => new ApplicationDbAccessor(
-            serviceProvider.GetRequiredService<ApplicationDbContext>(), serviceProvider.GetRequiredService<IIdentityService>()), ServiceLifetime.Scoped));
+            serviceProvider.GetRequiredService<ApplicationDbContext>()), ServiceLifetime.Scoped));
         RegisterService(new ServiceForRegister(typeof(IUnitOfWork), 
             serviceProvider => new UnitOfWork(serviceProvider.GetRequiredService<IApplicationDbAccessor>()), ServiceLifetime.Scoped));
         
@@ -60,7 +59,7 @@ public class GetOrganizationByIdQueryHandlerTests : ApplicationIntegrationTestsB
         dbContext.Set<UserInfo>().AddRange(users);
         
         var organization = SetupOrganization();
-        dbContext.Set<Domain.Entities.Organization>().Add(organization);
+        dbContext.Set<Organization>().Add(organization);
         
         var organizationUsers = new List<OrganizationUser>
         {
@@ -74,7 +73,7 @@ public class GetOrganizationByIdQueryHandlerTests : ApplicationIntegrationTestsB
         await dbContext.SaveChangesAsync();
         
         // Act
-        var query = new GetOrganizationByIdQuery(organization.Id);
+        var query = new GetOrganizationByIdAsUserQuery(organization.Id, UserId);
         var result = await _sender.Send(query);
 
         // Assert
@@ -92,7 +91,7 @@ public class GetOrganizationByIdQueryHandlerTests : ApplicationIntegrationTestsB
         var notExistingOrganizationId = Guid.NewGuid();
 
         // Act
-        var query = new GetOrganizationByIdQuery(notExistingOrganizationId);
+        var query = new GetOrganizationByIdAsUserQuery(notExistingOrganizationId, UserId);
         Func<Task> act = async () => await _sender.Send(query);
         
         // Assert
@@ -106,19 +105,19 @@ public class GetOrganizationByIdQueryHandlerTests : ApplicationIntegrationTestsB
         var dbContext = GetService<ApplicationDbContext>();
         dbContext.Set<UserInfo>().Add(SetupUserInfo(UserId));
         var organization = SetupOrganization();
-        dbContext.Set<Domain.Entities.Organization>().Add(organization);
+        dbContext.Set<Organization>().Add(organization);
         
         await dbContext.SaveChangesAsync();
         
         // Act
-        var query = new GetOrganizationByIdQuery(organization.Id);
+        var query = new GetOrganizationByIdAsUserQuery(organization.Id, UserId);
         Func<Task> act = async () => await _sender.Send(query);
         
         // Assert
         await act.Should().ThrowAsync<OrganizationNotFoundException>();
     }
     
-    private OrganizationUser SetupOrganizationUser(Guid organizationId, Guid userId, OrganizationUserRole role)
+    private static OrganizationUser SetupOrganizationUser(Guid organizationId, Guid userId, OrganizationUserRole role)
     {
         return new OrganizationUser
         {
@@ -128,9 +127,9 @@ public class GetOrganizationByIdQueryHandlerTests : ApplicationIntegrationTestsB
         };
     }
     
-    private Domain.Entities.Organization SetupOrganization()
+    private Organization SetupOrganization()
     {
-        return new Domain.Entities.Organization
+        return new Organization
         {
             Id = Guid.NewGuid(), 
             Name = _faker.Random.AlphaNumeric(8), 
@@ -138,7 +137,7 @@ public class GetOrganizationByIdQueryHandlerTests : ApplicationIntegrationTestsB
         };
     }
 
-    private UserInfo SetupUserInfo(Guid userId)
+    private static UserInfo SetupUserInfo(Guid userId)
     {
         return new UserInfo
         {

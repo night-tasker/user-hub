@@ -5,9 +5,6 @@ using NightTasker.UserHub.Presentation.WebApi.Requests.UserInfo;
 
 namespace NightTasker.UserHub.Presentation.WebApi.Profiles.UserInfo;
 
-/// <summary>
-/// Профиль маппинга для сведений пользователей.
-/// </summary>
 public class UserInfoProfile : IRegister
 {
     public void Register(TypeAdapterConfig config)

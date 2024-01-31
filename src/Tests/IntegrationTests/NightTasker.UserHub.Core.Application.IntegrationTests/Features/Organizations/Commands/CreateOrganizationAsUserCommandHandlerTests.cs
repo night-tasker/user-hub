@@ -21,7 +21,7 @@ using NightTasker.UserHub.Presentation.WebApi.Implementations;
 using NSubstitute;
 using Xunit;
 
-namespace NightTasker.UserHub.Core.Application.IntegrationTests.Features.Organization.Commands.CreateOrganization;
+namespace NightTasker.UserHub.Core.Application.IntegrationTests.Features.Organizations.Commands;
 
 public class CreateOrganizationAsUserCommandHandlerTests : ApplicationIntegrationTestsBase
 {
@@ -32,9 +32,8 @@ public class CreateOrganizationAsUserCommandHandlerTests : ApplicationIntegratio
     public CreateOrganizationAsUserCommandHandlerTests()
     {
         var identityService = Substitute.For<IIdentityService>();
-        RegisterService(new ServiceForRegister(typeof(IIdentityService), _ => identityService, ServiceLifetime.Scoped));
         RegisterService(new ServiceForRegister(typeof(IApplicationDbAccessor), serviceProvider => new ApplicationDbAccessor(
-            serviceProvider.GetRequiredService<ApplicationDbContext>(), serviceProvider.GetRequiredService<IIdentityService>()), ServiceLifetime.Scoped));
+            serviceProvider.GetRequiredService<ApplicationDbContext>()), ServiceLifetime.Scoped));
         RegisterService(new ServiceForRegister(typeof(IUnitOfWork), 
             serviceProvider => new UnitOfWork(serviceProvider.GetRequiredService<IApplicationDbAccessor>()), ServiceLifetime.Scoped));
         RegisterService(new ServiceForRegister(typeof(IOrganizationService), 
@@ -75,7 +74,7 @@ public class CreateOrganizationAsUserCommandHandlerTests : ApplicationIntegratio
         var result = await _sender.Send(createOrganizationAsUserCommand);
         
         // Assert
-        var organizations = await dbContext.Set<Domain.Entities.Organization>().ToListAsync();
+        var organizations = await dbContext.Set<Organization>().ToListAsync();
         
         organizations.Should().HaveCount(1);
         organizations[0].Should().NotBeNull();
@@ -91,7 +90,7 @@ public class CreateOrganizationAsUserCommandHandlerTests : ApplicationIntegratio
         organizationUsers[0].Role.Should().Be(OrganizationUserRole.Admin);
     }
 
-    private UserInfo SetupUserInfo(Guid userId)
+    private static UserInfo SetupUserInfo(Guid userId)
     {
         return new UserInfo
         {

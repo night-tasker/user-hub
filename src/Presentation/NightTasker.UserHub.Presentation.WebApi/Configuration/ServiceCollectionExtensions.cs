@@ -37,27 +37,22 @@ public static class ServiceCollectionExtensions
         services.AddHttpContextAccessor();
         services.AddScoped<IIdentityService, IdentityService>();
         services.AddScoped<IApplicationDbAccessor, ApplicationDbAccessor>();
+        services.AddValidation();
         return services;
     }
     
-    /// <summary>
-    /// Добавить Маппер.
-    /// </summary>
-    /// <param name="services">Коллекция сервисов.</param>
-    public static IServiceCollection AddMapper(this IServiceCollection services)
+    public static void AddMapper(this IServiceCollection services)
     {
-        var typeAdapterConfig = TypeAdapterConfig.GlobalSettings;
+        var typeAdapterConfig = TypeAdapterConfig.GlobalSettings.Clone();
         typeAdapterConfig.Scan(
             typeof(ServiceCollectionExtensions).Assembly,
             typeof(Core.Application.Configuration.ServiceCollectionExtensions).Assembly);
         typeAdapterConfig.RequireExplicitMapping = true;
         var mapperConfig = new Mapper(typeAdapterConfig);
         services.AddSingleton<IMapper>(mapperConfig);
-        return services;
     }
 
-    private static IServiceCollection ConfigureAuthentication(
-        this IServiceCollection services,
+    private static void ConfigureAuthentication(this IServiceCollection services,
         IConfiguration configuration)
     {
         var identitySettingsSection = configuration.GetSection(nameof(IdentitySettings));
@@ -98,14 +93,8 @@ public static class ServiceCollectionExtensions
             options.SaveToken = true;
             options.TokenValidationParameters = validationParameters;
         });
-
-        return services;
     }
-    
-    /// <summary>
-    /// Добавить валидацию.
-    /// </summary>
-    /// <param name="services">Коллекция сервисов.</param>
+
     public static void AddValidation(this IServiceCollection services)
     {
         services.AddValidatorsFromAssemblyContaining<Program>();

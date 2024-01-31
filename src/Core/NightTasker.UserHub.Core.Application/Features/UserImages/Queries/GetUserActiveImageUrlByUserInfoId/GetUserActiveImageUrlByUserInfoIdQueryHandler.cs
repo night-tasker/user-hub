@@ -3,9 +3,6 @@ using NightTasker.UserHub.Core.Application.Features.UserImages.Services.Contract
 
 namespace NightTasker.UserHub.Core.Application.Features.UserImages.Queries.GetUserActiveImageUrlByUserInfoId;
 
-/// <summary>
-/// Хэндлер для <see cref="GetUserActiveImageUrlByUserInfoIdQuery"/>
-/// </summary>
 public class GetUserActiveImageUrlByUserInfoIdQueryHandler(IUserImageService userImageService) : IRequestHandler<GetUserActiveImageUrlByUserInfoIdQuery, string>
 {
     private readonly IUserImageService _userImageService = userImageService ?? throw new ArgumentNullException(nameof(userImageService));

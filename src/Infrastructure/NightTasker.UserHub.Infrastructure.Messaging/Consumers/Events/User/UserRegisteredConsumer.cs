@@ -5,10 +5,6 @@ using NightTasker.UserHub.Core.Application.Features.UserInfos.Commands.CreateUse
 
 namespace NightTasker.UserHub.Infrastructure.Messaging.Consumers.Events.User;
 
-/// <summary>
-/// Консьюмер для события <see cref="IUserRegistered"/>.
-/// </summary>
-/// <param name="sender">Сэндер запросов.</param>
 public class UserRegisteredConsumer(
     ISender sender) : IConsumer<IUserRegistered>
 {

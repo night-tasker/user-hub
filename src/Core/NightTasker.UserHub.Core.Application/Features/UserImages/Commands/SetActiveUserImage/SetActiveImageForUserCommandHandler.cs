@@ -3,10 +3,7 @@ using NightTasker.UserHub.Core.Application.Features.UserImages.Services.Contract
 
 namespace NightTasker.UserHub.Core.Application.Features.UserImages.Commands.SetActiveUserImage;
 
-/// <summary>
-/// Хэндлер для <see cref="SetActiveImageForUserCommand"/>.
-/// </summary>
-public class SetActiveImageForUserCommandHandler(IUserImageService userImageService)
+internal class SetActiveImageForUserCommandHandler(IUserImageService userImageService)
     : IRequestHandler<SetActiveImageForUserCommand>
 {
     private readonly IUserImageService _userImageService = 

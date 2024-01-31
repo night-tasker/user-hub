@@ -18,16 +18,13 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    private static IServiceCollection AddGrpcClients(
-        this IServiceCollection services,
+    private static void AddGrpcClients(this IServiceCollection services,
         IConfiguration configuration)
     {
         services.AddStorageFileGrpcClient(configuration);
-        return services;
     }
 
-    private static IServiceCollection AddStorageFileGrpcClient(
-        this IServiceCollection services,
+    private static void AddStorageFileGrpcClient(this IServiceCollection services,
         IConfiguration configuration)
     {
         var storageGrpcSettingsSection = configuration.GetSection(nameof(StorageGrpcSettings));
@@ -39,14 +36,10 @@ public static class ServiceCollectionExtensions
         {
             configure.Address = new Uri($"{storageGrpcSettings.Host}:{storageGrpcSettings.Port}");
         });
-
-        return services;
     }
 
-    private static IServiceCollection AddServices(
-        this IServiceCollection services)
+    private static void AddServices(this IServiceCollection services)
     {
         services.AddScoped<IStorageFileService, StorageFileService>();
-        return services;
     }
 }

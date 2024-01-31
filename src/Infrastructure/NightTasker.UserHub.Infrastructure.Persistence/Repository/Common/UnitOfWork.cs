@@ -3,7 +3,6 @@ using NightTasker.UserHub.Infrastructure.Persistence.Contracts;
 
 namespace NightTasker.UserHub.Infrastructure.Persistence.Repository.Common;
 
-/// <inheritdoc />
 public class UnitOfWork(IApplicationDbAccessor applicationDbAccessor) : IUnitOfWork
 {
     public IUserInfoRepository UserInfoRepository { get; } = new UserInfoRepository(applicationDbAccessor.UserInfos);

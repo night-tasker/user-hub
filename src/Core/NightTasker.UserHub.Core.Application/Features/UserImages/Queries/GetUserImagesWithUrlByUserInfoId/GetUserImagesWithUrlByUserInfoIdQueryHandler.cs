@@ -4,9 +4,6 @@ using NightTasker.UserHub.Core.Application.Features.UserImages.Services.Contract
 
 namespace NightTasker.UserHub.Core.Application.Features.UserImages.Queries.GetUserImagesWithUrlByUserInfoId;
 
-/// <summary>
-/// Хэндлер для <see cref="GetUserImagesWithUrlByUserInfoIdQuery"/>
-/// </summary>
 internal class GetUserImagesWithUrlByUserInfoIdQueryHandler(IUserImageService userImageService)
     : IRequestHandler<GetUserImagesWithUrlByUserInfoIdQuery, IReadOnlyCollection<UserImageWithUrlDto>>
 {

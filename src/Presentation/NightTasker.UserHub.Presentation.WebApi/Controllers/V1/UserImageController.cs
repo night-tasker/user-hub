@@ -103,7 +103,8 @@ public class UserImageController(
     public async Task<IActionResult> RemoveCurrentUserImageById(
         Guid userImageId, CancellationToken cancellationToken)
     {
-        var command = new RemoveUserImageCommand(userImageId);
+        var currentUserId = _identityService.CurrentUserId!.Value;
+        var command = new RemoveUserImageCommand(currentUserId, userImageId);
         await _mediator.Send(command, cancellationToken);
         return Ok();
     }

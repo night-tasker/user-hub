@@ -4,14 +4,11 @@ using NightTasker.Common.Core.Extensions;
 
 namespace NightTasker.UserHub.Infrastructure.Persistence;
 
-/// <summary>
-/// Контекст для работы с базой данных.
-/// </summary>
 public class ApplicationDbContext : DbContext
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
-        base.SavingChanges += OnSavingChanges;
+        SavingChanges += OnSavingChanges;
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -27,7 +24,7 @@ public class ApplicationDbContext : DbContext
         builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
     }
     
-    private void UseSnakeCaseNamingConventions(ModelBuilder builder)
+    private static void UseSnakeCaseNamingConventions(ModelBuilder builder)
     {
         foreach(var entity in builder.Model.GetEntityTypes())
         {
@@ -63,7 +60,7 @@ public class ApplicationDbContext : DbContext
     private void ConfigureEntityDates()
     {
         var updatedEntities = ChangeTracker.Entries()
-            .Where(x => x.Entity is IUpdatedDateTimeOffset && x.State == EntityState.Modified)
+            .Where(x => x is { Entity: IUpdatedDateTimeOffset, State: EntityState.Modified })
             .Select(x => x.Entity as IUpdatedDateTimeOffset);
 
         foreach (var entity in updatedEntities)
@@ -75,7 +72,7 @@ public class ApplicationDbContext : DbContext
         }
 
         var createdEntities = ChangeTracker.Entries()
-            .Where(x => x.Entity is ICreatedDateTimeOffset && x.State == EntityState.Added)
+            .Where(x => x is { Entity: ICreatedDateTimeOffset, State: EntityState.Added })
             .Select(x => x.Entity as ICreatedDateTimeOffset);
 
         foreach (var entity in createdEntities)
@@ -86,4 +83,4 @@ public class ApplicationDbContext : DbContext
             }
         }
     }
-};
+}

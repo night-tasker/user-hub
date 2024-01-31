@@ -1,5 +1,4 @@
 ﻿using Google.Protobuf;
-using Google.Protobuf.Collections;
 using Grpc.Core;
 using Microsoft.Extensions.Options;
 using NightTasker.Common.Grpc.StorageFiles;
@@ -10,7 +9,6 @@ using NightTasker.UserHub.Infrastructure.Grpc.Settings;
 
 namespace NightTasker.UserHub.Infrastructure.Grpc.Implementations.Client.StorageFile;
 
-/// <inheritdoc />
 public class StorageFileService(
     Common.Grpc.StorageFiles.StorageFile.StorageFileClient storageFileClient,
     IOptions<StorageGrpcSettings> storageGrpcSettings) : IStorageFileService
@@ -18,13 +16,12 @@ public class StorageFileService(
     private readonly Common.Grpc.StorageFiles.StorageFile.StorageFileClient _storageFileClient =
         storageFileClient ?? throw new ArgumentNullException(nameof(storageFileClient));
     private readonly StorageGrpcSettings _storageGrpcSettings =
-        storageGrpcSettings?.Value ?? throw new ArgumentNullException(nameof(storageGrpcSettings));
+        storageGrpcSettings.Value ?? throw new ArgumentNullException(nameof(storageGrpcSettings));
     
-    /// <inheritdoc />
     public async Task<DownloadedFileDto> DownloadFile(
         Guid fileId, CancellationToken cancellationToken)
     {
-        var downloadFileRequest = new DownloadFileRequest()
+        var downloadFileRequest = new DownloadFileRequest
         {
             BucketName = _storageGrpcSettings.BucketName,
             FileName = fileId.ToString()
@@ -35,7 +32,6 @@ public class StorageFileService(
         return downloadedFileDto;
     }
 
-    /// <inheritdoc />
     public async Task UploadFile(UploadFileDto uploadFileDto, CancellationToken cancellationToken)
     {
         var uploadFileRequest = new UploadFileRequest
@@ -49,10 +45,9 @@ public class StorageFileService(
         await _storageFileClient.UploadFileAsync(uploadFileRequest, cancellationToken: cancellationToken);
     }
 
-    /// <inheritdoc />
     public async Task<string> GetFileUrl(Guid fileId, CancellationToken cancellationToken)
     {
-        var getFileUrlRequest = new GetFileUrlRequest()
+        var getFileUrlRequest = new GetFileUrlRequest
         {
             BucketName = _storageGrpcSettings.BucketName,
             FileName = fileId.ToString()
@@ -63,7 +58,6 @@ public class StorageFileService(
         return response.Url;
     }
 
-    /// <inheritdoc />
     public async Task<IDictionary<Guid, string>> GetFilesUrls(
         HashSet<Guid> fileIds, CancellationToken cancellationToken)
     {
@@ -86,7 +80,6 @@ public class StorageFileService(
         return dictionary;
     }
 
-    /// <inheritdoc />
     public async Task RemoveFile(Guid fileId, CancellationToken cancellationToken)
     {
         var removeFileRequest = new RemoveFileRequest
@@ -98,19 +91,14 @@ public class StorageFileService(
         await _storageFileClient.RemoveFileAsync(removeFileRequest, callOptions);
     }
 
-    /// <summary>
-    /// Проверка количества найденных файлов.
-    /// </summary>
-    /// <param name="lookingForFileIds">Идентификаторы искомых файлов.</param>
-    /// <param name="foundFileIds">Идентификаторы найденных файлов.</param>
-    /// <exception cref="StorageFilesNotFoundException"/>
-    private void ValidateFilesCount(
-        HashSet<Guid> lookingForFileIds, HashSet<Guid> foundFileIds)
+    private static void ValidateFilesCount(
+        IReadOnlyCollection<Guid> lookingForFileIds, IReadOnlyCollection<Guid> foundFileIds)
     {
-        if (lookingForFileIds.Count != foundFileIds.Count)
+        if (lookingForFileIds.Count == foundFileIds.Count)
         {
-            var notFoundFileIds = lookingForFileIds.Except(foundFileIds).ToList();
-            throw new StorageFilesNotFoundException(notFoundFileIds);
+            return;
         }
+        var notFoundFileIds = lookingForFileIds.Except(foundFileIds).ToList();
+        throw new StorageFilesNotFoundException(notFoundFileIds);
     }
 }
