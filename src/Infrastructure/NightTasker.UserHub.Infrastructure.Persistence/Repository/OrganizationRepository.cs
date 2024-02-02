@@ -49,6 +49,20 @@ public class OrganizationRepository(ApplicationDbSet<Organization, Guid> dbSet)
             .AnyAsync(x => x.Id == id, cancellationToken);
     }
 
+    public Task<Organization?> TryGetOrganizationForUser(
+        Guid userInfoId, Guid id, bool trackChanges, CancellationToken cancellationToken)
+    {
+        var query = Entities;
+        if (!trackChanges)
+        {
+            query = query.AsNoTracking();
+        }
+        
+        return query
+            .SingleOrDefaultAsync(x => x.Id == id 
+                                       && x.OrganizationUsers.Any(y => y.UserId == userInfoId), cancellationToken);
+    }
+
     private IQueryable<Organization> UserOrganizationsQuery(Guid userId)
     {
         return Entities

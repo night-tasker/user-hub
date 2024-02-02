@@ -22,8 +22,8 @@ namespace NightTasker.UserHub.Core.Application.IntegrationTests.Features.UserIma
 
 public class RemoveUserImageCommandTests : ApplicationIntegrationTestsBase
 {
-    private readonly ISender _sender;
-    
+    private readonly CancellationTokenSource _cancellationTokenSource;
+
     public RemoveUserImageCommandTests()
     {
         RegisterService(new ServiceForRegister(typeof(IApplicationDbAccessor), serviceProvider => new ApplicationDbAccessor(
@@ -37,11 +37,13 @@ public class RemoveUserImageCommandTests : ApplicationIntegrationTestsBase
                 serviceProvider.GetRequiredService<IUnitOfWork>(), 
                 Substitute.For<IStorageFileService>()), ServiceLifetime.Scoped));
         
+        RegisterService(new ServiceForRegister(typeof(RemoveUserImageCommandHandler)));
+        
         BuildServiceProvider();
         
         var dbContext = GetService<ApplicationDbContext>();
         dbContext.Database.Migrate();
-        _sender = GetService<ISender>();
+        _cancellationTokenSource = new CancellationTokenSource();
     }
 
     [Fact]
@@ -50,10 +52,12 @@ public class RemoveUserImageCommandTests : ApplicationIntegrationTestsBase
         // Arrange
         var userId = Guid.NewGuid();
         var userImageId = Guid.NewGuid();
+        var sut = GetService<RemoveUserImageCommandHandler>();
 
         // Assert & Act
         await Assert.ThrowsAsync<UserImageWithIdNotFoundException>(
-            async () => await _sender.Send(new RemoveUserImageCommand(userId, userImageId)));
+            async () => await sut.Handle(
+                new RemoveUserImageCommand(userId, userImageId), _cancellationTokenSource.Token));
     }
 
     [Fact]
@@ -68,9 +72,10 @@ public class RemoveUserImageCommandTests : ApplicationIntegrationTestsBase
         await dbContext.Set<UserImage>().AddAsync(userImage);
         await dbContext.SaveChangesAsync();
         var command = new RemoveUserImageCommand(userId, userImage.Id);
+        var sut = GetService<RemoveUserImageCommandHandler>();
         
         // Act
-        await _sender.Send(command);
+        await sut.Handle(command, _cancellationTokenSource.Token);
         
         // Assert
         var updatedImage = await dbContext.Set<UserImage>()

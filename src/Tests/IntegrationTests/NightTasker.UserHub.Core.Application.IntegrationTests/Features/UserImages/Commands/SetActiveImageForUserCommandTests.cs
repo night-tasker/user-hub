@@ -22,8 +22,8 @@ namespace NightTasker.UserHub.Core.Application.IntegrationTests.Features.UserIma
 
 public class SetActiveImageForUserCommandTests : ApplicationIntegrationTestsBase
 {
-    private readonly ISender _sender;
-    
+    private readonly CancellationTokenSource _cancellationTokenSource;
+
     public SetActiveImageForUserCommandTests()
     {
         RegisterService(new ServiceForRegister(typeof(IApplicationDbAccessor), serviceProvider => new ApplicationDbAccessor(
@@ -37,11 +37,13 @@ public class SetActiveImageForUserCommandTests : ApplicationIntegrationTestsBase
             serviceProvider.GetRequiredService<IUnitOfWork>(), 
             Substitute.For<IStorageFileService>()), ServiceLifetime.Scoped));
         
+        RegisterService(new ServiceForRegister(typeof(SetActiveImageForUserCommandHandler)));
+        
         BuildServiceProvider();
         
         var dbContext = GetService<ApplicationDbContext>();
         dbContext.Database.Migrate();
-        _sender = GetService<ISender>();
+        _cancellationTokenSource = new CancellationTokenSource();
     }
 
     [Fact]
@@ -57,9 +59,10 @@ public class SetActiveImageForUserCommandTests : ApplicationIntegrationTestsBase
         await dbContext.SaveChangesAsync();
         
         var command = new SetActiveImageForUserCommand(userInfo.Id, userImageForUpdate.Id);
+        var sut = GetService<SetActiveImageForUserCommandHandler>();
         
         // Act
-        await _sender.Send(command);
+        await sut.Handle(command, _cancellationTokenSource.Token);
         
         // Assert
         var allImages = await dbContext.Set<UserImage>()
@@ -78,9 +81,10 @@ public class SetActiveImageForUserCommandTests : ApplicationIntegrationTestsBase
         var userInfoId = Guid.NewGuid();
         var userImageId = Guid.NewGuid();
         var command = new SetActiveImageForUserCommand(userInfoId, userImageId);
+        var sut = GetService<SetActiveImageForUserCommandHandler>();
         
         // Act
-        var func = async () => await _sender.Send(command);
+        var func = async () => await sut.Handle(command, _cancellationTokenSource.Token);
         
         // Assert
         await func.Should().ThrowAsync<UserImageWithIdNotFoundException>();

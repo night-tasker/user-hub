@@ -19,22 +19,23 @@ namespace NightTasker.UserHub.Core.Application.IntegrationTests.Features.Organiz
 
 public class GetOrganizationUserRoleQueryTests : ApplicationIntegrationTestsBase
 {
-    private readonly ISender _sender;
-    private readonly Faker _faker; 
-    
+    private readonly Faker _faker;
+    private readonly CancellationTokenSource _cancellationTokenSource;
+
     public GetOrganizationUserRoleQueryTests()
     {
         RegisterService(new ServiceForRegister(typeof(IApplicationDbAccessor), serviceProvider => new ApplicationDbAccessor(
             serviceProvider.GetRequiredService<ApplicationDbContext>()), ServiceLifetime.Scoped));
         RegisterService(new ServiceForRegister(typeof(IUnitOfWork), 
             serviceProvider => new UnitOfWork(serviceProvider.GetRequiredService<IApplicationDbAccessor>()), ServiceLifetime.Scoped));
+        RegisterService(new ServiceForRegister(typeof(GetOrganizationUserRoleQueryHandler)));
         
         BuildServiceProvider();
         
         var dbContext = GetService<ApplicationDbContext>();
         dbContext.Database.Migrate();
-        _sender = GetService<ISender>();
         _faker = new Faker();
+        _cancellationTokenSource = new CancellationTokenSource();
     }
     
     [Theory]
@@ -53,9 +54,11 @@ public class GetOrganizationUserRoleQueryTests : ApplicationIntegrationTestsBase
         await dbContext.Set<Organization>().AddAsync(organization);
         await dbContext.Set<OrganizationUser>().AddAsync(organizationUser);
         await dbContext.SaveChangesAsync();
+        var query = new GetOrganizationUserRoleQuery(organization.Id, userId);
+        var sut = GetService<GetOrganizationUserRoleQueryHandler>();
 
         // Act
-        var result = await _sender.Send(new GetOrganizationUserRoleQuery(organization.Id, userId));
+        var result = await sut.Handle(query, _cancellationTokenSource.Token);
         
         // Assert
         result.Should().Be(role);
@@ -74,9 +77,14 @@ public class GetOrganizationUserRoleQueryTests : ApplicationIntegrationTestsBase
         await dbContext.Set<Organization>().AddAsync(organization);
         await dbContext.SaveChangesAsync();
         
-        // Act & Assert;
-        await Assert.ThrowsAsync<OrganizationUserNotFoundException>(() =>
-            _sender.Send(new GetOrganizationUserRoleQuery(organization.Id, userId)));
+        var sut = GetService<GetOrganizationUserRoleQueryHandler>();
+        var query = new GetOrganizationUserRoleQuery(organization.Id, userId);
+        
+        // Act
+        var func = async () => await sut.Handle(query, _cancellationTokenSource.Token);
+        
+        // Assert
+        await func.Should().ThrowAsync<OrganizationNotFoundException>();
     }
     
     private static UserInfo SetupUserInfo(Guid userId)

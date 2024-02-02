@@ -20,10 +20,10 @@ namespace NightTasker.UserHub.Core.Application.IntegrationTests.Features.Organiz
 
 public class GetUserOrganizationsQueryHandlerTests : ApplicationIntegrationTestsBase
 {
-    private readonly ISender _sender;
     private static readonly Guid UserId = Guid.NewGuid();
-    private readonly Faker _faker; 
-    
+    private readonly Faker _faker;
+    private readonly CancellationTokenSource _cancellationTokenSource;
+
     public GetUserOrganizationsQueryHandlerTests()
     {
         var identityService = Substitute.For<IIdentityService>();
@@ -31,7 +31,7 @@ public class GetUserOrganizationsQueryHandlerTests : ApplicationIntegrationTests
             serviceProvider.GetRequiredService<ApplicationDbContext>()), ServiceLifetime.Scoped));
         RegisterService(new ServiceForRegister(typeof(IUnitOfWork), 
             serviceProvider => new UnitOfWork(serviceProvider.GetRequiredService<IApplicationDbAccessor>()), ServiceLifetime.Scoped));
-        
+        RegisterService(new ServiceForRegister(typeof(GetUserOrganizationsQueryHandler)));
         BuildServiceProvider();
         
         identityService.CurrentUserId.Returns(UserId);
@@ -39,8 +39,9 @@ public class GetUserOrganizationsQueryHandlerTests : ApplicationIntegrationTests
 
         var dbContext = GetService<ApplicationDbContext>();
         dbContext.Database.Migrate();
-        _sender = GetService<ISender>();
+        
         _faker = new Faker();
+        _cancellationTokenSource = new CancellationTokenSource();
     }
     
     [Theory]
@@ -71,9 +72,10 @@ public class GetUserOrganizationsQueryHandlerTests : ApplicationIntegrationTests
         await dbContext.SaveChangesAsync();
         
         var query = new GetUserOrganizationsQuery(UserId);
+        var sut = GetService<GetUserOrganizationsQueryHandler>();
         
         // Act
-        var result = await _sender.Send(query);
+        var result = await sut.Handle(query, _cancellationTokenSource.Token);
         
         // Assert
         Assert.Equal(organizations.Count, result.Count);
@@ -117,9 +119,10 @@ public class GetUserOrganizationsQueryHandlerTests : ApplicationIntegrationTests
         await dbContext.SaveChangesAsync();
         
         var query = new GetUserOrganizationsQuery(UserId);
+        var sut = GetService<GetUserOrganizationsQueryHandler>();
         
         // Act
-        var result = await _sender.Send(query);
+        var result = await sut.Handle(query, _cancellationTokenSource.Token);
         
         // Assert
         Assert.Equal(0, result.Count);

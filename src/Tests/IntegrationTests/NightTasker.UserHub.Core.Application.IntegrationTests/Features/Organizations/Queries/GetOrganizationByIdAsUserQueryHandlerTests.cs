@@ -21,10 +21,10 @@ namespace NightTasker.UserHub.Core.Application.IntegrationTests.Features.Organiz
 
 public class GetOrganizationByIdAsUserQueryHandlerTests : ApplicationIntegrationTestsBase
 {
-    private readonly ISender _sender;
     private static readonly Guid UserId = Guid.NewGuid();
-    private readonly Faker _faker; 
-    
+    private readonly Faker _faker;
+    private readonly CancellationTokenSource _cancellationTokenSource;
+
     public GetOrganizationByIdAsUserQueryHandlerTests()
     {
         var identityService = Substitute.For<IIdentityService>();
@@ -32,7 +32,7 @@ public class GetOrganizationByIdAsUserQueryHandlerTests : ApplicationIntegration
             serviceProvider.GetRequiredService<ApplicationDbContext>()), ServiceLifetime.Scoped));
         RegisterService(new ServiceForRegister(typeof(IUnitOfWork), 
             serviceProvider => new UnitOfWork(serviceProvider.GetRequiredService<IApplicationDbAccessor>()), ServiceLifetime.Scoped));
-        
+        RegisterService(new ServiceForRegister(typeof(GetOrganizationByIdAsUserQueryHandler)));
         BuildServiceProvider();
         
         identityService.CurrentUserId.Returns(UserId);
@@ -40,8 +40,8 @@ public class GetOrganizationByIdAsUserQueryHandlerTests : ApplicationIntegration
 
         var dbContext = GetService<ApplicationDbContext>();
         dbContext.Database.Migrate();
-        _sender = GetService<ISender>();
         _faker = new Faker();
+        _cancellationTokenSource = new CancellationTokenSource();
     }
 
     [Theory]
@@ -69,12 +69,13 @@ public class GetOrganizationByIdAsUserQueryHandlerTests : ApplicationIntegration
             SetupOrganizationUser(organization.Id, users[3].Id, OrganizationUserRole.Member)
         };
         dbContext.Set<OrganizationUser>().AddRange(organizationUsers);
-        
         await dbContext.SaveChangesAsync();
         
-        // Act
         var query = new GetOrganizationByIdAsUserQuery(organization.Id, UserId);
-        var result = await _sender.Send(query);
+        var sut = GetService<GetOrganizationByIdAsUserQueryHandler>();        
+        
+        // Act
+        var result = await sut.Handle(query, _cancellationTokenSource.Token);
 
         // Assert
         result.Should().NotBeNull();
@@ -90,9 +91,11 @@ public class GetOrganizationByIdAsUserQueryHandlerTests : ApplicationIntegration
         // Arrange
         var notExistingOrganizationId = Guid.NewGuid();
 
-        // Act
         var query = new GetOrganizationByIdAsUserQuery(notExistingOrganizationId, UserId);
-        Func<Task> act = async () => await _sender.Send(query);
+        var sut = GetService<GetOrganizationByIdAsUserQueryHandler>();    
+        
+        // Act
+        Func<Task> act = async () => await sut.Handle(query, _cancellationTokenSource.Token);
         
         // Assert
         await act.Should().ThrowAsync<OrganizationNotFoundException>();
@@ -106,12 +109,13 @@ public class GetOrganizationByIdAsUserQueryHandlerTests : ApplicationIntegration
         dbContext.Set<UserInfo>().Add(SetupUserInfo(UserId));
         var organization = SetupOrganization();
         dbContext.Set<Organization>().Add(organization);
-        
         await dbContext.SaveChangesAsync();
+
+        var query = new GetOrganizationByIdAsUserQuery(organization.Id, UserId);
+        var sut = GetService<GetOrganizationByIdAsUserQueryHandler>();
         
         // Act
-        var query = new GetOrganizationByIdAsUserQuery(organization.Id, UserId);
-        Func<Task> act = async () => await _sender.Send(query);
+        Func<Task> act = async () => await sut.Handle(query, _cancellationTokenSource.Token);
         
         // Assert
         await act.Should().ThrowAsync<OrganizationNotFoundException>();

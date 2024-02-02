@@ -9,7 +9,11 @@ public interface IOrganizationRepository : IRepository<Organization, Guid>
     Task<IReadOnlyCollection<Organization>> GetUserOrganizations(
         Guid userInfoId, bool trackChanges, CancellationToken cancellationToken);
 
-    Task<OrganizationWithInfoDto?> TryGetOrganizationWithInfoForUser(Guid id, Guid userId, CancellationToken cancellationToken);
+    Task<OrganizationWithInfoDto?> TryGetOrganizationWithInfoForUser(
+        Guid id, Guid userId, CancellationToken cancellationToken);
+
+    Task<Organization?> TryGetOrganizationForUser(
+        Guid userInfoId, Guid id, bool trackChanges, CancellationToken cancellationToken);
 
     Task<bool> CheckExistsById(Guid id, CancellationToken cancellationToken);
 

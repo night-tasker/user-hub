@@ -6,7 +6,7 @@ using NightTasker.UserHub.Core.Application.Features.OrganizationUsers.Models;
 using NightTasker.UserHub.Core.Application.Features.OrganizationUsers.Services.Contracts;
 using NightTasker.UserHub.Core.Domain.Enums;
 
-namespace NightTasker.UserHub.Core.Application.Features.Organizations.Commands.CreateOrganization;
+namespace NightTasker.UserHub.Core.Application.Features.Organizations.Commands.CreateOrganizationAsUser;
 
 internal class CreateOrganizationAsUserCommandHandler(
     IOrganizationService organizationService,

@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NightTasker.Common.Core.Identity.Contracts;
-using NightTasker.UserHub.Core.Application.Features.Organizations.Commands.CreateOrganization;
+using NightTasker.UserHub.Core.Application.Features.Organizations.Commands.CreateOrganizationAsUser;
+using NightTasker.UserHub.Core.Application.Features.Organizations.Commands.UpdateOrganizationAsUser;
+using NightTasker.UserHub.Core.Application.Features.Organizations.Models;
 using NightTasker.UserHub.Core.Application.Features.Organizations.Queries.GetOrganizationById;
 using NightTasker.UserHub.Core.Application.Features.Organizations.Queries.GetUserOrganizations;
 using NightTasker.UserHub.Core.Application.Features.OrganizationUsers.Queries.GetOrganizationUserRole;
@@ -88,5 +90,23 @@ public class OrganizationController(
             UserId: _identityService.CurrentUserId!.Value);
         var result = await _mediator.Send(command, cancellationToken);
         return Ok(result);
+    }
+
+    /// <summary>
+    /// Эндпоинт для обновления организации.
+    /// </summary>
+    /// <param name="organizationId">ИД организации.</param>
+    /// <param name="request">Запрос на обновление организации.</param>
+    /// <param name="cancellationToken">Токен отмены.</param>
+    [HttpPut(OrganizationEndpoints.UpdateOrganization)]
+    public async Task<IActionResult> UpdateOrganization(
+        [FromRoute] Guid organizationId,
+        [FromBody] UpdateOrganizationDto request,
+        CancellationToken cancellationToken)
+    {
+        var userId = _identityService.CurrentUserId!.Value;
+        var command = new UpdateOrganizationAsUserCommand(organizationId, userId, request);
+        await _mediator.Send(command, cancellationToken);
+        return Ok();
     }
 }

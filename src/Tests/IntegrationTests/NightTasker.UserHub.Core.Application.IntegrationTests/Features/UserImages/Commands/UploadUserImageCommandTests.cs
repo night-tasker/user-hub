@@ -22,9 +22,9 @@ namespace NightTasker.UserHub.Core.Application.IntegrationTests.Features.UserIma
 
 public class UploadUserImageCommandTests : ApplicationIntegrationTestsBase
 {
-    private readonly ISender _sender;
     private readonly Faker _faker;
-    
+    private readonly CancellationTokenSource _cancellationTokenSource;
+
     public UploadUserImageCommandTests()
     {
         RegisterService(new ServiceForRegister(typeof(IApplicationDbAccessor), serviceProvider => new ApplicationDbAccessor(
@@ -41,13 +41,14 @@ public class UploadUserImageCommandTests : ApplicationIntegrationTestsBase
             serviceProvider.GetRequiredService<IUnitOfWork>(), 
             Substitute.For<IStorageFileService>()), ServiceLifetime.Scoped));
         
+        RegisterService(new ServiceForRegister(typeof(UploadUserImageCommandHandler)));
+        
         BuildServiceProvider();
         
         var dbContext = GetService<ApplicationDbContext>();
         dbContext.Database.Migrate();
-        _sender = GetService<ISender>();
-        
         _faker = new Faker();
+        _cancellationTokenSource = new CancellationTokenSource();
     }
 
     [Fact]
@@ -66,9 +67,10 @@ public class UploadUserImageCommandTests : ApplicationIntegrationTestsBase
         var dbContext = GetService<ApplicationDbContext>();
         await dbContext.Set<UserInfo>().AddAsync(userInfo);
         await dbContext.SaveChangesAsync();
+        var sut = GetService<UploadUserImageCommandHandler>();
         
         // Act
-        await _sender.Send(command);
+        await sut.Handle(command, _cancellationTokenSource.Token);
         
         // Assert
         var userImage = await dbContext.Set<UserImage>()

@@ -1,12 +1,12 @@
 ﻿using Bogus;
 using FluentAssertions;
 using MapsterMapper;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using NightTasker.Common.Core.Identity.Contracts;
 using NightTasker.UserHub.Core.Application.ApplicationContracts.Repository;
-using NightTasker.UserHub.Core.Application.Features.Organizations.Commands.CreateOrganizationAsUser;
+using NightTasker.UserHub.Core.Application.Features.Organizations.Commands.UpdateOrganizationAsUser;
+using NightTasker.UserHub.Core.Application.Features.Organizations.Models;
 using NightTasker.UserHub.Core.Application.Features.Organizations.Services.Contracts;
 using NightTasker.UserHub.Core.Application.Features.Organizations.Services.Implementations;
 using NightTasker.UserHub.Core.Application.Features.OrganizationUsers.Services.Contracts;
@@ -23,13 +23,13 @@ using Xunit;
 
 namespace NightTasker.UserHub.Core.Application.IntegrationTests.Features.Organizations.Commands;
 
-public class CreateOrganizationAsUserCommandHandlerTests : ApplicationIntegrationTestsBase
+public class UpdateOrganizationAsUserCommandHandlerTests : ApplicationIntegrationTestsBase
 {
     private static readonly Guid UserId = Guid.NewGuid();
     private readonly Faker _faker;
     private readonly CancellationTokenSource _cancellationTokenSource;
 
-    public CreateOrganizationAsUserCommandHandlerTests()
+    public UpdateOrganizationAsUserCommandHandlerTests()
     {
         var identityService = Substitute.For<IIdentityService>();
         RegisterService(new ServiceForRegister(typeof(IApplicationDbAccessor), serviceProvider => new ApplicationDbAccessor(
@@ -45,7 +45,8 @@ public class CreateOrganizationAsUserCommandHandlerTests : ApplicationIntegratio
             serviceProvider => new OrganizationUserService(
                 serviceProvider.GetRequiredService<IUnitOfWork>(), 
                 serviceProvider.GetRequiredService<IMapper>()), ServiceLifetime.Scoped));
-        RegisterService(new ServiceForRegister(typeof(CreateOrganizationAsUserCommandHandler)));
+        
+        RegisterService(new ServiceForRegister(typeof(UpdateOrganizationAsUserCommandHandler)));
         
         BuildServiceProvider();
         
@@ -57,39 +58,35 @@ public class CreateOrganizationAsUserCommandHandlerTests : ApplicationIntegratio
         _faker = new Faker();
         _cancellationTokenSource = new CancellationTokenSource();
     }
-
+    
     [Fact]
-    public async Task Handle_CreateOrganization_OrganizationHasAdminWithCurrentUserId()
+    public async Task UpdateOrganization_OrganizationExists_OrganizationUpdated()
     {
         // Arrange
         var dbContext = GetService<ApplicationDbContext>();
-        dbContext.Set<UserInfo>().Add(SetupUserInfo(UserId));
-        await dbContext.SaveChangesAsync();
-
-        var createOrganizationAsUserCommand = new CreateOrganizationAsUserCommand(
-                _faker.Random.AlphaNumeric(8), 
-                _faker.Random.AlphaNumeric(32), 
-                UserId);
-        var sut = GetService<CreateOrganizationAsUserCommandHandler>();
+        var organization = SetupRandomOrganization();
+        await dbContext.Set<Organization>().AddAsync(organization, _cancellationTokenSource.Token);
+        await dbContext.Set<UserInfo>().AddAsync(SetupUserInfo(UserId), _cancellationTokenSource.Token);
+        var organizationUser = SetupOrganizationUser(organization.Id, UserId, OrganizationUserRole.Admin);
+        await dbContext.Set<OrganizationUser>().AddAsync(organizationUser, _cancellationTokenSource.Token);
+        await dbContext.SaveChangesAsync(_cancellationTokenSource.Token);
+        
+        var updateOrganizationDto = new UpdateOrganizationDto(
+            _faker.Random.AlphaNumeric(8), _faker.Random.AlphaNumeric(32));
+        var updateOrganizationAsUserCommand = new UpdateOrganizationAsUserCommand(
+            UserId,organization.Id, updateOrganizationDto);
+        var sut = GetService<UpdateOrganizationAsUserCommandHandler>();
         
         // Act
-        var result = await sut.Handle(createOrganizationAsUserCommand, _cancellationTokenSource.Token);
+        await sut.Handle(updateOrganizationAsUserCommand, _cancellationTokenSource.Token);
         
         // Assert
-        var organizations = await dbContext.Set<Organization>().ToListAsync();
+        var updatedOrganization = await dbContext.Set<Organization>().SingleOrDefaultAsync(_cancellationTokenSource.Token);
         
-        organizations.Should().HaveCount(1);
-        organizations[0].Should().NotBeNull();
-        organizations[0].Id.Should().Be(result);
-        organizations[0].Name.Should().Be(createOrganizationAsUserCommand.Name);
-        organizations[0].Description.Should().Be(createOrganizationAsUserCommand.Description);
-        
-        var organizationUsers = await dbContext.Set<OrganizationUser>().ToListAsync();
-        
-        organizationUsers.Should().HaveCount(1);
-        organizationUsers[0].UserId.Should().Be(UserId);
-        organizationUsers[0].OrganizationId.Should().Be(result);
-        organizationUsers[0].Role.Should().Be(OrganizationUserRole.Admin);
+        updatedOrganization.Should().NotBeNull();
+        updatedOrganization!.Id.Should().Be(organization.Id);
+        updatedOrganization.Name.Should().Be(updateOrganizationDto.Name);
+        updatedOrganization.Description.Should().Be(updateOrganizationDto.Description);
     }
 
     private static UserInfo SetupUserInfo(Guid userId)
@@ -97,6 +94,26 @@ public class CreateOrganizationAsUserCommandHandlerTests : ApplicationIntegratio
         return new UserInfo
         {
             Id = userId
+        };
+    }
+
+    private Organization SetupRandomOrganization()
+    {
+        return new Organization
+        {
+            Id = Guid.NewGuid(),
+            Name = _faker.Random.AlphaNumeric(8),
+            Description = _faker.Random.AlphaNumeric(32),
+        };
+    }
+
+    private static OrganizationUser SetupOrganizationUser(Guid organizationId, Guid userId, OrganizationUserRole role)
+    {
+        return new OrganizationUser
+        {
+            OrganizationId = organizationId,
+            UserId = userId,
+            Role = role
         };
     }
 }

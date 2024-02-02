@@ -1,5 +1,6 @@
 ﻿using MapsterMapper;
 using NightTasker.UserHub.Core.Application.ApplicationContracts.Repository;
+using NightTasker.UserHub.Core.Application.Exceptions.NotFound;
 using NightTasker.UserHub.Core.Application.Features.Organizations.Models;
 using NightTasker.UserHub.Core.Application.Features.Organizations.Services.Contracts;
 using NightTasker.UserHub.Core.Domain.Entities;
@@ -21,5 +22,31 @@ internal class OrganizationService(
         await _unitOfWork.OrganizationRepository.Add(organization, cancellationToken);
         await _unitOfWork.SaveChanges(cancellationToken);
         return organization.Id;
+    }
+
+    public async Task UpdateOrganizationAsUser(
+        Guid userInfoId,
+        Guid organizationId,
+        UpdateOrganizationDto updateOrganizationDto,
+        CancellationToken cancellationToken)
+    {
+        var organization = await GetOrganizationForUser(userInfoId, organizationId, cancellationToken);
+        _mapper.Map(updateOrganizationDto, organization);
+        _unitOfWork.OrganizationRepository.Update(organization);
+        await _unitOfWork.SaveChanges(cancellationToken);
+    }
+
+    private async Task<Organization> GetOrganizationForUser(
+        Guid userInfoId, Guid organizationId, CancellationToken cancellationToken)
+    {
+        var organization = await _unitOfWork.OrganizationRepository
+            .TryGetOrganizationForUser(userInfoId, organizationId, true, cancellationToken);
+        
+        if (organization is null)
+        {
+            throw new OrganizationNotFoundException(organizationId);
+        }
+        
+        return organization;
     }
 }

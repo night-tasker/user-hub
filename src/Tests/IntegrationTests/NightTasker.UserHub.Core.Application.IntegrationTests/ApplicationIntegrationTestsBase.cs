@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using NightTasker.UserHub.Core.Application.Features.Organizations.Queries.GetOrganizationById;
 using NightTasker.UserHub.Infrastructure.Persistence;
 using NightTasker.UserHub.IntegrationTests.Framework;
 using NightTasker.UserHub.Presentation.WebApi.Configuration;
@@ -20,8 +19,6 @@ public abstract class ApplicationIntegrationTestsBase
             _serviceCollection = new ServiceCollection();
             _serviceCollection.AddDbContext<ApplicationDbContext>(
                 (_, option) => option.UseNpgsql($"{testNpgSql.NpgSqlContainer.GetConnectionString()};Include Error Detail=true"));
-            _serviceCollection.AddMediatR(
-                conf => conf.RegisterServicesFromAssembly(typeof(GetOrganizationByIdAsUserQuery).Assembly));
             _serviceCollection.AddMapper();
         }
     }
@@ -31,13 +28,28 @@ public abstract class ApplicationIntegrationTestsBase
         switch (serviceForRegister)
         {
             case { Lifetime: ServiceLifetime.Singleton }:
-                _serviceCollection.AddSingleton(serviceForRegister.Type, serviceForRegister.Factory);
+                if (serviceForRegister.Factory == null)
+                    _serviceCollection.AddSingleton(serviceForRegister.Type);
+                else
+                    _serviceCollection.AddSingleton(serviceForRegister.Type, serviceForRegister.Factory);
                 break;
             case { Lifetime: ServiceLifetime.Scoped }:
-                _serviceCollection.AddScoped(serviceForRegister.Type, serviceForRegister.Factory);
+                if (serviceForRegister.Factory == null)
+                    _serviceCollection.AddScoped(serviceForRegister.Type);
+                else
+                    _serviceCollection.AddScoped(serviceForRegister.Type, serviceForRegister.Factory);
                 break;
             case { Lifetime: ServiceLifetime.Transient }:
-                _serviceCollection.AddTransient(serviceForRegister.Type, serviceForRegister.Factory);
+                if (serviceForRegister.Factory == null)
+                    _serviceCollection.AddTransient(serviceForRegister.Type);
+                else
+                    _serviceCollection.AddTransient(serviceForRegister.Type, serviceForRegister.Factory);
+                break;
+            case { Lifetime: null }:
+                if (serviceForRegister.Factory == null)
+                    _serviceCollection.AddScoped(serviceForRegister.Type);
+                else
+                    _serviceCollection.AddScoped(serviceForRegister.Type, serviceForRegister.Factory);
                 break;
         }
     }
