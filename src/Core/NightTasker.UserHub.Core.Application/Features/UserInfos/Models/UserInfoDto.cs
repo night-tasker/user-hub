@@ -10,14 +10,14 @@ public record UserInfoDto(
     string? MiddleName,
     string? LastName)
 {
-    public static UserInfoDto FromEntity(UserInfo userInfo)
+    public static UserInfoDto FromEntity(User user)
     {
         return new UserInfoDto(
-            userInfo.Id,
-            userInfo.UserName,
-            userInfo.Email,
-            userInfo.FirstName,
-            userInfo.MiddleName,
-            userInfo.LastName);
+            user.Id,
+            user.UserName,
+            user.Email,
+            user.FirstName,
+            user.MiddleName,
+            user.LastName);
     }
 };

@@ -67,7 +67,7 @@ public class RemoveUserImageCommandTests : ApplicationIntegrationTestsBase
         var userId = Guid.NewGuid();
         var user = SetupUserInfo(userId);
         var userImage = SetupUserImage(userId);
-        await dbContext.Set<UserInfo>().AddAsync(user);
+        await dbContext.Set<User>().AddAsync(user);
         await dbContext.Set<UserImage>().AddAsync(userImage);
         await dbContext.SaveChangesAsync();
         var command = new RemoveUserImageCommand(userId, userImage.Id);
@@ -83,9 +83,9 @@ public class RemoveUserImageCommandTests : ApplicationIntegrationTestsBase
         updatedImage.Should().BeNull();
     }
     
-    private static UserInfo SetupUserInfo(Guid userId)
+    private static User SetupUserInfo(Guid userId)
     {
-        var userInfo = new UserInfo
+        var userInfo = new User
         {
             Id = userId
         };

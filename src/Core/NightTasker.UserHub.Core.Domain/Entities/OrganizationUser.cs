@@ -9,7 +9,7 @@ public class OrganizationUser : IEntity
 
     public Guid UserId { get; set; }
 
-    public UserInfo UserInfo { get; set; } = null!;
+    public User User { get; set; } = null!;
 
     public Guid OrganizationId { get; set; }
 

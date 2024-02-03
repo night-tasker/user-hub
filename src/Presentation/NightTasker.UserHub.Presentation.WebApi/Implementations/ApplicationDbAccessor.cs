@@ -14,12 +14,12 @@ public class ApplicationDbAccessor : IApplicationDbAccessor
     {
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         Organizations = new ApplicationDbSet<Organization, Guid>(_dbContext, GetOrganizations(_dbContext.Set<Organization>()));
-        UserInfos = new ApplicationDbSet<UserInfo, Guid>(_dbContext, GetUserInfos(_dbContext.Set<UserInfo>()));
+        UserInfos = new ApplicationDbSet<User, Guid>(_dbContext, GetUserInfos(_dbContext.Set<User>()));
         UserImages = new ApplicationDbSet<UserImage, Guid>(_dbContext, GetUserImages(_dbContext.Set<UserImage>()));
         OrganizationUsers = new ApplicationDbSet<OrganizationUser, Guid>(_dbContext, GetOrganizationUsers(_dbContext.Set<OrganizationUser>()));
     }
 
-    public ApplicationDbSet<UserInfo, Guid> UserInfos { get; }
+    public ApplicationDbSet<User, Guid> UserInfos { get; }
 
     public ApplicationDbSet<UserImage, Guid> UserImages { get; }
     
@@ -27,7 +27,7 @@ public class ApplicationDbAccessor : IApplicationDbAccessor
     
     public ApplicationDbSet<OrganizationUser, Guid> OrganizationUsers { get; }
 
-    private IQueryable<UserInfo> GetUserInfos(DbSet<UserInfo> query)
+    private IQueryable<User> GetUserInfos(DbSet<User> query)
     {
         return query;
     }

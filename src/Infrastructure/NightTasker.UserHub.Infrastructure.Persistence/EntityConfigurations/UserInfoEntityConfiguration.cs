@@ -4,11 +4,11 @@ using NightTasker.UserHub.Core.Domain.Entities;
 
 namespace NightTasker.UserHub.Infrastructure.Persistence.EntityConfigurations;
 
-public class UserInfoEntityConfiguration : IEntityTypeConfiguration<UserInfo>
+public class UserInfoEntityConfiguration : IEntityTypeConfiguration<User>
 {
-    public void Configure(EntityTypeBuilder<UserInfo> builder)
+    public void Configure(EntityTypeBuilder<User> builder)
     {
-        builder.ToTable(name: "user_infos");
+        builder.ToTable(name: "users");
         
         builder.HasKey(userInfo => userInfo.Id);
 

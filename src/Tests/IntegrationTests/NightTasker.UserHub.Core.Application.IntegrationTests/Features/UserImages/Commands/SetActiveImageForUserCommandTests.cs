@@ -53,7 +53,7 @@ public class SetActiveImageForUserCommandTests : ApplicationIntegrationTestsBase
         var userImageForUpdate = SetupUserImage(userInfo.Id, false);
         
         var dbContext = GetService<ApplicationDbContext>();
-        await dbContext.Set<UserInfo>().AddAsync(userInfo);
+        await dbContext.Set<User>().AddAsync(userInfo);
         await dbContext.Set<UserImage>().AddAsync(userImageForUpdate);
         await dbContext.SaveChangesAsync();
         
@@ -89,9 +89,9 @@ public class SetActiveImageForUserCommandTests : ApplicationIntegrationTestsBase
         await func.Should().ThrowAsync<UserImageWithIdNotFoundException>();
     }
     
-    private static UserInfo SetupUserInfo(Guid userId)
+    private static User SetupUserInfo(Guid userId)
     {
-        var userInfo = new UserInfo
+        var userInfo = new User
         {
             Id = userId
         };

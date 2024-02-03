@@ -4,9 +4,9 @@ namespace NightTasker.UserHub.Core.Application.Features.UserInfos.Models;
 
 public record CreateUserInfoDto(Guid UserId, string UserName, string Email)
 {
-    public UserInfo ToEntity()
+    public User ToEntity()
     {
-        return new UserInfo
+        return new User
         {
             Id = UserId,
             UserName = UserName,

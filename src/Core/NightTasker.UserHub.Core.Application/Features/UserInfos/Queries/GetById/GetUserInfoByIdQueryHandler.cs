@@ -17,7 +17,7 @@ internal class GetUserInfoByIdQueryHandler(IUnitOfWork unitOfWork) : IRequestHan
         return userInfoDto;
     }
 
-    private async Task<UserInfo> GetUserInfoById(Guid userInfoId, CancellationToken cancellationToken)
+    private async Task<User> GetUserInfoById(Guid userInfoId, CancellationToken cancellationToken)
     {
         var userInfo = await _unitOfWork.UserInfoRepository.TryGetById(userInfoId, false, cancellationToken);
         if (userInfo is null)

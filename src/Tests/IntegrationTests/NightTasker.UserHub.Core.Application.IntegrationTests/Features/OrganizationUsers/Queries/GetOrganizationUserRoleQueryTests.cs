@@ -50,7 +50,7 @@ public class GetOrganizationUserRoleQueryTests : ApplicationIntegrationTestsBase
         var organization = SetupOrganization();
         var organizationUser = SetupOrganizationUser(organization.Id, userId, role);
         
-        await dbContext.Set<UserInfo>().AddAsync(user);
+        await dbContext.Set<User>().AddAsync(user);
         await dbContext.Set<Organization>().AddAsync(organization);
         await dbContext.Set<OrganizationUser>().AddAsync(organizationUser);
         await dbContext.SaveChangesAsync();
@@ -73,7 +73,7 @@ public class GetOrganizationUserRoleQueryTests : ApplicationIntegrationTestsBase
         var user = SetupUserInfo(userId);
         var organization = SetupOrganization();
         
-        await dbContext.Set<UserInfo>().AddAsync(user);
+        await dbContext.Set<User>().AddAsync(user);
         await dbContext.Set<Organization>().AddAsync(organization);
         await dbContext.SaveChangesAsync();
         
@@ -87,9 +87,9 @@ public class GetOrganizationUserRoleQueryTests : ApplicationIntegrationTestsBase
         await func.Should().ThrowAsync<OrganizationUserNotFoundException>();
     }
     
-    private static UserInfo SetupUserInfo(Guid userId)
+    private static User SetupUserInfo(Guid userId)
     {
-        return new UserInfo
+        return new User
         {
             Id = userId
         };

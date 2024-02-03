@@ -7,9 +7,9 @@ using NightTasker.UserHub.Core.Domain.Repositories;
 namespace NightTasker.UserHub.Infrastructure.Persistence.Repository;
 
 public class UserInfoRepository
-    (ApplicationDbSet<UserInfo, Guid> dbSet) : BaseRepository<UserInfo, Guid>(dbSet), IUserInfoRepository
+    (ApplicationDbSet<User, Guid> dbSet) : BaseRepository<User, Guid>(dbSet), IUserInfoRepository
 {
-    public Task<UserInfo?> TryGetById(
+    public Task<User?> TryGetById(
         Guid id, 
         bool trackChanges, 
         CancellationToken cancellationToken)

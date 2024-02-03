@@ -26,7 +26,7 @@ public class UserInfoService(
         await _unitOfWork.SaveChanges(cancellationToken);
     }
 
-    private async Task<UserInfo> GetUserInfoById(
+    private async Task<User> GetUserInfoById(
         Guid userInfoId, bool trackChanges, CancellationToken cancellationToken)
     {
         var userInfo = await _unitOfWork.UserInfoRepository.TryGetById(userInfoId, trackChanges, cancellationToken);

@@ -52,7 +52,7 @@ public class GetUserOrganizationsQueryHandlerTests : ApplicationIntegrationTests
         // Arrange
         var dbContext = GetService<ApplicationDbContext>();
         var user = SetupUserInfo(UserId);
-        await dbContext.Set<UserInfo>().AddAsync(user);
+        await dbContext.Set<User>().AddAsync(user);
 
         var organizations = new List<Organization>
         {
@@ -89,15 +89,15 @@ public class GetUserOrganizationsQueryHandlerTests : ApplicationIntegrationTests
         // Arrange
         var dbContext = GetService<ApplicationDbContext>();
         var user = SetupUserInfo(UserId);
-        await dbContext.Set<UserInfo>().AddAsync(user);
+        await dbContext.Set<User>().AddAsync(user);
         
-        var otherUsers = new List<UserInfo>
+        var otherUsers = new List<User>
         {
             SetupUserInfo(Guid.NewGuid()),
             SetupUserInfo(Guid.NewGuid()),
             SetupUserInfo(Guid.NewGuid())
         };
-        await dbContext.Set<UserInfo>().AddRangeAsync(otherUsers);
+        await dbContext.Set<User>().AddRangeAsync(otherUsers);
 
         var organizations = new List<Organization>
         {
@@ -149,9 +149,9 @@ public class GetUserOrganizationsQueryHandlerTests : ApplicationIntegrationTests
         };
     }
 
-    private static UserInfo SetupUserInfo(Guid userId)
+    private static User SetupUserInfo(Guid userId)
     {
-        return new UserInfo
+        return new User
         {
             Id = userId
         };

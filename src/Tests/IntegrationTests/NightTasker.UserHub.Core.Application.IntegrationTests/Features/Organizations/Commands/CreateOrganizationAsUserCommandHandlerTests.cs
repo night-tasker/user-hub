@@ -61,7 +61,7 @@ public class CreateOrganizationAsUserCommandHandlerTests : ApplicationIntegratio
     {
         // Arrange
         var dbContext = GetService<ApplicationDbContext>();
-        dbContext.Set<UserInfo>().Add(SetupUserInfo(UserId));
+        dbContext.Set<User>().Add(SetupUserInfo(UserId));
         await dbContext.SaveChangesAsync();
 
         var createOrganizationAsUserCommand = new CreateOrganizationAsUserCommand(
@@ -90,9 +90,9 @@ public class CreateOrganizationAsUserCommandHandlerTests : ApplicationIntegratio
         organizationUsers[0].Role.Should().Be(OrganizationUserRole.Admin);
     }
 
-    private static UserInfo SetupUserInfo(Guid userId)
+    private static User SetupUserInfo(Guid userId)
     {
-        return new UserInfo
+        return new User
         {
             Id = userId
         };

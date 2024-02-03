@@ -4,11 +4,11 @@ namespace NightTasker.UserHub.Core.Application.Features.UserInfos.Models;
 
 public record UpdateUserInfoDto(Guid Id, string? FirstName, string? MiddleName, string? LastName)
 {
-    public UserInfo MapFieldsToEntity(UserInfo userInfo)
+    public User MapFieldsToEntity(User user)
     {
-        userInfo.UpdateFirstName(FirstName);
-        userInfo.UpdateMiddleName(MiddleName);
-        userInfo.UpdateLastName(LastName);
-        return userInfo;
+        user.UpdateFirstName(FirstName);
+        user.UpdateMiddleName(MiddleName);
+        user.UpdateLastName(LastName);
+        return user;
     }
 };

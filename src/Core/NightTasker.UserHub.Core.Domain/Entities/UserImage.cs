@@ -18,7 +18,7 @@ public class UserImage : IEntityWithId<Guid>, IDateTimeOffsetModification
         
     public Guid UserInfoId { get; set; }
 
-    public UserInfo? UserInfo { get; set; }
+    public User? UserInfo { get; set; }
 
     public DateTimeOffset CreatedDateTimeOffset { get; set; }
     

@@ -2,7 +2,7 @@
 
 namespace NightTasker.UserHub.Core.Domain.Entities;
 
-public class UserInfo : IEntityWithId<Guid>, IDateTimeOffsetModification
+public class User : IEntityWithId<Guid>, IDateTimeOffsetModification
 {
     public Guid Id { get; set; }
 

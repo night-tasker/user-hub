@@ -51,12 +51,12 @@ public class GetOrganizationByIdAsUserQueryHandlerTests : ApplicationIntegration
     {
         // Arrange
         var dbContext = GetService<ApplicationDbContext>();
-        var users = new List<UserInfo>
+        var users = new List<User>
         {
             SetupUserInfo(UserId), SetupUserInfo(Guid.NewGuid()), SetupUserInfo(Guid.NewGuid()), SetupUserInfo(Guid.NewGuid())
         };
         
-        dbContext.Set<UserInfo>().AddRange(users);
+        dbContext.Set<User>().AddRange(users);
         
         var organization = SetupOrganization();
         dbContext.Set<Organization>().Add(organization);
@@ -106,7 +106,7 @@ public class GetOrganizationByIdAsUserQueryHandlerTests : ApplicationIntegration
     {
         // Arrange
         var dbContext = GetService<ApplicationDbContext>();
-        dbContext.Set<UserInfo>().Add(SetupUserInfo(UserId));
+        dbContext.Set<User>().Add(SetupUserInfo(UserId));
         var organization = SetupOrganization();
         dbContext.Set<Organization>().Add(organization);
         await dbContext.SaveChangesAsync();
@@ -141,9 +141,9 @@ public class GetOrganizationByIdAsUserQueryHandlerTests : ApplicationIntegration
         };
     }
 
-    private static UserInfo SetupUserInfo(Guid userId)
+    private static User SetupUserInfo(Guid userId)
     {
-        return new UserInfo
+        return new User
         {
             Id = userId
         };

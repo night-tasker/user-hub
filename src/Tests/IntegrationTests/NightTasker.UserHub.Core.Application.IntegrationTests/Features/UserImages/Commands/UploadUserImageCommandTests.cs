@@ -64,7 +64,7 @@ public class UploadUserImageCommandTests : ApplicationIntegrationTestsBase
             50);
         
         var dbContext = GetService<ApplicationDbContext>();
-        await dbContext.Set<UserInfo>().AddAsync(userInfo);
+        await dbContext.Set<User>().AddAsync(userInfo);
         await dbContext.SaveChangesAsync();
         var sut = GetService<UploadUserImageCommandHandler>();
         
@@ -85,9 +85,9 @@ public class UploadUserImageCommandTests : ApplicationIntegrationTestsBase
         userImage.FileSize.Should().Be(command.FileSize);
     }
     
-    private static UserInfo SetupUserInfo(Guid userId)
+    private static User SetupUserInfo(Guid userId)
     {
-        var userInfo = new UserInfo
+        var userInfo = new User
         {
             Id = userId
         };

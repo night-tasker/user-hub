@@ -48,7 +48,7 @@ public class OrganizationControllerTest() : BaseIntegrationTests(CreateMockedSer
             
         var organization = SetupOrganization();
         
-        var setupUserInfos = new List<UserInfo>
+        var setupUserInfos = new List<User>
         {
             SetupUserInfo(UserId),
             SetupUserInfo(Guid.NewGuid()),
@@ -64,7 +64,7 @@ public class OrganizationControllerTest() : BaseIntegrationTests(CreateMockedSer
         
         await dbContext.Set<Organization>().AddAsync(organization);
         await dbContext.Set<OrganizationUser>().AddRangeAsync(organizationUsers);
-        await dbContext.Set<UserInfo>().AddRangeAsync(setupUserInfos);
+        await dbContext.Set<User>().AddRangeAsync(setupUserInfos);
         await dbContext.SaveChangesAsync();
 
         var getUrl = $"{ApiConstants.DefaultPrefix}/{ApiConstants.V1}/{OrganizationEndpoints.BaseResource}/{organization.Id}";
@@ -96,7 +96,7 @@ public class OrganizationControllerTest() : BaseIntegrationTests(CreateMockedSer
         
         await dbContext.Set<Organization>().AddRangeAsync(firstOrganization, secondOrganization);
         await dbContext.Set<OrganizationUser>().AddRangeAsync(firstOrganizationUser, secondOrganizationUser);
-        await dbContext.Set<UserInfo>().AddAsync(userInfo);
+        await dbContext.Set<User>().AddAsync(userInfo);
         await dbContext.SaveChangesAsync();
         
         const string url = $"{ApiConstants.DefaultPrefix}/{ApiConstants.V1}/{OrganizationEndpoints.BaseResource}";
@@ -135,7 +135,7 @@ public class OrganizationControllerTest() : BaseIntegrationTests(CreateMockedSer
         
         await dbContext.Set<Organization>().AddRangeAsync(firstOrganization);
         await dbContext.Set<OrganizationUser>().AddRangeAsync(firstOrganizationUser);
-        await dbContext.Set<UserInfo>().AddAsync(userInfo);
+        await dbContext.Set<User>().AddAsync(userInfo);
         await dbContext.SaveChangesAsync();
         
         var url = $"{ApiConstants.DefaultPrefix}/{ApiConstants.V1}/{OrganizationEndpoints.BaseResource}/" +
@@ -164,7 +164,7 @@ public class OrganizationControllerTest() : BaseIntegrationTests(CreateMockedSer
         
         await dbContext.Set<Organization>().AddRangeAsync(firstOrganization);
         await dbContext.Set<OrganizationUser>().AddRangeAsync(firstOrganizationUser);
-        await dbContext.Set<UserInfo>().AddAsync(userInfo);
+        await dbContext.Set<User>().AddAsync(userInfo);
         await dbContext.SaveChangesAsync();
         
         var url = $"{ApiConstants.DefaultPrefix}/{ApiConstants.V1}/{OrganizationEndpoints.BaseResource}/" +
@@ -224,9 +224,9 @@ public class OrganizationControllerTest() : BaseIntegrationTests(CreateMockedSer
         };
     }
 
-    private static UserInfo SetupUserInfo(Guid userId)
+    private static User SetupUserInfo(Guid userId)
     {
-        return new UserInfo
+        return new User
         {
             Id = userId
         };
@@ -247,11 +247,11 @@ public class OrganizationControllerTest() : BaseIntegrationTests(CreateMockedSer
     
     private static async Task CreateUserInDatabase(DbContext applicationDbContext, Guid userId)
     {
-        var user = new UserInfo
+        var user = new User
         {
             Id = userId
         };
-        await applicationDbContext.Set<UserInfo>().AddAsync(user);
+        await applicationDbContext.Set<User>().AddAsync(user);
         await applicationDbContext.SaveChangesAsync();
     }
 

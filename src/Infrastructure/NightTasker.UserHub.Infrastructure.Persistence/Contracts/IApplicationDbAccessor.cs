@@ -6,7 +6,7 @@ namespace NightTasker.UserHub.Infrastructure.Persistence.Contracts;
 
 public interface IApplicationDbAccessor
 {
-    ApplicationDbSet<UserInfo, Guid> UserInfos { get; }
+    ApplicationDbSet<User, Guid> UserInfos { get; }
 
     ApplicationDbSet<UserImage, Guid> UserImages { get; }
 
