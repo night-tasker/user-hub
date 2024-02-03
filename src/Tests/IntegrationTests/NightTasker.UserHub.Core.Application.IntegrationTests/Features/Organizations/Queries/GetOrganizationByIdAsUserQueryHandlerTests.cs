@@ -4,11 +4,11 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using NightTasker.Common.Core.Identity.Contracts;
-using NightTasker.UserHub.Core.Application.ApplicationContracts.Repository;
 using NightTasker.UserHub.Core.Application.Exceptions.NotFound;
 using NightTasker.UserHub.Core.Application.Features.Organizations.Queries.GetOrganizationById;
 using NightTasker.UserHub.Core.Domain.Entities;
 using NightTasker.UserHub.Core.Domain.Enums;
+using NightTasker.UserHub.Core.Domain.Repositories;
 using NightTasker.UserHub.Infrastructure.Persistence;
 using NightTasker.UserHub.Infrastructure.Persistence.Contracts;
 using NightTasker.UserHub.Infrastructure.Persistence.Repository.Common;
@@ -98,7 +98,7 @@ public class GetOrganizationByIdAsUserQueryHandlerTests : ApplicationIntegration
         Func<Task> act = async () => await sut.Handle(query, _cancellationTokenSource.Token);
         
         // Assert
-        await act.Should().ThrowAsync<OrganizationNotFoundException>();
+        await act.Should().ThrowAsync<OrganizationUserNotFoundException>();
     }
     
     [Fact]
@@ -118,7 +118,7 @@ public class GetOrganizationByIdAsUserQueryHandlerTests : ApplicationIntegration
         Func<Task> act = async () => await sut.Handle(query, _cancellationTokenSource.Token);
         
         // Assert
-        await act.Should().ThrowAsync<OrganizationNotFoundException>();
+        await act.Should().ThrowAsync<OrganizationUserNotFoundException>();
     }
     
     private static OrganizationUser SetupOrganizationUser(Guid organizationId, Guid userId, OrganizationUserRole role)

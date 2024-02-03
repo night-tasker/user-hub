@@ -1,6 +1,6 @@
-﻿using NightTasker.UserHub.Core.Application.ApplicationContracts.Repository;
-using NightTasker.UserHub.Core.Application.Exceptions.NotFound;
+﻿using NightTasker.UserHub.Core.Application.Exceptions.NotFound;
 using NightTasker.UserHub.Core.Application.Features.Organizations.Queries.GetOrganizationById;
+using NightTasker.UserHub.Core.Domain.Repositories;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 
@@ -25,13 +25,14 @@ public class GetOrganizationByIdAsUserQueryHandlerTests
         var query = new GetOrganizationByIdAsUserQuery(Guid.NewGuid(), Guid.NewGuid());
         _unitOfWork
             .OrganizationRepository
-            .TryGetOrganizationWithInfoForUser(Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>())
+            .TryGetOrganizationForUser(
+                Arg.Any<Guid>(), Arg.Any<Guid>(),  Arg.Any<bool>(), Arg.Any<CancellationToken>())
             .ReturnsNull();
         
         // Act
         var result = _sut.Handle(query, CancellationToken.None);
         
         // Assert
-        Assert.ThrowsAsync<OrganizationNotFoundException>(async () => await result);
+        Assert.ThrowsAsync<OrganizationUserNotFoundException>(async () => await result);
     }
 }

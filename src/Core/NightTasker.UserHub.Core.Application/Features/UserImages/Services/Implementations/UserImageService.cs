@@ -1,19 +1,16 @@
-﻿using MapsterMapper;
-using NightTasker.UserHub.Core.Application.ApplicationContracts.Repository;
-using NightTasker.UserHub.Core.Application.ApplicationContracts.Services;
+﻿using NightTasker.UserHub.Core.Application.ApplicationContracts.Services;
 using NightTasker.UserHub.Core.Application.Exceptions.NotFound;
 using NightTasker.UserHub.Core.Application.Features.UserImages.Models;
 using NightTasker.UserHub.Core.Application.Features.UserImages.Services.Contracts;
 using NightTasker.UserHub.Core.Domain.Entities;
+using NightTasker.UserHub.Core.Domain.Repositories;
 
 namespace NightTasker.UserHub.Core.Application.Features.UserImages.Services.Implementations;
 
 public class UserImageService(
-    IMapper mapper,
     IUnitOfWork unitOfWork,
     IStorageFileService storageFileService) : IUserImageService
 {
-    private readonly IMapper _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     private readonly IUnitOfWork _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
     private readonly IStorageFileService _storageFileService =
         storageFileService ?? throw new ArgumentNullException(nameof(storageFileService));
@@ -23,8 +20,9 @@ public class UserImageService(
     {
         await ValidateUserInfoExists(createUserImageDto.UserInfoId, cancellationToken);
             
-        var userImage = _mapper.Map<UserImage>(createUserImageDto);
-        userImage.IsActive = true;
+        var userImage = createUserImageDto.ToEntity();
+        userImage.ChangeIsActive(true);
+        
         await _unitOfWork.UserImageRepository.Add(userImage, cancellationToken);
         await _unitOfWork.UserImageRepository.SetUnActiveImagesForUserInfoIdExcludeOne(
             userImage.UserInfoId, userImage.Id, cancellationToken);
@@ -89,7 +87,7 @@ public class UserImageService(
     {
         var userImage = await GetImageByIdForUser(userInfoId, userImageId, true, cancellationToken);
 
-        userImage.IsActive = true;
+        userImage.ChangeIsActive(true);
         _unitOfWork.UserImageRepository.Update(userImage);
 
         await _unitOfWork.UserImageRepository.SetUnActiveImagesForUserInfoIdExcludeOne(

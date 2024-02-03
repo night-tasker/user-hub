@@ -1,9 +1,8 @@
-﻿using MapsterMapper;
-using NightTasker.UserHub.Core.Application.ApplicationContracts.Repository;
-using NightTasker.UserHub.Core.Application.Exceptions.NotFound;
+﻿using NightTasker.UserHub.Core.Application.Exceptions.NotFound;
 using NightTasker.UserHub.Core.Application.Features.OrganizationUsers.Models;
 using NightTasker.UserHub.Core.Application.Features.OrganizationUsers.Services.Implementations;
 using NightTasker.UserHub.Core.Domain.Enums;
+using NightTasker.UserHub.Core.Domain.Repositories;
 using NSubstitute;
 
 namespace NightTasker.UserHub.Core.Application.UnitTests.Features.OrganizationUsers.Services;
@@ -11,15 +10,13 @@ namespace NightTasker.UserHub.Core.Application.UnitTests.Features.OrganizationUs
 public class OrganizationUserServiceTests
 {
     private IUnitOfWork _unitOfWork = null!;
-    private IMapper _mapper = null!;
     private OrganizationUserService _sut = null!;
 
     [SetUp]
     public void Setup()
     {
         _unitOfWork = Substitute.For<IUnitOfWork>();
-        _mapper = Substitute.For<IMapper>();
-        _sut = new OrganizationUserService(_unitOfWork, _mapper);
+        _sut = new OrganizationUserService(_unitOfWork);
     }
 
     [Test]

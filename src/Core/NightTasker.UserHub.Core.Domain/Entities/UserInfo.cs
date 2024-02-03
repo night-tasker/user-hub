@@ -23,4 +23,29 @@ public class UserInfo : IEntityWithId<Guid>, IDateTimeOffsetModification
     public DateTimeOffset CreatedDateTimeOffset { get; set; }
     
     public DateTimeOffset? UpdatedDateTimeOffset { get; set; }
+
+    public void UpdateUserName(string? userName)
+    {
+        UserName = userName;
+    }
+
+    public void UpdateEmail(string? email)
+    {
+        Email = email;
+    }
+
+    public void UpdateFirstName(string? firstName)
+    {
+        FirstName = firstName;
+    }
+
+    public void UpdateMiddleName(string? middleName)
+    {
+        MiddleName = middleName;
+    }
+
+    public void UpdateLastName(string? lastName)
+    {
+        LastName = lastName;
+    }
 }

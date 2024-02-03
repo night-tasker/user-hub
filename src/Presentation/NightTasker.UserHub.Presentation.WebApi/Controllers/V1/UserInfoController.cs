@@ -1,5 +1,4 @@
-﻿using MapsterMapper;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NightTasker.Common.Core.Identity.Contracts;
@@ -20,13 +19,11 @@ namespace NightTasker.UserHub.Presentation.WebApi.Controllers.V1;
 [Route($"{ApiConstants.DefaultPrefix}/{ApiConstants.V1}/{UserInfoEndpoints.UserInfoResource}")]
 public class UserInfoController(
     IIdentityService identityService,
-    ISender sender,
-    IMapper mapper) : ControllerBase
+    ISender sender) : ControllerBase
 {
     private readonly IIdentityService _identityService =
         identityService ?? throw new ArgumentNullException(nameof(identityService));
     private readonly ISender _sender = sender ?? throw new ArgumentNullException(nameof(sender));
-    private readonly IMapper _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
 
     /// <summary>
     /// Эндпоинт для получения информации о пользователе.
@@ -53,8 +50,7 @@ public class UserInfoController(
         CancellationToken cancellationToken)
     {
         var currentUserId = _identityService.CurrentUserId!.Value;
-        var command = _mapper.Map<UpdateUserInfoCommand>(request);
-        command.Id = currentUserId;
+        var command = new UpdateUserInfoCommand(currentUserId, request.FirstName, request.MiddleName, request.LastName);
         await _sender.Send(command, cancellationToken);
         return Ok();
     }

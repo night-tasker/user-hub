@@ -1,7 +1,7 @@
 ﻿using MediatR;
-using NightTasker.UserHub.Core.Application.ApplicationContracts.Repository;
 using NightTasker.UserHub.Core.Application.Exceptions.NotFound;
 using NightTasker.UserHub.Core.Domain.Enums;
+using NightTasker.UserHub.Core.Domain.Repositories;
 
 namespace NightTasker.UserHub.Core.Application.Features.OrganizationUsers.Queries.GetOrganizationUserRole;
 

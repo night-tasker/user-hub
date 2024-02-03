@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NightTasker.Common.Core.Persistence;
 using NightTasker.Common.Core.Persistence.Repository;
-using NightTasker.UserHub.Core.Application.ApplicationContracts.Repository;
 using NightTasker.UserHub.Core.Domain.Entities;
+using NightTasker.UserHub.Core.Domain.Repositories;
 
 namespace NightTasker.UserHub.Infrastructure.Persistence.Repository;
 

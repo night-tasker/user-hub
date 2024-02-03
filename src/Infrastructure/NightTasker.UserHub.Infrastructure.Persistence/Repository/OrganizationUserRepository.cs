@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NightTasker.Common.Core.Persistence;
 using NightTasker.Common.Core.Persistence.Repository;
-using NightTasker.UserHub.Core.Application.ApplicationContracts.Repository;
 using NightTasker.UserHub.Core.Domain.Entities;
 using NightTasker.UserHub.Core.Domain.Enums;
+using NightTasker.UserHub.Core.Domain.Repositories;
 
 namespace NightTasker.UserHub.Infrastructure.Persistence.Repository;
 
@@ -18,5 +18,11 @@ public class OrganizationUserRepository(ApplicationDbSet<OrganizationUser, Guid>
             .SingleOrDefaultAsync(cancellationToken);
         
         return organizationUser?.Role;
+    }
+
+    public async Task<int> GetUsersCountInOrganization(Guid organizationId, CancellationToken cancellationToken)
+    {
+        return await Entities
+            .CountAsync(x => x.OrganizationId == organizationId, cancellationToken);
     }
 }

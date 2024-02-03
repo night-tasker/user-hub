@@ -1,11 +1,10 @@
 ﻿using Bogus;
 using FluentAssertions;
-using MapsterMapper;
-using NightTasker.UserHub.Core.Application.ApplicationContracts.Repository;
 using NightTasker.UserHub.Core.Application.ApplicationContracts.Services;
 using NightTasker.UserHub.Core.Application.Exceptions.NotFound;
 using NightTasker.UserHub.Core.Application.Features.UserImages.Models;
 using NightTasker.UserHub.Core.Application.Features.UserImages.Services.Implementations;
+using NightTasker.UserHub.Core.Domain.Repositories;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 
@@ -21,8 +20,7 @@ public class UserImageServiceTests
     public void Setup()
     {
         _unitOfWork = Substitute.For<IUnitOfWork>();
-        _sut = new UserImageService(
-            Substitute.For<IMapper>(), _unitOfWork, Substitute.For<IStorageFileService>());
+        _sut = new UserImageService(_unitOfWork, Substitute.For<IStorageFileService>());
         _faker = new Faker();
     }
 

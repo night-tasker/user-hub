@@ -1,6 +1,4 @@
-﻿using MapsterMapper;
-using MediatR;
-using NightTasker.UserHub.Core.Application.Features.Organizations.Models;
+﻿using MediatR;
 using NightTasker.UserHub.Core.Application.Features.Organizations.Services.Contracts;
 using NightTasker.UserHub.Core.Application.Features.OrganizationUsers.Models;
 using NightTasker.UserHub.Core.Application.Features.OrganizationUsers.Services.Contracts;
@@ -10,19 +8,17 @@ namespace NightTasker.UserHub.Core.Application.Features.Organizations.Commands.C
 
 internal class CreateOrganizationAsUserCommandHandler(
     IOrganizationService organizationService,
-    IOrganizationUserService organizationUserService,
-    IMapper mapper)
+    IOrganizationUserService organizationUserService)
     : IRequestHandler<CreateOrganizationAsUserCommand, Guid>
 {
     private readonly IOrganizationService _organizationService = 
         organizationService ?? throw new ArgumentNullException(nameof(organizationService));
-    private readonly IMapper _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     private readonly IOrganizationUserService _organizationUserService = 
         organizationUserService ?? throw new ArgumentNullException(nameof(organizationUserService));
 
     public async Task<Guid> Handle(CreateOrganizationAsUserCommand request, CancellationToken cancellationToken)
     {
-        var createOrganizationDto = _mapper.Map<CreateOrganizationDto>(request);
+        var createOrganizationDto = request.ToCreateOrganizationDto();
         var organizationId = await _organizationService.CreateOrganization(
             createOrganizationDto, cancellationToken);
         

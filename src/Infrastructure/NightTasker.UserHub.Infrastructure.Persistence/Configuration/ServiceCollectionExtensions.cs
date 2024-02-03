@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using NightTasker.UserHub.Core.Application.ApplicationContracts.Repository;
+using NightTasker.UserHub.Core.Domain.Repositories;
 using NightTasker.UserHub.Infrastructure.Persistence.Repository.Common;
 
 namespace NightTasker.UserHub.Infrastructure.Persistence.Configuration;

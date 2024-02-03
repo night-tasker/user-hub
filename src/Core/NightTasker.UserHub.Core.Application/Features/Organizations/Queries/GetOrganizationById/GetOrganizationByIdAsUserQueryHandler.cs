@@ -1,7 +1,7 @@
 ﻿using MediatR;
-using NightTasker.UserHub.Core.Application.ApplicationContracts.Repository;
 using NightTasker.UserHub.Core.Application.Exceptions.NotFound;
 using NightTasker.UserHub.Core.Application.Models.Organization;
+using NightTasker.UserHub.Core.Domain.Repositories;
 
 namespace NightTasker.UserHub.Core.Application.Features.Organizations.Queries.GetOrganizationById;
 
@@ -12,14 +12,15 @@ internal class GetOrganizationByIdAsUserQueryHandler(
 
     public async Task<OrganizationWithInfoDto> Handle(GetOrganizationByIdAsUserQuery request, CancellationToken cancellationToken)
     {
-        var organization = await _unitOfWork.OrganizationRepository.TryGetOrganizationWithInfoForUser(
-            request.OrganizationId, request.UserId, cancellationToken);
+        var organization = await _unitOfWork.OrganizationRepository.TryGetOrganizationForUser(
+            request.UserId, request.OrganizationId, false, cancellationToken);
 
         if (organization is null)
         {
-            throw new OrganizationNotFoundException(request.OrganizationId);   
+            throw new OrganizationUserNotFoundException(request.OrganizationId, request.UserId);   
         }
         
-        return organization;
+        return await OrganizationWithInfoDto.FromEntity(
+            organization, _unitOfWork.OrganizationUserRepository, cancellationToken);
     }
 }

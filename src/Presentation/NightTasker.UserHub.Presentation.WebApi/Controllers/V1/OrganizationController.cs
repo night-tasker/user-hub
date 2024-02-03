@@ -105,7 +105,7 @@ public class OrganizationController(
         CancellationToken cancellationToken)
     {
         var userId = _identityService.CurrentUserId!.Value;
-        var command = new UpdateOrganizationAsUserCommand(organizationId, userId, request);
+        var command = new UpdateOrganizationAsUserCommand(userId, organizationId, request);
         await _mediator.Send(command, cancellationToken);
         return Ok();
     }

@@ -7,7 +7,6 @@
     </PropertyGroup>
     
     <ItemGroup>
-        <PackageReference Include="Mapster" Version="7.4.0" />
         <PackageReference Include="MediatR" Version="12.2.0" />
         <PackageReference Include="NightTasker.Common.Messaging" Version="1.0.3" />
     </ItemGroup>

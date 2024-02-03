@@ -1,7 +1,7 @@
 ﻿using NightTasker.Common.Core.Persistence.Repository;
 using NightTasker.UserHub.Core.Domain.Entities;
 
-namespace NightTasker.UserHub.Core.Application.ApplicationContracts.Repository;
+namespace NightTasker.UserHub.Core.Domain.Repositories;
 
 public interface IUserInfoRepository : IRepository<UserInfo, Guid>
 {

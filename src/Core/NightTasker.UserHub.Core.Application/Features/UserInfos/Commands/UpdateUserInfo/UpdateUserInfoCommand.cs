@@ -1,14 +1,12 @@
 ﻿using MediatR;
+using NightTasker.UserHub.Core.Application.Features.UserInfos.Models;
 
 namespace NightTasker.UserHub.Core.Application.Features.UserInfos.Commands.UpdateUserInfo;
 
-public class UpdateUserInfoCommand : IRequest<Unit>
+public record UpdateUserInfoCommand(Guid Id, string? FirstName, string? MiddleName, string? LastName) : IRequest<Unit>
 {
-    public Guid Id { get; set; }
-    
-    public string? FirstName { get; set; }
-    
-    public string? MiddleName { get; set; }
-    
-    public string? LastName { get; set; }
+    public UpdateUserInfoDto ToUpdateUserInfoDto()
+    {
+        return new UpdateUserInfoDto(Id, FirstName, MiddleName, LastName);
+    }
 }

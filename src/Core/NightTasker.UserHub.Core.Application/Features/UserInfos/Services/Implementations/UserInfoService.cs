@@ -1,22 +1,19 @@
-﻿using MapsterMapper;
-using NightTasker.UserHub.Core.Application.ApplicationContracts.Repository;
-using NightTasker.UserHub.Core.Application.Exceptions.NotFound;
+﻿using NightTasker.UserHub.Core.Application.Exceptions.NotFound;
 using NightTasker.UserHub.Core.Application.Features.UserInfos.Models;
 using NightTasker.UserHub.Core.Application.Features.UserInfos.Services.Contracts;
 using NightTasker.UserHub.Core.Domain.Entities;
+using NightTasker.UserHub.Core.Domain.Repositories;
 
 namespace NightTasker.UserHub.Core.Application.Features.UserInfos.Services.Implementations;
 
 public class UserInfoService(
-    IUnitOfWork unitOfWork,
-    IMapper mapper) : IUserInfoService
+    IUnitOfWork unitOfWork) : IUserInfoService
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
-    private readonly IMapper _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
 
     public async Task CreateUserInfo(CreateUserInfoDto createUserInfoDto, CancellationToken cancellationToken)
     {
-        var userInfo = _mapper.Map<UserInfo>(createUserInfoDto);
+        var userInfo = createUserInfoDto.ToEntity();
         await _unitOfWork.UserInfoRepository.Add(userInfo, cancellationToken);
         await _unitOfWork.SaveChanges(cancellationToken);
     }
@@ -24,7 +21,7 @@ public class UserInfoService(
     public async Task UpdateUserInfo(UpdateUserInfoDto updateUserInfoDto, CancellationToken cancellationToken)
     {
         var userInfo = await GetUserInfoById(updateUserInfoDto.Id, true, cancellationToken);
-        _mapper.Map(updateUserInfoDto, userInfo);
+        userInfo = updateUserInfoDto.MapFieldsToEntity(userInfo);
         _unitOfWork.UserInfoRepository.Update(userInfo);
         await _unitOfWork.SaveChanges(cancellationToken);
     }

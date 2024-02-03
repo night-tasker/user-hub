@@ -1,3 +1,15 @@
-﻿namespace NightTasker.UserHub.Core.Application.Features.Organizations.Models;
+﻿using NightTasker.UserHub.Core.Domain.Entities;
 
-public record CreateOrganizationDto(string Name, string Description);
+namespace NightTasker.UserHub.Core.Application.Features.Organizations.Models;
+
+public record CreateOrganizationDto(string Name, string? Description)
+{
+    public Organization ToEntity()
+    {
+        return new Organization
+        {
+            Name = Name,
+            Description = Description
+        };
+    }
+};

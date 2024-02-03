@@ -23,4 +23,9 @@ public class UserImage : IEntityWithId<Guid>, IDateTimeOffsetModification
     public DateTimeOffset CreatedDateTimeOffset { get; set; }
     
     public DateTimeOffset? UpdatedDateTimeOffset { get; set; }
+
+    public void ChangeIsActive(bool isActive)
+    {
+        IsActive = isActive;
+    }
 }

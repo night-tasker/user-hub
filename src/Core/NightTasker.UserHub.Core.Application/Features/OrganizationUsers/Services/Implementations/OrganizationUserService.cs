@@ -1,18 +1,14 @@
-﻿using MapsterMapper;
-using NightTasker.UserHub.Core.Application.ApplicationContracts.Repository;
-using NightTasker.UserHub.Core.Application.Exceptions.NotFound;
+﻿using NightTasker.UserHub.Core.Application.Exceptions.NotFound;
 using NightTasker.UserHub.Core.Application.Features.OrganizationUsers.Models;
 using NightTasker.UserHub.Core.Application.Features.OrganizationUsers.Services.Contracts;
-using NightTasker.UserHub.Core.Domain.Entities;
+using NightTasker.UserHub.Core.Domain.Repositories;
 
 namespace NightTasker.UserHub.Core.Application.Features.OrganizationUsers.Services.Implementations;
 
 public class OrganizationUserService(
-    IUnitOfWork unitOfWork,
-    IMapper mapper) : IOrganizationUserService
+    IUnitOfWork unitOfWork) : IOrganizationUserService
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
-    private readonly IMapper _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
 
     public async Task CreateOrganizationUser(
         CreateOrganizationUserDto organizationUserDto, CancellationToken cancellationToken)
@@ -20,7 +16,7 @@ public class OrganizationUserService(
         await ValidateUserInfoExists(organizationUserDto.UserId, cancellationToken);
         await ValidateOrganizationExists(organizationUserDto.OrganizationId, cancellationToken);
 
-        var organizationUser = _mapper.Map<OrganizationUser>(organizationUserDto);
+        var organizationUser = organizationUserDto.ToEntity();
         await _unitOfWork.OrganizationUserRepository.Add(organizationUser, cancellationToken);
         await _unitOfWork.SaveChanges(cancellationToken);
     }

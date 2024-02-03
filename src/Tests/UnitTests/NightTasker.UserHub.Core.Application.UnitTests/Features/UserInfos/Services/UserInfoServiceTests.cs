@@ -1,10 +1,9 @@
 ﻿using Bogus;
 using FluentAssertions;
-using MapsterMapper;
-using NightTasker.UserHub.Core.Application.ApplicationContracts.Repository;
 using NightTasker.UserHub.Core.Application.Exceptions.NotFound;
 using NightTasker.UserHub.Core.Application.Features.UserInfos.Models;
 using NightTasker.UserHub.Core.Application.Features.UserInfos.Services.Implementations;
+using NightTasker.UserHub.Core.Domain.Repositories;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 
@@ -20,7 +19,7 @@ public class UserInfoServiceTests
     public void Setup()
     {
         _unitOfWork = Substitute.For<IUnitOfWork>();
-        _sut = new UserInfoService(_unitOfWork, Substitute.For<IMapper>());
+        _sut = new UserInfoService(_unitOfWork);
         _faker = new Faker();
     }
 

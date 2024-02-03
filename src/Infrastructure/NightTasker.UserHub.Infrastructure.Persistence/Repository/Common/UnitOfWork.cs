@@ -1,4 +1,4 @@
-﻿using NightTasker.UserHub.Core.Application.ApplicationContracts.Repository;
+﻿using NightTasker.UserHub.Core.Domain.Repositories;
 using NightTasker.UserHub.Infrastructure.Persistence.Contracts;
 
 namespace NightTasker.UserHub.Infrastructure.Persistence.Repository.Common;

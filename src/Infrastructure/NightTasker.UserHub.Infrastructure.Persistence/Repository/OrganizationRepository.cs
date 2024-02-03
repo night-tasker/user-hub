@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NightTasker.Common.Core.Persistence;
 using NightTasker.Common.Core.Persistence.Repository;
-using NightTasker.UserHub.Core.Application.ApplicationContracts.Repository;
 using NightTasker.UserHub.Core.Application.Models.Organization;
 using NightTasker.UserHub.Core.Domain.Entities;
+using NightTasker.UserHub.Core.Domain.Repositories;
 
 namespace NightTasker.UserHub.Infrastructure.Persistence.Repository;
 
@@ -21,6 +21,13 @@ public class OrganizationRepository(ApplicationDbSet<Organization, Guid> dbSet)
         }
         
         return await query.ToListAsync(cancellationToken);
+    }
+
+    public Task<int> GetUsersCount(Guid organizationId, CancellationToken cancellationToken)
+    {
+        return Entities
+            .Where(x => x.Id == organizationId)
+            .CountAsync(cancellationToken);
     }
 
     public async Task<OrganizationWithInfoDto?> TryGetOrganizationWithInfoForUser(Guid id, Guid userId, CancellationToken cancellationToken)
@@ -50,17 +57,19 @@ public class OrganizationRepository(ApplicationDbSet<Organization, Guid> dbSet)
     }
 
     public Task<Organization?> TryGetOrganizationForUser(
-        Guid userInfoId, Guid id, bool trackChanges, CancellationToken cancellationToken)
+        Guid userInfoId, Guid organizationId, bool trackChanges, CancellationToken cancellationToken)
     {
-        var query = Entities;
+        var query = Entities
+            .Where(x => x.Id == organizationId
+                        && x.OrganizationUsers.Any(y => y.UserId == userInfoId));
+        
         if (!trackChanges)
         {
             query = query.AsNoTracking();
         }
         
         return query
-            .SingleOrDefaultAsync(x => x.Id == id 
-                                       && x.OrganizationUsers.Any(y => y.UserId == userInfoId), cancellationToken);
+            .SingleOrDefaultAsync(cancellationToken);
     }
 
     private IQueryable<Organization> UserOrganizationsQuery(Guid userId)

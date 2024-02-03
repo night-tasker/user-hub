@@ -5,7 +5,6 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using NightTasker.Common.Core.Identity.Contracts;
-using NightTasker.UserHub.Core.Application.ApplicationContracts.Repository;
 using NightTasker.UserHub.Core.Application.Features.Organizations.Commands.CreateOrganizationAsUser;
 using NightTasker.UserHub.Core.Application.Features.Organizations.Services.Contracts;
 using NightTasker.UserHub.Core.Application.Features.Organizations.Services.Implementations;
@@ -13,6 +12,7 @@ using NightTasker.UserHub.Core.Application.Features.OrganizationUsers.Services.C
 using NightTasker.UserHub.Core.Application.Features.OrganizationUsers.Services.Implementations;
 using NightTasker.UserHub.Core.Domain.Entities;
 using NightTasker.UserHub.Core.Domain.Enums;
+using NightTasker.UserHub.Core.Domain.Repositories;
 using NightTasker.UserHub.Infrastructure.Persistence;
 using NightTasker.UserHub.Infrastructure.Persistence.Contracts;
 using NightTasker.UserHub.Infrastructure.Persistence.Repository.Common;
@@ -38,13 +38,11 @@ public class CreateOrganizationAsUserCommandHandlerTests : ApplicationIntegratio
             serviceProvider => new UnitOfWork(serviceProvider.GetRequiredService<IApplicationDbAccessor>()), ServiceLifetime.Scoped));
         RegisterService(new ServiceForRegister(typeof(IOrganizationService), 
             serviceProvider => new OrganizationService(
-                serviceProvider.GetRequiredService<IUnitOfWork>(), 
-                serviceProvider.GetRequiredService<IMapper>()), ServiceLifetime.Scoped));
+                serviceProvider.GetRequiredService<IUnitOfWork>()), ServiceLifetime.Scoped));
         
         RegisterService(new ServiceForRegister(typeof(IOrganizationUserService), 
             serviceProvider => new OrganizationUserService(
-                serviceProvider.GetRequiredService<IUnitOfWork>(), 
-                serviceProvider.GetRequiredService<IMapper>()), ServiceLifetime.Scoped));
+                serviceProvider.GetRequiredService<IUnitOfWork>()), ServiceLifetime.Scoped));
         RegisterService(new ServiceForRegister(typeof(CreateOrganizationAsUserCommandHandler)));
         
         BuildServiceProvider();

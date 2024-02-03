@@ -63,4 +63,14 @@ public abstract class ApplicationIntegrationTestsBase
     {
         return _serviceProvider.GetRequiredService<T>();
     }
+
+    protected IServiceScope CreateScope()
+    {
+        return _serviceProvider.CreateScope();
+    }
+
+    protected AsyncServiceScope CreateAsyncScope()
+    {
+        return _serviceProvider.CreateAsyncScope();
+    }
 }

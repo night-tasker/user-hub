@@ -4,12 +4,12 @@ using MapsterMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using NightTasker.UserHub.Core.Application.ApplicationContracts.Repository;
 using NightTasker.UserHub.Core.Application.ApplicationContracts.Services;
 using NightTasker.UserHub.Core.Application.Features.UserImages.Commands.UploadUserImage;
 using NightTasker.UserHub.Core.Application.Features.UserImages.Services.Contracts;
 using NightTasker.UserHub.Core.Application.Features.UserImages.Services.Implementations;
 using NightTasker.UserHub.Core.Domain.Entities;
+using NightTasker.UserHub.Core.Domain.Repositories;
 using NightTasker.UserHub.Infrastructure.Persistence;
 using NightTasker.UserHub.Infrastructure.Persistence.Contracts;
 using NightTasker.UserHub.Infrastructure.Persistence.Repository.Common;
@@ -37,7 +37,6 @@ public class UploadUserImageCommandTests : ApplicationIntegrationTestsBase
             typeof(IStorageFileService), _ => Substitute.For<IStorageFileService>(), ServiceLifetime.Scoped));
         
         RegisterService(new ServiceForRegister(typeof(IUserImageService), serviceProvider => new UserImageService(
-            serviceProvider.GetRequiredService<IMapper>(), 
             serviceProvider.GetRequiredService<IUnitOfWork>(), 
             Substitute.For<IStorageFileService>()), ServiceLifetime.Scoped));
         
