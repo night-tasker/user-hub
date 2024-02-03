@@ -36,7 +36,7 @@ public static class ServiceCollectionExtensions
         services.ConfigureAuthentication(configuration);
         services.AddHttpContextAccessor();
         services.AddScoped<IIdentityService, IdentityService>();
-        services.AddScoped<IApplicationDbAccessor, ApplicationDbAccessor>();
+        services.AddScoped<IApplicationDataAccessor, ApplicationDataAccessor>();
         services.AddValidation();
         return services;
     }

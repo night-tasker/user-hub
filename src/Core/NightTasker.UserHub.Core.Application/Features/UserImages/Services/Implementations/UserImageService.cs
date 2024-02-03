@@ -18,24 +18,24 @@ public class UserImageService(
     public async Task<Guid> CreateUserImage(
         CreateUserImageDto createUserImageDto, CancellationToken cancellationToken)
     {
-        await ValidateUserInfoExists(createUserImageDto.UserInfoId, cancellationToken);
+        await ValidateUserExists(createUserImageDto.UserId, cancellationToken);
             
         var userImage = createUserImageDto.ToEntity();
         userImage.ChangeIsActive(true);
         
         await _unitOfWork.UserImageRepository.Add(userImage, cancellationToken);
-        await _unitOfWork.UserImageRepository.SetUnActiveImagesForUserInfoIdExcludeOne(
-            userImage.UserInfoId, userImage.Id, cancellationToken);
+        await _unitOfWork.UserImageRepository.SetUnActiveImagesForUserIdExcludeOne(
+            userImage.UserId, userImage.Id, cancellationToken);
         await _unitOfWork.SaveChanges(cancellationToken);
 
         return userImage.Id;
     }
 
-    public async Task<UserImageWithStreamDto> DownloadActiveUserImageByUserInfoId(Guid userInfoId,
+    public async Task<UserImageWithStreamDto> DownloadActiveUserImageByUserId(Guid userId,
         CancellationToken cancellationToken)
     {
-        var userImage = await GetActiveImageByUserInfoId(
-            userInfoId, false, cancellationToken);
+        var userImage = await GetActiveImageByUserId(
+            userId, false, cancellationToken);
 
         var downloadedFileDto = await _storageFileService.DownloadFile(userImage.Id, cancellationToken);
         var fileStream = new MemoryStream(downloadedFileDto.File);
@@ -44,20 +44,20 @@ public class UserImageService(
         return userImageDto;
     }
 
-    public async Task<string> GetUserActiveImageUrlByUserInfoId(Guid userInfoId, CancellationToken cancellationToken)
+    public async Task<string> GetUserActiveImageUrlByUserId(Guid userId, CancellationToken cancellationToken)
     {
-        var userImage = await GetActiveImageByUserInfoId(
-            userInfoId, false, cancellationToken);
+        var userImage = await GetActiveImageByUserId(
+            userId, false, cancellationToken);
 
         var fileUrl = await _storageFileService.GetFileUrl(userImage.Id, cancellationToken);
         return fileUrl;
     }
 
-    public async Task<IReadOnlyCollection<UserImageWithUrlDto>> GetUserImagesByUserInfoId(
-        Guid userInfoId, CancellationToken cancellationToken)
+    public async Task<IReadOnlyCollection<UserImageWithUrlDto>> GetUserImagesByUserId(
+        Guid userId, CancellationToken cancellationToken)
     {
         var userImages =
-            await _unitOfWork.UserImageRepository.GetImageIdsWithActiveByUserInfoId(userInfoId, cancellationToken);
+            await _unitOfWork.UserImageRepository.GetImageIdsWithActiveByUserId(userId, cancellationToken);
         
         if (!userImages.Any())
         {
@@ -82,25 +82,25 @@ public class UserImageService(
         await _storageFileService.RemoveFile(userImageId, cancellationToken);
     }
 
-    public async Task SetActiveUserImageForUserInfoId(
-        Guid userInfoId, Guid userImageId, CancellationToken cancellationToken)
+    public async Task SetActiveUserImageForUser(
+        Guid userId, Guid userImageId, CancellationToken cancellationToken)
     {
-        var userImage = await GetImageByIdForUser(userInfoId, userImageId, true, cancellationToken);
+        var userImage = await GetImageByIdForUser(userId, userImageId, true, cancellationToken);
 
         userImage.ChangeIsActive(true);
         _unitOfWork.UserImageRepository.Update(userImage);
 
-        await _unitOfWork.UserImageRepository.SetUnActiveImagesForUserInfoIdExcludeOne(
-            userInfoId, userImageId, cancellationToken);
+        await _unitOfWork.UserImageRepository.SetUnActiveImagesForUserIdExcludeOne(
+            userId, userImageId, cancellationToken);
 
         await _unitOfWork.SaveChanges(cancellationToken);
     }
 
     private async Task<UserImage> GetImageByIdForUser(
-        Guid userInfoId, Guid userImageId, bool trackChanges, CancellationToken cancellationToken)
+        Guid userId, Guid userImageId, bool trackChanges, CancellationToken cancellationToken)
     {
         var userImage = await _unitOfWork.UserImageRepository.TryGetImageByIdForUser(
-            userImageId, userInfoId, trackChanges, cancellationToken);
+            userImageId, userId, trackChanges, cancellationToken);
 
         if (userImage == null)
         {
@@ -110,33 +110,33 @@ public class UserImageService(
         return userImage;
     }
 
-    private async Task<UserImage> GetActiveImageByUserInfoId(
-        Guid userInfoId, bool trackChanges, CancellationToken cancellationToken)
+    private async Task<UserImage> GetActiveImageByUserId(
+        Guid userId, bool trackChanges, CancellationToken cancellationToken)
     {
-        var userImage = await _unitOfWork.UserImageRepository.TryGetActiveImageByUserInfoId(
-            userInfoId, trackChanges, cancellationToken);
+        var userImage = await _unitOfWork.UserImageRepository.TryGetActiveImageByUserId(
+            userId, trackChanges, cancellationToken);
 
         if (userImage == null)
         {
-            throw new ActiveUserImageForUserInfoIdNotFoundException(userInfoId);
+            throw new ActiveUserImageForUserIdNotFoundException(userId);
         }
         
         return userImage;
     }
 
-    private async Task ValidateUserInfoExists(Guid userInfoId, CancellationToken cancellationToken)
+    private async Task ValidateUserExists(Guid userId, CancellationToken cancellationToken)
     {
-        var userInfo = await _unitOfWork.UserInfoRepository.TryGetById(userInfoId, false, cancellationToken);
-        if (userInfo is null)
+        var user = await _unitOfWork.UserRepository.TryGetById(userId, false, cancellationToken);
+        if (user is null)
         {
-            throw new UserInfoNotFoundException(userInfoId);
+            throw new UserNotFoundException(userId);
         }
     }
 
-    private async Task ValidateUserImageExists(Guid userInfoId, Guid userImageId, CancellationToken cancellationToken)
+    private async Task ValidateUserImageExists(Guid userId, Guid userImageId, CancellationToken cancellationToken)
     {
         var userImageExists =
-            await _unitOfWork.UserImageRepository.CheckImageForUserExists(userInfoId, userImageId, cancellationToken);
+            await _unitOfWork.UserImageRepository.CheckImageForUserExists(userId, userImageId, cancellationToken);
 
         if (!userImageExists)
         {

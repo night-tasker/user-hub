@@ -26,11 +26,11 @@ public class SetActiveImageForUserCommandTests : ApplicationIntegrationTestsBase
 
     public SetActiveImageForUserCommandTests()
     {
-        RegisterService(new ServiceForRegister(typeof(IApplicationDbAccessor), serviceProvider => new ApplicationDbAccessor(
+        RegisterService(new ServiceForRegister(typeof(IApplicationDataAccessor), serviceProvider => new ApplicationDataAccessor(
             serviceProvider.GetRequiredService<ApplicationDbContext>()), ServiceLifetime.Scoped));
         
         RegisterService(new ServiceForRegister(typeof(IUnitOfWork), 
-            serviceProvider => new UnitOfWork(serviceProvider.GetRequiredService<IApplicationDbAccessor>()), ServiceLifetime.Scoped));
+            serviceProvider => new UnitOfWork(serviceProvider.GetRequiredService<IApplicationDataAccessor>()), ServiceLifetime.Scoped));
         
         RegisterService(new ServiceForRegister(typeof(IUserImageService), serviceProvider => new UserImageService(
             serviceProvider.GetRequiredService<IUnitOfWork>(), 
@@ -49,15 +49,15 @@ public class SetActiveImageForUserCommandTests : ApplicationIntegrationTestsBase
     public async Task Handle_ImageIsNotActive_CurrentImageIsActive()
     {
         // Arrange
-        var userInfo = SetupUserInfo(Guid.NewGuid());
-        var userImageForUpdate = SetupUserImage(userInfo.Id, false);
+        var user = SetupUser(Guid.NewGuid());
+        var userImageForUpdate = SetupUserImage(user.Id, false);
         
         var dbContext = GetService<ApplicationDbContext>();
-        await dbContext.Set<User>().AddAsync(userInfo);
+        await dbContext.Set<User>().AddAsync(user);
         await dbContext.Set<UserImage>().AddAsync(userImageForUpdate);
         await dbContext.SaveChangesAsync();
         
-        var command = new SetActiveImageForUserCommand(userInfo.Id, userImageForUpdate.Id);
+        var command = new SetActiveImageForUserCommand(user.Id, userImageForUpdate.Id);
         var sut = GetService<SetActiveImageForUserCommandHandler>();
         
         // Act
@@ -65,7 +65,7 @@ public class SetActiveImageForUserCommandTests : ApplicationIntegrationTestsBase
         
         // Assert
         var allImages = await dbContext.Set<UserImage>()
-            .Where(x => x.UserInfoId == userInfo.Id)
+            .Where(x => x.UserId == user.Id)
             .ToListAsync();
         
         var activeImages = allImages.Where(x => x.IsActive).ToList();
@@ -77,9 +77,9 @@ public class SetActiveImageForUserCommandTests : ApplicationIntegrationTestsBase
     public async Task Handle_ImageNotExist_ThrowsUserImageWithIdNotFoundException()
     {
         // Arrange
-        var userInfoId = Guid.NewGuid();
+        var userId = Guid.NewGuid();
         var userImageId = Guid.NewGuid();
-        var command = new SetActiveImageForUserCommand(userInfoId, userImageId);
+        var command = new SetActiveImageForUserCommand(userId, userImageId);
         var sut = GetService<SetActiveImageForUserCommandHandler>();
         
         // Act
@@ -89,21 +89,21 @@ public class SetActiveImageForUserCommandTests : ApplicationIntegrationTestsBase
         await func.Should().ThrowAsync<UserImageWithIdNotFoundException>();
     }
     
-    private static User SetupUserInfo(Guid userId)
+    private static User SetupUser(Guid userId)
     {
-        var userInfo = new User
+        var user = new User
         {
             Id = userId
         };
         
-        return userInfo;
+        return user;
     }
 
     private static UserImage SetupUserImage(Guid userId, bool isActive)
     {
         var userImage = new UserImage
         {
-            UserInfoId = userId,
+            UserId = userId,
             IsActive = isActive
         };
         

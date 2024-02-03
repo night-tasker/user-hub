@@ -27,10 +27,10 @@ public class GetUserOrganizationsQueryHandlerTests : ApplicationIntegrationTests
     public GetUserOrganizationsQueryHandlerTests()
     {
         var identityService = Substitute.For<IIdentityService>();
-        RegisterService(new ServiceForRegister(typeof(IApplicationDbAccessor), serviceProvider => new ApplicationDbAccessor(
+        RegisterService(new ServiceForRegister(typeof(IApplicationDataAccessor), serviceProvider => new ApplicationDataAccessor(
             serviceProvider.GetRequiredService<ApplicationDbContext>()), ServiceLifetime.Scoped));
         RegisterService(new ServiceForRegister(typeof(IUnitOfWork), 
-            serviceProvider => new UnitOfWork(serviceProvider.GetRequiredService<IApplicationDbAccessor>()), ServiceLifetime.Scoped));
+            serviceProvider => new UnitOfWork(serviceProvider.GetRequiredService<IApplicationDataAccessor>()), ServiceLifetime.Scoped));
         RegisterService(new ServiceForRegister(typeof(GetUserOrganizationsQueryHandler)));
         BuildServiceProvider();
         
@@ -51,7 +51,7 @@ public class GetUserOrganizationsQueryHandlerTests : ApplicationIntegrationTests
     {
         // Arrange
         var dbContext = GetService<ApplicationDbContext>();
-        var user = SetupUserInfo(UserId);
+        var user = SetupUser(UserId);
         await dbContext.Set<User>().AddAsync(user);
 
         var organizations = new List<Organization>
@@ -88,14 +88,14 @@ public class GetUserOrganizationsQueryHandlerTests : ApplicationIntegrationTests
     {
         // Arrange
         var dbContext = GetService<ApplicationDbContext>();
-        var user = SetupUserInfo(UserId);
+        var user = SetupUser(UserId);
         await dbContext.Set<User>().AddAsync(user);
         
         var otherUsers = new List<User>
         {
-            SetupUserInfo(Guid.NewGuid()),
-            SetupUserInfo(Guid.NewGuid()),
-            SetupUserInfo(Guid.NewGuid())
+            SetupUser(Guid.NewGuid()),
+            SetupUser(Guid.NewGuid()),
+            SetupUser(Guid.NewGuid())
         };
         await dbContext.Set<User>().AddRangeAsync(otherUsers);
 
@@ -149,7 +149,7 @@ public class GetUserOrganizationsQueryHandlerTests : ApplicationIntegrationTests
         };
     }
 
-    private static User SetupUserInfo(Guid userId)
+    private static User SetupUser(Guid userId)
     {
         return new User
         {

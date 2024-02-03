@@ -33,10 +33,10 @@ public class UpdateOrganizationAsUserCommandHandlerTests : ApplicationIntegratio
     public UpdateOrganizationAsUserCommandHandlerTests()
     {
         var identityService = Substitute.For<IIdentityService>();
-        RegisterService(new ServiceForRegister(typeof(IApplicationDbAccessor), serviceProvider => new ApplicationDbAccessor(
+        RegisterService(new ServiceForRegister(typeof(IApplicationDataAccessor), serviceProvider => new ApplicationDataAccessor(
             serviceProvider.GetRequiredService<ApplicationDbContext>()), ServiceLifetime.Scoped));
         RegisterService(new ServiceForRegister(typeof(IUnitOfWork), 
-            serviceProvider => new UnitOfWork(serviceProvider.GetRequiredService<IApplicationDbAccessor>()), ServiceLifetime.Scoped));
+            serviceProvider => new UnitOfWork(serviceProvider.GetRequiredService<IApplicationDataAccessor>()), ServiceLifetime.Scoped));
         RegisterService(new ServiceForRegister(typeof(IOrganizationService), 
             serviceProvider => new OrganizationService(
                 serviceProvider.GetRequiredService<IUnitOfWork>()), ServiceLifetime.Scoped));
@@ -69,7 +69,7 @@ public class UpdateOrganizationAsUserCommandHandlerTests : ApplicationIntegratio
             var dbContext = arrangeScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             var organization = SetupRandomOrganization(organizationId);
             await dbContext.Set<Organization>().AddAsync(organization, _cancellationTokenSource.Token);
-            await dbContext.Set<User>().AddAsync(SetupUserInfo(UserId), _cancellationTokenSource.Token);
+            await dbContext.Set<User>().AddAsync(SetupUser(UserId), _cancellationTokenSource.Token);
             var organizationUser = SetupOrganizationUser(organization.Id, UserId, OrganizationUserRole.Admin);
             await dbContext.Set<OrganizationUser>().AddAsync(organizationUser, _cancellationTokenSource.Token);
             await dbContext.SaveChangesAsync(_cancellationTokenSource.Token);
@@ -110,7 +110,7 @@ public class UpdateOrganizationAsUserCommandHandlerTests : ApplicationIntegratio
             var dbContext = arrangeScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             var organization = SetupRandomOrganization(organizationId);
             await dbContext.Set<Organization>().AddAsync(organization, _cancellationTokenSource.Token);
-            await dbContext.Set<User>().AddAsync(SetupUserInfo(UserId), _cancellationTokenSource.Token);
+            await dbContext.Set<User>().AddAsync(SetupUser(UserId), _cancellationTokenSource.Token);
             var organizationUser = SetupOrganizationUser(organization.Id, UserId, OrganizationUserRole.Member);
             await dbContext.Set<OrganizationUser>().AddAsync(organizationUser, _cancellationTokenSource.Token);
             await dbContext.SaveChangesAsync(_cancellationTokenSource.Token);
@@ -138,7 +138,7 @@ public class UpdateOrganizationAsUserCommandHandlerTests : ApplicationIntegratio
         await using (var arrangeScope = CreateAsyncScope())
         {
             var dbContext = arrangeScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            await dbContext.Set<User>().AddAsync(SetupUserInfo(UserId), _cancellationTokenSource.Token);
+            await dbContext.Set<User>().AddAsync(SetupUser(UserId), _cancellationTokenSource.Token);
             await dbContext.SaveChangesAsync(_cancellationTokenSource.Token);
         }
         
@@ -165,7 +165,7 @@ public class UpdateOrganizationAsUserCommandHandlerTests : ApplicationIntegratio
         {
             var organization = SetupRandomOrganization(organizationId);
             var dbContext = arrangeScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            await dbContext.Set<User>().AddAsync(SetupUserInfo(UserId), _cancellationTokenSource.Token);
+            await dbContext.Set<User>().AddAsync(SetupUser(UserId), _cancellationTokenSource.Token);
             await dbContext.Set<Organization>().AddAsync(organization, _cancellationTokenSource.Token);
             await dbContext.SaveChangesAsync(_cancellationTokenSource.Token);
         }
@@ -184,7 +184,7 @@ public class UpdateOrganizationAsUserCommandHandlerTests : ApplicationIntegratio
         }
     }
 
-    private static User SetupUserInfo(Guid userId)
+    private static User SetupUser(Guid userId)
     {
         return new User
         {

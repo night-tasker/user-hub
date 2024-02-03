@@ -11,9 +11,9 @@ public class OrganizationRepository(ApplicationDbSet<Organization, Guid> dbSet)
     : BaseRepository<Organization, Guid>(dbSet), IOrganizationRepository
 {
     public async Task<IReadOnlyCollection<Organization>> GetUserOrganizations(
-        Guid userInfoId, bool trackChanges, CancellationToken cancellationToken)
+        Guid userId, bool trackChanges, CancellationToken cancellationToken)
     {
-        var query = UserOrganizationsQuery(userInfoId);
+        var query = UserOrganizationsQuery(userId);
 
         if (!trackChanges)
         {
@@ -43,11 +43,11 @@ public class OrganizationRepository(ApplicationDbSet<Organization, Guid> dbSet)
         return organization;
     }
 
-    public Task<bool> CheckExistsByIdForUser(Guid userInfoId, Guid id, CancellationToken cancellationToken)
+    public Task<bool> CheckExistsByIdForUser(Guid userId, Guid id, CancellationToken cancellationToken)
     {
         return Entities
             .AnyAsync(x => x.Id == id 
-                           && x.OrganizationUsers.Any(y => y.UserId == userInfoId), cancellationToken);
+                           && x.OrganizationUsers.Any(y => y.UserId == userId), cancellationToken);
     }
     
     public Task<bool> CheckExistsById(Guid id, CancellationToken cancellationToken)
@@ -57,11 +57,11 @@ public class OrganizationRepository(ApplicationDbSet<Organization, Guid> dbSet)
     }
 
     public Task<Organization?> TryGetOrganizationForUser(
-        Guid userInfoId, Guid organizationId, bool trackChanges, CancellationToken cancellationToken)
+        Guid userId, Guid organizationId, bool trackChanges, CancellationToken cancellationToken)
     {
         var query = Entities
             .Where(x => x.Id == organizationId
-                        && x.OrganizationUsers.Any(y => y.UserId == userInfoId));
+                        && x.OrganizationUsers.Any(y => y.UserId == userId));
         
         if (!trackChanges)
         {

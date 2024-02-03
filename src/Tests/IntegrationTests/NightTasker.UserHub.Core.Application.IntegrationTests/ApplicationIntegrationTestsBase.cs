@@ -2,7 +2,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using NightTasker.UserHub.Infrastructure.Persistence;
 using NightTasker.UserHub.IntegrationTests.Framework;
-using NightTasker.UserHub.Presentation.WebApi.Configuration;
 
 namespace NightTasker.UserHub.Core.Application.IntegrationTests;
 
@@ -19,7 +18,6 @@ public abstract class ApplicationIntegrationTestsBase
             _serviceCollection = new ServiceCollection();
             _serviceCollection.AddDbContext<ApplicationDbContext>(
                 (_, option) => option.UseNpgsql($"{testNpgSql.NpgSqlContainer.GetConnectionString()};Include Error Detail=true"));
-            _serviceCollection.AddMapper();
         }
     }
 

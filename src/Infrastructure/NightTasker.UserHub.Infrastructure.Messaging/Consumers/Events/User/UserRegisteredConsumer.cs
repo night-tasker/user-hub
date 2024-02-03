@@ -1,7 +1,7 @@
 ﻿using MassTransit;
 using MediatR;
 using NightTasker.Common.Messaging.Events.Contracts;
-using NightTasker.UserHub.Core.Application.Features.UserInfos.Commands.CreateUserInfo;
+using NightTasker.UserHub.Core.Application.Features.Users.Commands.CreateUser;
 
 namespace NightTasker.UserHub.Infrastructure.Messaging.Consumers.Events.User;
 
@@ -12,10 +12,10 @@ public class UserRegisteredConsumer(
 
     public Task Consume(ConsumeContext<IUserRegistered> context)
     {
-        var createUserInfoCommand = new CreateUserInfoCommand(
+        var createUserCommand = new CreateUserCommand(
             context.Message.Id, 
             context.Message.UserName,
             context.Message.Email);
-        return _sender.Send(createUserInfoCommand, context.CancellationToken);
+        return _sender.Send(createUserCommand, context.CancellationToken);
     }
 }

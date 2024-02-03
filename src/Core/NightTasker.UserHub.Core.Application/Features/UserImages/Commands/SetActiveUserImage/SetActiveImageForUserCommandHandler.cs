@@ -11,7 +11,7 @@ internal class SetActiveImageForUserCommandHandler(IUserImageService userImageSe
 
     public Task Handle(SetActiveImageForUserCommand request, CancellationToken cancellationToken)
     {
-        return _userImageService.SetActiveUserImageForUserInfoId(
-            request.UserInfoId, request.UserImageId, cancellationToken);
+        return _userImageService.SetActiveUserImageForUser(
+            request.UserId, request.UserImageId, cancellationToken);
     }
 }

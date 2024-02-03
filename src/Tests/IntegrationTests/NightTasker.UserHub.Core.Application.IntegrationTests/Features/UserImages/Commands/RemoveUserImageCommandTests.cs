@@ -1,6 +1,4 @@
 ﻿using FluentAssertions;
-using MapsterMapper;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using NightTasker.UserHub.Core.Application.ApplicationContracts.Services;
@@ -26,11 +24,11 @@ public class RemoveUserImageCommandTests : ApplicationIntegrationTestsBase
 
     public RemoveUserImageCommandTests()
     {
-        RegisterService(new ServiceForRegister(typeof(IApplicationDbAccessor), serviceProvider => new ApplicationDbAccessor(
+        RegisterService(new ServiceForRegister(typeof(IApplicationDataAccessor), serviceProvider => new ApplicationDataAccessor(
             serviceProvider.GetRequiredService<ApplicationDbContext>()), ServiceLifetime.Scoped));
         
         RegisterService(new ServiceForRegister(typeof(IUnitOfWork), 
-            serviceProvider => new UnitOfWork(serviceProvider.GetRequiredService<IApplicationDbAccessor>()), ServiceLifetime.Scoped));
+            serviceProvider => new UnitOfWork(serviceProvider.GetRequiredService<IApplicationDataAccessor>()), ServiceLifetime.Scoped));
         
         RegisterService(new ServiceForRegister(typeof(IUserImageService), serviceProvider => new UserImageService(
                 serviceProvider.GetRequiredService<IUnitOfWork>(), 
@@ -65,7 +63,7 @@ public class RemoveUserImageCommandTests : ApplicationIntegrationTestsBase
         // Arrange
         var dbContext = GetService<ApplicationDbContext>();
         var userId = Guid.NewGuid();
-        var user = SetupUserInfo(userId);
+        var user = SetupUser(userId);
         var userImage = SetupUserImage(userId);
         await dbContext.Set<User>().AddAsync(user);
         await dbContext.Set<UserImage>().AddAsync(userImage);
@@ -83,21 +81,21 @@ public class RemoveUserImageCommandTests : ApplicationIntegrationTestsBase
         updatedImage.Should().BeNull();
     }
     
-    private static User SetupUserInfo(Guid userId)
+    private static User SetupUser(Guid userId)
     {
-        var userInfo = new User
+        var user = new User
         {
             Id = userId
         };
         
-        return userInfo;
+        return user;
     }
 
     private static UserImage SetupUserImage(Guid userId)
     {
         var userImage = new UserImage
         {
-            UserInfoId = userId
+            UserId = userId
         };
         
         return userImage;

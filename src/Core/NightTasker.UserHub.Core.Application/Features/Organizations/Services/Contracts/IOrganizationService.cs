@@ -7,7 +7,7 @@ public interface IOrganizationService
     Task<Guid> CreateOrganization(CreateOrganizationDto createOrganizationDto, CancellationToken cancellationToken);
 
     Task UpdateOrganizationAsUser(
-        Guid userInfoId,
+        Guid userId,
         Guid organizationId,
         UpdateOrganizationDto updateOrganizationDto,
         CancellationToken cancellationToken);

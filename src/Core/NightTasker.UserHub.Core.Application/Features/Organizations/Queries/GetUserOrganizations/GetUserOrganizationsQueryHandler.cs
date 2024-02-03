@@ -15,7 +15,7 @@ public class GetUserOrganizationsQueryHandler(
         GetUserOrganizationsQuery request, CancellationToken cancellationToken)
     {
         var organizations = await _unitOfWork.OrganizationRepository.GetUserOrganizations(
-            request.UserInfoId, false, cancellationToken);
+            request.UserId, false, cancellationToken);
         
         return OrganizationDto.FromEntities(organizations).ToList();
     }

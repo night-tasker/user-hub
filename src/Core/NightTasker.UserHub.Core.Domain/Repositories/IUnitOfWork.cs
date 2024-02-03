@@ -2,7 +2,7 @@
 
 public interface IUnitOfWork
 {
-    IUserInfoRepository UserInfoRepository { get; }
+    IUserRepository UserRepository { get; }
     
     IUserImageRepository UserImageRepository { get; }
     

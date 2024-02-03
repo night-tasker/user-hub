@@ -5,8 +5,8 @@ using NightTasker.UserHub.Core.Application.Features.OrganizationUsers.Services.C
 using NightTasker.UserHub.Core.Application.Features.OrganizationUsers.Services.Implementations;
 using NightTasker.UserHub.Core.Application.Features.UserImages.Services.Contracts;
 using NightTasker.UserHub.Core.Application.Features.UserImages.Services.Implementations;
-using NightTasker.UserHub.Core.Application.Features.UserInfos.Services.Contracts;
-using NightTasker.UserHub.Core.Application.Features.UserInfos.Services.Implementations;
+using NightTasker.UserHub.Core.Application.Features.Users.Services.Contracts;
+using NightTasker.UserHub.Core.Application.Features.Users.Services.Implementations;
 
 namespace NightTasker.UserHub.Core.Application.Configuration;
 
@@ -14,7 +14,7 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection RegisterApplicationServices(this IServiceCollection services)
     {
-        services.AddScoped<IUserInfoService, UserInfoService>();
+        services.AddScoped<IUserService, UserService>();
         services.AddScoped<IUserImageService, UserImageService>();
         services.AddScoped<IOrganizationService, OrganizationService>();
         services.AddScoped<IOrganizationUserService, OrganizationUserService>();

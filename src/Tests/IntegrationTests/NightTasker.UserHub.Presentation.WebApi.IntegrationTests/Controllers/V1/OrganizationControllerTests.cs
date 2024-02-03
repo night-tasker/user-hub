@@ -48,23 +48,23 @@ public class OrganizationControllerTest() : BaseIntegrationTests(CreateMockedSer
             
         var organization = SetupOrganization();
         
-        var setupUserInfos = new List<User>
+        var setupUsers = new List<User>
         {
-            SetupUserInfo(UserId),
-            SetupUserInfo(Guid.NewGuid()),
-            SetupUserInfo(Guid.NewGuid())
+            SetupUser(UserId),
+            SetupUser(Guid.NewGuid()),
+            SetupUser(Guid.NewGuid())
         };
         
         var organizationUsers = new [] 
         { 
             SetupOrganizationUser(UserId, organization.Id, OrganizationUserRole.Admin), 
-            SetupOrganizationUser(setupUserInfos[1].Id, organization.Id, OrganizationUserRole.Member),
-            SetupOrganizationUser(setupUserInfos[2].Id, organization.Id, OrganizationUserRole.Member)
+            SetupOrganizationUser(setupUsers[1].Id, organization.Id, OrganizationUserRole.Member),
+            SetupOrganizationUser(setupUsers[2].Id, organization.Id, OrganizationUserRole.Member)
         };
         
         await dbContext.Set<Organization>().AddAsync(organization);
         await dbContext.Set<OrganizationUser>().AddRangeAsync(organizationUsers);
-        await dbContext.Set<User>().AddRangeAsync(setupUserInfos);
+        await dbContext.Set<User>().AddRangeAsync(setupUsers);
         await dbContext.SaveChangesAsync();
 
         var getUrl = $"{ApiConstants.DefaultPrefix}/{ApiConstants.V1}/{OrganizationEndpoints.BaseResource}/{organization.Id}";
@@ -89,14 +89,14 @@ public class OrganizationControllerTest() : BaseIntegrationTests(CreateMockedSer
         var firstOrganization = SetupOrganization();
         var secondOrganization = SetupOrganization();
 
-        var userInfo = SetupUserInfo(UserId);
+        var user = SetupUser(UserId);
         
         var firstOrganizationUser = SetupOrganizationUser(UserId, firstOrganization.Id, OrganizationUserRole.Admin);
         var secondOrganizationUser = SetupOrganizationUser(UserId, secondOrganization.Id, OrganizationUserRole.Member);
         
         await dbContext.Set<Organization>().AddRangeAsync(firstOrganization, secondOrganization);
         await dbContext.Set<OrganizationUser>().AddRangeAsync(firstOrganizationUser, secondOrganizationUser);
-        await dbContext.Set<User>().AddAsync(userInfo);
+        await dbContext.Set<User>().AddAsync(user);
         await dbContext.SaveChangesAsync();
         
         const string url = $"{ApiConstants.DefaultPrefix}/{ApiConstants.V1}/{OrganizationEndpoints.BaseResource}";
@@ -129,13 +129,13 @@ public class OrganizationControllerTest() : BaseIntegrationTests(CreateMockedSer
         var dbContext = GetDbContextService();
         var firstOrganization = SetupOrganization();
 
-        var userInfo = SetupUserInfo(UserId);
+        var user = SetupUser(UserId);
         
         var firstOrganizationUser = SetupOrganizationUser(UserId, firstOrganization.Id, OrganizationUserRole.Admin);
         
         await dbContext.Set<Organization>().AddRangeAsync(firstOrganization);
         await dbContext.Set<OrganizationUser>().AddRangeAsync(firstOrganizationUser);
-        await dbContext.Set<User>().AddAsync(userInfo);
+        await dbContext.Set<User>().AddAsync(user);
         await dbContext.SaveChangesAsync();
         
         var url = $"{ApiConstants.DefaultPrefix}/{ApiConstants.V1}/{OrganizationEndpoints.BaseResource}/" +
@@ -158,13 +158,13 @@ public class OrganizationControllerTest() : BaseIntegrationTests(CreateMockedSer
         var dbContext = GetDbContextService();
         var firstOrganization = SetupOrganization();
 
-        var userInfo = SetupUserInfo(UserId);
+        var user = SetupUser(UserId);
         
         var firstOrganizationUser = SetupOrganizationUser(UserId, firstOrganization.Id, OrganizationUserRole.Member);
         
         await dbContext.Set<Organization>().AddRangeAsync(firstOrganization);
         await dbContext.Set<OrganizationUser>().AddRangeAsync(firstOrganizationUser);
-        await dbContext.Set<User>().AddAsync(userInfo);
+        await dbContext.Set<User>().AddAsync(user);
         await dbContext.SaveChangesAsync();
         
         var url = $"{ApiConstants.DefaultPrefix}/{ApiConstants.V1}/{OrganizationEndpoints.BaseResource}/" +
@@ -224,7 +224,7 @@ public class OrganizationControllerTest() : BaseIntegrationTests(CreateMockedSer
         };
     }
 
-    private static User SetupUserInfo(Guid userId)
+    private static User SetupUser(Guid userId)
     {
         return new User
         {

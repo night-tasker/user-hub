@@ -167,15 +167,15 @@ namespace NightTasker.UserHub.Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_date_time_offset");
 
-                    b.Property<Guid>("UserInfoId")
+                    b.Property<Guid>("UserId")
                         .HasColumnType("uuid")
-                        .HasColumnName("user_info_id");
+                        .HasColumnName("user_id");
 
                     b.HasKey("Id")
                         .HasName("pk_user_images");
 
-                    b.HasIndex("UserInfoId")
-                        .HasDatabaseName("ix_user_images_user_info_id");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_user_images_user_id");
 
                     b.ToTable("user_images", (string)null);
                 });
@@ -203,12 +203,14 @@ namespace NightTasker.UserHub.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("NightTasker.UserHub.Core.Domain.Entities.UserImage", b =>
                 {
-                    b.HasOne("NightTasker.UserHub.Core.Domain.Entities.User", "UserInfo")
-                        .WithMany("UserInfoImages")
-                        .HasForeignKey("UserInfoId")
-                        .HasConstraintName("fk_user_images_user_user_info_id");
+                    b.HasOne("NightTasker.UserHub.Core.Domain.Entities.User", "User")
+                        .WithMany("UserImages")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_user_images_users_user_id");
 
-                    b.Navigation("UserInfo");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("NightTasker.UserHub.Core.Domain.Entities.Organization", b =>
@@ -220,7 +222,7 @@ namespace NightTasker.UserHub.Infrastructure.Persistence.Migrations
                 {
                     b.Navigation("OrganizationUsers");
 
-                    b.Navigation("UserInfoImages");
+                    b.Navigation("UserImages");
                 });
 #pragma warning restore 612, 618
         }

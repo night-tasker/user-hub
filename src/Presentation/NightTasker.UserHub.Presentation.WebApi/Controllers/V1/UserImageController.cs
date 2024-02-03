@@ -6,8 +6,8 @@ using NightTasker.UserHub.Core.Application.Features.UserImages.Commands.RemoveUs
 using NightTasker.UserHub.Core.Application.Features.UserImages.Commands.SetActiveUserImage;
 using NightTasker.UserHub.Core.Application.Features.UserImages.Commands.UploadUserImage;
 using NightTasker.UserHub.Core.Application.Features.UserImages.Queries.DownloadByUserId;
-using NightTasker.UserHub.Core.Application.Features.UserImages.Queries.GetUserActiveImageUrlByUserInfoId;
-using NightTasker.UserHub.Core.Application.Features.UserImages.Queries.GetUserImagesWithUrlByUserInfoId;
+using NightTasker.UserHub.Core.Application.Features.UserImages.Queries.GetUserActiveImageUrlByUserId;
+using NightTasker.UserHub.Core.Application.Features.UserImages.Queries.GetUserImagesWithUrlByUserId;
 using NightTasker.UserHub.Presentation.WebApi.Constants;
 using NightTasker.UserHub.Presentation.WebApi.Endpoints;
 using NightTasker.UserHub.Presentation.WebApi.Responses.UserImage;
@@ -38,7 +38,7 @@ public class UserImageController(
         CancellationToken cancellationToken)
     {
         var currentUserId = _identityService.CurrentUserId!.Value;
-        var query = new DownloadUserImageByUserInfoIdQuery(currentUserId);
+        var query = new DownloadUserImageByUserIdQuery(currentUserId);
         var result = await _mediator.Send(query, cancellationToken);
         return File(result.Stream, result.ContentType, $"{result.FileName}.{result.Extension}");
     }
@@ -72,7 +72,7 @@ public class UserImageController(
         CancellationToken cancellationToken)
     {
         var currentUserId = _identityService.CurrentUserId!.Value;
-        var query = new GetUserActiveImageUrlByUserInfoIdQuery(currentUserId);
+        var query = new GetUserActiveImageUrlByUserIdQuery(currentUserId);
         var result = await _mediator.Send(query, cancellationToken);
         var response = new GetCurrentUserActiveImageUrlResponse(result);
         return Ok(response);
@@ -88,7 +88,7 @@ public class UserImageController(
         CancellationToken cancellationToken)
     {
         var currentUserId = _identityService.CurrentUserId!.Value;
-        var query = new GetUserImagesWithUrlByUserInfoIdQuery(currentUserId);
+        var query = new GetUserImagesWithUrlByUserIdQuery(currentUserId);
         var result = await _mediator.Send(query, cancellationToken);
         var response = new GetCurrentUserImagesUrlResponse(result);
         return Ok(response);

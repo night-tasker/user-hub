@@ -9,8 +9,8 @@ namespace NightTasker.UserHub.Infrastructure.Persistence.Repository;
 public class UserImageRepository(ApplicationDbSet<UserImage, Guid> dbSet) 
     : BaseRepository<UserImage, Guid>(dbSet), IUserImageRepository
 {
-    public Task<UserImage?> TryGetActiveImageByUserInfoId(
-        Guid userInfoId, bool trackChanges, CancellationToken cancellationToken)
+    public Task<UserImage?> TryGetActiveImageByUserId(
+        Guid userId, bool trackChanges, CancellationToken cancellationToken)
     {
         var entities = Entities
             .Where(x => x.IsActive);
@@ -21,14 +21,14 @@ public class UserImageRepository(ApplicationDbSet<UserImage, Guid> dbSet)
         }
         
         return entities
-            .SingleOrDefaultAsync(userImage => userImage.UserInfoId == userInfoId, cancellationToken);
+            .SingleOrDefaultAsync(userImage => userImage.UserId == userId, cancellationToken);
     }
 
     public Task<UserImage?> TryGetImageByIdForUser(
-        Guid userImageId, Guid userInfoId, bool trackChanges, CancellationToken cancellationToken)
+        Guid userImageId, Guid userId, bool trackChanges, CancellationToken cancellationToken)
     {
         var entities = Entities
-            .Where(x => x.Id == userImageId && x.UserInfoId == userInfoId);
+            .Where(x => x.Id == userImageId && x.UserId == userId);
         
         if (!trackChanges)
         {
@@ -39,11 +39,11 @@ public class UserImageRepository(ApplicationDbSet<UserImage, Guid> dbSet)
             .SingleOrDefaultAsync(cancellationToken);
     }
 
-    public async Task<IDictionary<Guid, bool>> GetImageIdsWithActiveByUserInfoId(
-        Guid userInfoId, CancellationToken cancellationToken)
+    public async Task<IDictionary<Guid, bool>> GetImageIdsWithActiveByUserId(
+        Guid userId, CancellationToken cancellationToken)
     {
         var query = Entities
-            .Where(x => x.UserInfoId == userInfoId);
+            .Where(x => x.UserId == userId);
         
         return await query
             .ToDictionaryAsync(x => x.Id, x => x.IsActive, cancellationToken);
@@ -56,19 +56,19 @@ public class UserImageRepository(ApplicationDbSet<UserImage, Guid> dbSet)
             .ExecuteDeleteAsync(cancellationToken);
     }
 
-    public Task<bool> CheckImageForUserExists(Guid userInfoId, Guid userImageId, CancellationToken cancellationToken)
+    public Task<bool> CheckImageForUserExists(Guid userId, Guid userImageId, CancellationToken cancellationToken)
     {
         return Entities
-            .AnyAsync(x => x.UserInfoId == userInfoId && x.Id == userImageId, cancellationToken);
+            .AnyAsync(x => x.UserId == userId && x.Id == userImageId, cancellationToken);
     }
 
-    public Task SetUnActiveImagesForUserInfoIdExcludeOne(
-        Guid userInfoId,
+    public Task SetUnActiveImagesForUserIdExcludeOne(
+        Guid userId,
         Guid activeUserImageId,
         CancellationToken cancellationToken)
     {
         return Entities
-            .Where(x => x.UserInfoId == userInfoId && x.Id != activeUserImageId && x.IsActive)
+            .Where(x => x.UserId == userId && x.Id != activeUserImageId && x.IsActive)
             .ExecuteUpdateAsync(setPropertyCall => 
                 setPropertyCall.SetProperty(prop => prop.IsActive, false), cancellationToken);
     }

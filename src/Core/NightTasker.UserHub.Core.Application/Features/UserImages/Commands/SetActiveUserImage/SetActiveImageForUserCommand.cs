@@ -2,4 +2,4 @@
 
 namespace NightTasker.UserHub.Core.Application.Features.UserImages.Commands.SetActiveUserImage;
 
-public record SetActiveImageForUserCommand(Guid UserInfoId, Guid UserImageId) : IRequest;
+public record SetActiveImageForUserCommand(Guid UserId, Guid UserImageId) : IRequest;

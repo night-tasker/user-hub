@@ -1,7 +1,7 @@
 ﻿namespace NightTasker.UserHub.Core.Application.Features.UserImages.Models;
 
 public record CreateUserImageDto(
-    Guid UserInfoId,
+    Guid UserId,
     string FileName,
     string Extension,
     string ContentType,
@@ -11,7 +11,7 @@ public record CreateUserImageDto(
     {
         return new Domain.Entities.UserImage
         {
-            UserInfoId = UserInfoId,
+            UserId = UserId,
             FileName = FileName,
             Extension = Extension,
             ContentType = ContentType,

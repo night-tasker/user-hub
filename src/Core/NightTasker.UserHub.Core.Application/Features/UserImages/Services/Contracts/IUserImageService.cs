@@ -6,15 +6,15 @@ public interface IUserImageService
 {
     Task<Guid> CreateUserImage(CreateUserImageDto createUserImageDto, CancellationToken cancellationToken);
 
-    Task<UserImageWithStreamDto> DownloadActiveUserImageByUserInfoId(Guid userInfoId, CancellationToken cancellationToken);
+    Task<UserImageWithStreamDto> DownloadActiveUserImageByUserId(Guid userId, CancellationToken cancellationToken);
 
-    Task<string> GetUserActiveImageUrlByUserInfoId(Guid userInfoId, CancellationToken cancellationToken);
+    Task<string> GetUserActiveImageUrlByUserId(Guid userId, CancellationToken cancellationToken);
 
-    Task<IReadOnlyCollection<UserImageWithUrlDto>> GetUserImagesByUserInfoId(
-        Guid userInfoId, CancellationToken cancellationToken);
+    Task<IReadOnlyCollection<UserImageWithUrlDto>> GetUserImagesByUserId(
+        Guid userId, CancellationToken cancellationToken);
 
-    Task RemoveUserImageById(Guid userInfoId, Guid userImageId, CancellationToken cancellationToken);
+    Task RemoveUserImageById(Guid userId, Guid userImageId, CancellationToken cancellationToken);
 
-    Task SetActiveUserImageForUserInfoId(
-        Guid userInfoId, Guid userImageId, CancellationToken cancellationToken);
+    Task SetActiveUserImageForUser(
+        Guid userId, Guid userImageId, CancellationToken cancellationToken);
 }

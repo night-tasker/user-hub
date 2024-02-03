@@ -24,10 +24,10 @@ public class GetOrganizationUserRoleQueryTests : ApplicationIntegrationTestsBase
 
     public GetOrganizationUserRoleQueryTests()
     {
-        RegisterService(new ServiceForRegister(typeof(IApplicationDbAccessor), serviceProvider => new ApplicationDbAccessor(
+        RegisterService(new ServiceForRegister(typeof(IApplicationDataAccessor), serviceProvider => new ApplicationDataAccessor(
             serviceProvider.GetRequiredService<ApplicationDbContext>()), ServiceLifetime.Scoped));
         RegisterService(new ServiceForRegister(typeof(IUnitOfWork), 
-            serviceProvider => new UnitOfWork(serviceProvider.GetRequiredService<IApplicationDbAccessor>()), ServiceLifetime.Scoped));
+            serviceProvider => new UnitOfWork(serviceProvider.GetRequiredService<IApplicationDataAccessor>()), ServiceLifetime.Scoped));
         RegisterService(new ServiceForRegister(typeof(GetOrganizationUserRoleQueryHandler)));
         
         BuildServiceProvider();
@@ -46,7 +46,7 @@ public class GetOrganizationUserRoleQueryTests : ApplicationIntegrationTestsBase
         // Arrange
         var dbContext = GetService<ApplicationDbContext>();
         var userId = Guid.NewGuid();
-        var user = SetupUserInfo(userId);
+        var user = SetupUser(userId);
         var organization = SetupOrganization();
         var organizationUser = SetupOrganizationUser(organization.Id, userId, role);
         
@@ -70,7 +70,7 @@ public class GetOrganizationUserRoleQueryTests : ApplicationIntegrationTestsBase
         // Arrange
         var dbContext = GetService<ApplicationDbContext>();
         var userId = Guid.NewGuid();
-        var user = SetupUserInfo(userId);
+        var user = SetupUser(userId);
         var organization = SetupOrganization();
         
         await dbContext.Set<User>().AddAsync(user);
@@ -87,7 +87,7 @@ public class GetOrganizationUserRoleQueryTests : ApplicationIntegrationTestsBase
         await func.Should().ThrowAsync<OrganizationUserNotFoundException>();
     }
     
-    private static User SetupUserInfo(Guid userId)
+    private static User SetupUser(Guid userId)
     {
         return new User
         {

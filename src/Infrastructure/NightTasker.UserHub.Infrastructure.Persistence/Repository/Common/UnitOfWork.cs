@@ -3,19 +3,19 @@ using NightTasker.UserHub.Infrastructure.Persistence.Contracts;
 
 namespace NightTasker.UserHub.Infrastructure.Persistence.Repository.Common;
 
-public class UnitOfWork(IApplicationDbAccessor applicationDbAccessor) : IUnitOfWork
+public class UnitOfWork(IApplicationDataAccessor applicationDataAccessor) : IUnitOfWork
 {
-    public IUserInfoRepository UserInfoRepository { get; } = new UserInfoRepository(applicationDbAccessor.UserInfos);
+    public IUserRepository UserRepository { get; } = new UserRepository(applicationDataAccessor.Users);
     
-    public IUserImageRepository UserImageRepository { get; } = new UserImageRepository(applicationDbAccessor.UserImages);
+    public IUserImageRepository UserImageRepository { get; } = new UserImageRepository(applicationDataAccessor.UserImages);
     
-    public IOrganizationRepository OrganizationRepository { get; } = new OrganizationRepository(applicationDbAccessor.Organizations);
+    public IOrganizationRepository OrganizationRepository { get; } = new OrganizationRepository(applicationDataAccessor.Organizations);
 
     public IOrganizationUserRepository OrganizationUserRepository { get; } =
-        new OrganizationUserRepository(applicationDbAccessor.OrganizationUsers);
+        new OrganizationUserRepository(applicationDataAccessor.OrganizationUsers);
 
     public Task SaveChanges(CancellationToken cancellationToken)
     {
-        return applicationDbAccessor.SaveChanges(cancellationToken);
+        return applicationDataAccessor.SaveChanges(cancellationToken);
     }
 }

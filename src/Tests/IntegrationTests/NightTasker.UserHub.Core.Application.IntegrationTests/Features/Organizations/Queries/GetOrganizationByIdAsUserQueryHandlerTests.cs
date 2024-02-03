@@ -28,10 +28,10 @@ public class GetOrganizationByIdAsUserQueryHandlerTests : ApplicationIntegration
     public GetOrganizationByIdAsUserQueryHandlerTests()
     {
         var identityService = Substitute.For<IIdentityService>();
-        RegisterService(new ServiceForRegister(typeof(IApplicationDbAccessor), serviceProvider => new ApplicationDbAccessor(
+        RegisterService(new ServiceForRegister(typeof(IApplicationDataAccessor), serviceProvider => new ApplicationDataAccessor(
             serviceProvider.GetRequiredService<ApplicationDbContext>()), ServiceLifetime.Scoped));
         RegisterService(new ServiceForRegister(typeof(IUnitOfWork), 
-            serviceProvider => new UnitOfWork(serviceProvider.GetRequiredService<IApplicationDbAccessor>()), ServiceLifetime.Scoped));
+            serviceProvider => new UnitOfWork(serviceProvider.GetRequiredService<IApplicationDataAccessor>()), ServiceLifetime.Scoped));
         RegisterService(new ServiceForRegister(typeof(GetOrganizationByIdAsUserQueryHandler)));
         BuildServiceProvider();
         
@@ -53,7 +53,7 @@ public class GetOrganizationByIdAsUserQueryHandlerTests : ApplicationIntegration
         var dbContext = GetService<ApplicationDbContext>();
         var users = new List<User>
         {
-            SetupUserInfo(UserId), SetupUserInfo(Guid.NewGuid()), SetupUserInfo(Guid.NewGuid()), SetupUserInfo(Guid.NewGuid())
+            SetupUser(UserId), SetupUser(Guid.NewGuid()), SetupUser(Guid.NewGuid()), SetupUser(Guid.NewGuid())
         };
         
         dbContext.Set<User>().AddRange(users);
@@ -106,7 +106,7 @@ public class GetOrganizationByIdAsUserQueryHandlerTests : ApplicationIntegration
     {
         // Arrange
         var dbContext = GetService<ApplicationDbContext>();
-        dbContext.Set<User>().Add(SetupUserInfo(UserId));
+        dbContext.Set<User>().Add(SetupUser(UserId));
         var organization = SetupOrganization();
         dbContext.Set<Organization>().Add(organization);
         await dbContext.SaveChangesAsync();
@@ -141,7 +141,7 @@ public class GetOrganizationByIdAsUserQueryHandlerTests : ApplicationIntegration
         };
     }
 
-    private static User SetupUserInfo(Guid userId)
+    private static User SetupUser(Guid userId)
     {
         return new User
         {

@@ -16,7 +16,7 @@ public class User : IEntityWithId<Guid>, IDateTimeOffsetModification
     
     public string? LastName { get; set; }
 
-    public List<UserImage> UserInfoImages { get; set; } = null!;
+    public List<UserImage> UserImages { get; set; } = null!;
 
     public List<OrganizationUser> OrganizationUsers { get; set; } = null!;
 

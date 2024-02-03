@@ -20,7 +20,7 @@ public class OrganizationUserServiceTests
     }
 
     [Test]
-    public void CreateOrganizationUserWithOutSaving_UserInfoNotExist_UserInfoNotFoundException()
+    public void CreateOrganizationUserWithOutSaving_UserNotExist_UserNotFoundException()
     {
         // Arrange
         var dto = new CreateOrganizationUserDto(Guid.NewGuid(), Guid.NewGuid(), OrganizationUserRole.Admin);
@@ -29,12 +29,12 @@ public class OrganizationUserServiceTests
             .CheckExistsByIdForUser(dto.UserId, dto.OrganizationId, CancellationToken.None)
             .Returns(true);
         
-        _unitOfWork.UserInfoRepository
+        _unitOfWork.UserRepository
             .CheckExistsById(dto.UserId, CancellationToken.None)
             .Returns(false);
         
         // Act && Assert
-        Assert.ThrowsAsync<UserInfoNotFoundException>(() => _sut.CreateOrganizationUser(dto, CancellationToken.None));
+        Assert.ThrowsAsync<UserNotFoundException>(() => _sut.CreateOrganizationUser(dto, CancellationToken.None));
     }
     
     [Test]
@@ -47,7 +47,7 @@ public class OrganizationUserServiceTests
             .CheckExistsByIdForUser(dto.UserId, dto.OrganizationId,  CancellationToken.None)
             .Returns(false);
         
-        _unitOfWork.UserInfoRepository
+        _unitOfWork.UserRepository
             .CheckExistsById(dto.UserId, CancellationToken.None)
             .Returns(true);
         

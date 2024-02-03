@@ -22,7 +22,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\..\Infrastructure\NightTasker.UserHub.Infrastructure.Persistence\NightTasker.UserHub.Infrastructure.Persistence.csproj" />
       <ProjectReference Include="..\..\..\Presentation\NightTasker.UserHub.Presentation.WebApi\NightTasker.UserHub.Presentation.WebApi.csproj" />
       <ProjectReference Include="..\NightTasker.UserHub.IntegrationTests.Framework\NightTasker.UserHub.IntegrationTests.Framework.csproj" />
     </ItemGroup>

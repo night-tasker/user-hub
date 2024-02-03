@@ -1,7 +1,5 @@
 ﻿using Bogus;
 using FluentAssertions;
-using MapsterMapper;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using NightTasker.Common.Core.Identity.Contracts;
@@ -32,10 +30,10 @@ public class CreateOrganizationAsUserCommandHandlerTests : ApplicationIntegratio
     public CreateOrganizationAsUserCommandHandlerTests()
     {
         var identityService = Substitute.For<IIdentityService>();
-        RegisterService(new ServiceForRegister(typeof(IApplicationDbAccessor), serviceProvider => new ApplicationDbAccessor(
+        RegisterService(new ServiceForRegister(typeof(IApplicationDataAccessor), serviceProvider => new ApplicationDataAccessor(
             serviceProvider.GetRequiredService<ApplicationDbContext>()), ServiceLifetime.Scoped));
         RegisterService(new ServiceForRegister(typeof(IUnitOfWork), 
-            serviceProvider => new UnitOfWork(serviceProvider.GetRequiredService<IApplicationDbAccessor>()), ServiceLifetime.Scoped));
+            serviceProvider => new UnitOfWork(serviceProvider.GetRequiredService<IApplicationDataAccessor>()), ServiceLifetime.Scoped));
         RegisterService(new ServiceForRegister(typeof(IOrganizationService), 
             serviceProvider => new OrganizationService(
                 serviceProvider.GetRequiredService<IUnitOfWork>()), ServiceLifetime.Scoped));
@@ -61,7 +59,7 @@ public class CreateOrganizationAsUserCommandHandlerTests : ApplicationIntegratio
     {
         // Arrange
         var dbContext = GetService<ApplicationDbContext>();
-        dbContext.Set<User>().Add(SetupUserInfo(UserId));
+        dbContext.Set<User>().Add(SetupUser(UserId));
         await dbContext.SaveChangesAsync();
 
         var createOrganizationAsUserCommand = new CreateOrganizationAsUserCommand(
@@ -90,7 +88,7 @@ public class CreateOrganizationAsUserCommandHandlerTests : ApplicationIntegratio
         organizationUsers[0].Role.Should().Be(OrganizationUserRole.Admin);
     }
 
-    private static User SetupUserInfo(Guid userId)
+    private static User SetupUser(Guid userId)
     {
         return new User
         {

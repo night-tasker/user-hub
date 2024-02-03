@@ -12,6 +12,6 @@ public class UpdateOrganizationAsUserCommandHandler(IOrganizationService organiz
     public Task Handle(UpdateOrganizationAsUserCommand request, CancellationToken cancellationToken)
     {
         return _organizationService.UpdateOrganizationAsUser(
-            request.UserInfoId, request.OrganizationId, request.UpdateOrganizationDto, cancellationToken);
+            request.UserId, request.OrganizationId, request.UpdateOrganizationDto, cancellationToken);
     }
 }

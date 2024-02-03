@@ -27,11 +27,11 @@ public class UploadUserImageCommandTests : ApplicationIntegrationTestsBase
 
     public UploadUserImageCommandTests()
     {
-        RegisterService(new ServiceForRegister(typeof(IApplicationDbAccessor), serviceProvider => new ApplicationDbAccessor(
+        RegisterService(new ServiceForRegister(typeof(IApplicationDataAccessor), serviceProvider => new ApplicationDataAccessor(
             serviceProvider.GetRequiredService<ApplicationDbContext>()), ServiceLifetime.Scoped));
         
         RegisterService(new ServiceForRegister(typeof(IUnitOfWork), 
-            serviceProvider => new UnitOfWork(serviceProvider.GetRequiredService<IApplicationDbAccessor>()), ServiceLifetime.Scoped));
+            serviceProvider => new UnitOfWork(serviceProvider.GetRequiredService<IApplicationDataAccessor>()), ServiceLifetime.Scoped));
         
         RegisterService(new ServiceForRegister(
             typeof(IStorageFileService), _ => Substitute.For<IStorageFileService>(), ServiceLifetime.Scoped));
@@ -54,9 +54,9 @@ public class UploadUserImageCommandTests : ApplicationIntegrationTestsBase
     public async Task Handle_UploadUserImage()
     {
         // Arrange
-        var userInfo = SetupUserInfo(Guid.NewGuid());
+        var user = SetupUser(Guid.NewGuid());
         var command = new UploadUserImageCommand(
-            userInfo.Id,
+            user.Id,
             new MemoryStream(), 
             _faker.Random.AlphaNumeric(8), 
             ".jpg", 
@@ -64,7 +64,7 @@ public class UploadUserImageCommandTests : ApplicationIntegrationTestsBase
             50);
         
         var dbContext = GetService<ApplicationDbContext>();
-        await dbContext.Set<User>().AddAsync(userInfo);
+        await dbContext.Set<User>().AddAsync(user);
         await dbContext.SaveChangesAsync();
         var sut = GetService<UploadUserImageCommandHandler>();
         
@@ -73,11 +73,11 @@ public class UploadUserImageCommandTests : ApplicationIntegrationTestsBase
         
         // Assert
         var userImage = await dbContext.Set<UserImage>()
-            .Where(x => x.UserInfoId == userInfo.Id)
+            .Where(x => x.UserId == user.Id)
             .SingleOrDefaultAsync();
         
         userImage.Should().NotBeNull();
-        userInfo.Id.Should().Be(userImage!.UserInfoId);
+        user.Id.Should().Be(userImage!.UserId);
         userImage.IsActive.Should().BeTrue();
         userImage.FileName.Should().Be(command.FileName);
         userImage.Extension.Should().Be(command.FileExtension);
@@ -85,12 +85,12 @@ public class UploadUserImageCommandTests : ApplicationIntegrationTestsBase
         userImage.FileSize.Should().Be(command.FileSize);
     }
     
-    private static User SetupUserInfo(Guid userId)
+    private static User SetupUser(Guid userId)
     {
-        var userInfo = new User
+        var user = new User
         {
             Id = userId
         };
-        return userInfo;
+        return user;
     }
 }

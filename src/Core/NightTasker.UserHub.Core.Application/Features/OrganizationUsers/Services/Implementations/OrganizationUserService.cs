@@ -13,7 +13,7 @@ public class OrganizationUserService(
     public async Task CreateOrganizationUser(
         CreateOrganizationUserDto organizationUserDto, CancellationToken cancellationToken)
     {
-        await ValidateUserInfoExists(organizationUserDto.UserId, cancellationToken);
+        await ValidateUserExists(organizationUserDto.UserId, cancellationToken);
         await ValidateOrganizationExists(organizationUserDto.OrganizationId, cancellationToken);
 
         var organizationUser = organizationUserDto.ToEntity();
@@ -21,12 +21,12 @@ public class OrganizationUserService(
         await _unitOfWork.SaveChanges(cancellationToken);
     }
 
-    private async Task ValidateUserInfoExists(Guid userId, CancellationToken cancellationToken)
+    private async Task ValidateUserExists(Guid userId, CancellationToken cancellationToken)
     {
-        var userExists = await _unitOfWork.UserInfoRepository.CheckExistsById(userId, cancellationToken);
+        var userExists = await _unitOfWork.UserRepository.CheckExistsById(userId, cancellationToken);
         if (!userExists)
         {
-            throw new UserInfoNotFoundException(userId);
+            throw new UserNotFoundException(userId);
         }
     }
 

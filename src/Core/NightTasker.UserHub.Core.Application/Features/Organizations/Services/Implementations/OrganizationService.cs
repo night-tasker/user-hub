@@ -24,27 +24,27 @@ internal class OrganizationService(
     }
 
     public async Task UpdateOrganizationAsUser(
-        Guid userInfoId,
+        Guid userId,
         Guid organizationId,
         UpdateOrganizationDto updateOrganizationDto,
         CancellationToken cancellationToken)
     {
-        var organization = await GetOrganizationForUser(userInfoId, organizationId, cancellationToken);
-        await ValidateUserHasAdminRoleInOrganization(organizationId, userInfoId, cancellationToken);
+        var organization = await GetOrganizationForUser(userId, organizationId, cancellationToken);
+        await ValidateUserHasAdminRoleInOrganization(organizationId, userId, cancellationToken);
         updateOrganizationDto.MapToEntityFields(organization);
         _unitOfWork.OrganizationRepository.Update(organization);
         await _unitOfWork.SaveChanges(cancellationToken);
     }
 
     private async Task<Organization> GetOrganizationForUser(
-        Guid userInfoId, Guid organizationId, CancellationToken cancellationToken)
+        Guid userId, Guid organizationId, CancellationToken cancellationToken)
     {
         var organization = await _unitOfWork.OrganizationRepository
-            .TryGetOrganizationForUser(userInfoId, organizationId, true, cancellationToken);
+            .TryGetOrganizationForUser(userId, organizationId, true, cancellationToken);
         
         if (organization is null)
         {
-            throw new OrganizationUserNotFoundException(organizationId, userInfoId);
+            throw new OrganizationUserNotFoundException(organizationId, userId);
         }
         
         return organization;

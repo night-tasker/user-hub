@@ -25,60 +25,60 @@ public class UserImageServiceTests
     }
 
     [Test]
-    public void CreateUserImage_UserInfoNotExist_ThrowsUserInfoNotFoundException()
+    public void CreateUserImage_UserNotExist_ThrowsUserNotFoundException()
     {
         // Arrange
         var createUserImageDto = new CreateUserImageDto(
             Guid.NewGuid(), _faker.Random.AlphaNumeric(8), "png", "image/png", 100);
        
-        _unitOfWork.UserInfoRepository
-            .TryGetById(createUserImageDto.UserInfoId, false, Arg.Any<CancellationToken>())
+        _unitOfWork.UserRepository
+            .TryGetById(createUserImageDto.UserId, false, Arg.Any<CancellationToken>())
             .ReturnsNull();
 
         // Act & Assert
-        Assert.ThrowsAsync<UserInfoNotFoundException>(
+        Assert.ThrowsAsync<UserNotFoundException>(
             () => _sut.CreateUserImage(createUserImageDto, CancellationToken.None));
     }
 
     [Test]
-    public void DownloadActiveUserImageByUserInfoId_ActiveImageNotExist_ThrowsActiveUserImageForUserInfoIdNotFoundException()
+    public void DownloadActiveUserImageByUserId_ActiveImageNotExist_ThrowsActiveUserImageForUserIdNotFoundException()
     {
         // Arrange
-        var userInfoId = Guid.NewGuid();
+        var userId = Guid.NewGuid();
         _unitOfWork.UserImageRepository
-            .TryGetActiveImageByUserInfoId(userInfoId, false, Arg.Any<CancellationToken>())
+            .TryGetActiveImageByUserId(userId, false, Arg.Any<CancellationToken>())
             .ReturnsNull();
         
         // Act & Assert
-        Assert.ThrowsAsync<ActiveUserImageForUserInfoIdNotFoundException>(
-            () => _sut.DownloadActiveUserImageByUserInfoId(userInfoId, CancellationToken.None));
+        Assert.ThrowsAsync<ActiveUserImageForUserIdNotFoundException>(
+            () => _sut.DownloadActiveUserImageByUserId(userId, CancellationToken.None));
     }
     
     [Test]
-    public void GetUserActiveImageUrlByUserInfoId_ActiveImageNotExist_ThrowsActiveUserImageForUserInfoIdNotFoundException()
+    public void GetUserActiveImageUrlByUserId_ActiveImageNotExist_ThrowsActiveUserImageForUserIdNotFoundException()
     {
         // Arrange
-        var userInfoId = Guid.NewGuid();
+        var userId = Guid.NewGuid();
         _unitOfWork.UserImageRepository
-            .TryGetActiveImageByUserInfoId(userInfoId, false, Arg.Any<CancellationToken>())
+            .TryGetActiveImageByUserId(userId, false, Arg.Any<CancellationToken>())
             .ReturnsNull();
         
         // Act & Assert
-        Assert.ThrowsAsync<ActiveUserImageForUserInfoIdNotFoundException>(
-            () => _sut.DownloadActiveUserImageByUserInfoId(userInfoId, CancellationToken.None));
+        Assert.ThrowsAsync<ActiveUserImageForUserIdNotFoundException>(
+            () => _sut.DownloadActiveUserImageByUserId(userId, CancellationToken.None));
     }
 
     [Test]
-    public async Task GetUserImagesByUserInfoId_UserImagesNotExist_EmptyCollection()
+    public async Task GetUserImagesByUserId_UserImagesNotExist_EmptyCollection()
     {
         // Arrange
-        var userInfoId = Guid.NewGuid();
+        var userId = Guid.NewGuid();
         _unitOfWork.UserImageRepository
-            .GetImageIdsWithActiveByUserInfoId(userInfoId, Arg.Any<CancellationToken>())
+            .GetImageIdsWithActiveByUserId(userId, Arg.Any<CancellationToken>())
             .Returns(new Dictionary<Guid, bool>());
         
         // Act
-        var result = await _sut.GetUserImagesByUserInfoId(userInfoId, CancellationToken.None);
+        var result = await _sut.GetUserImagesByUserId(userId, CancellationToken.None);
         
         // Assert
         result.Should().BeEmpty();
@@ -89,28 +89,28 @@ public class UserImageServiceTests
     {
         // Arrange
         var userImageId = Guid.NewGuid();
-        var userInfoId = Guid.NewGuid();
+        var userId = Guid.NewGuid();
         _unitOfWork.UserImageRepository
-            .CheckImageForUserExists(userInfoId, userImageId, Arg.Any<CancellationToken>())
+            .CheckImageForUserExists(userId, userImageId, Arg.Any<CancellationToken>())
             .Returns(false);
         
         // Act & Assert
         Assert.ThrowsAsync<UserImageWithIdNotFoundException>(
-            () => _sut.RemoveUserImageById(userInfoId, userImageId, CancellationToken.None));
+            () => _sut.RemoveUserImageById(userId, userImageId, CancellationToken.None));
     }
     
     [Test]
-    public void SetActiveUserImageForUserInfoId_UserImageNotExist_ThrowsUserImageWithIdNotFoundException()
+    public void SetActiveUserImageForUserId_UserImageNotExist_ThrowsUserImageWithIdNotFoundException()
     {
         // Arrange
         var userImageId = Guid.NewGuid();
-        var userInfoId = Guid.NewGuid();
+        var userId = Guid.NewGuid();
         _unitOfWork.UserImageRepository
-            .TryGetImageByIdForUser(userImageId, userInfoId, false, Arg.Any<CancellationToken>())
+            .TryGetImageByIdForUser(userImageId, userId, false, Arg.Any<CancellationToken>())
             .ReturnsNull();
         
         // Act & Assert
         Assert.ThrowsAsync<UserImageWithIdNotFoundException>(
-            () => _sut.SetActiveUserImageForUserInfoId(userInfoId, userImageId, CancellationToken.None));
+            () => _sut.SetActiveUserImageForUser(userId, userImageId, CancellationToken.None));
     }
 }

@@ -16,9 +16,9 @@ public class UserImage : IEntityWithId<Guid>, IDateTimeOffsetModification
 
     public long FileSize { get; set; }
         
-    public Guid UserInfoId { get; set; }
+    public Guid UserId { get; set; }
 
-    public User? UserInfo { get; set; }
+    public User? User { get; set; }
 
     public DateTimeOffset CreatedDateTimeOffset { get; set; }
     
