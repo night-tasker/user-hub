@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using NightTasker.UserHub.Core.Application.Exceptions.NotFound;
-using NightTasker.UserHub.Core.Application.Models.Organization;
+using NightTasker.UserHub.Core.Application.Models;
 using NightTasker.UserHub.Core.Domain.Repositories;
 
 namespace NightTasker.UserHub.Core.Application.Features.Organizations.Queries.GetOrganizationById;

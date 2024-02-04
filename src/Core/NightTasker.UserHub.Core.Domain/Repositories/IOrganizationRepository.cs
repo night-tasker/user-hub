@@ -1,4 +1,5 @@
 ﻿using NightTasker.Common.Core.Persistence.Repository;
+using NightTasker.UserHub.Core.Domain.Common.Search;
 using NightTasker.UserHub.Core.Domain.Entities;
 
 namespace NightTasker.UserHub.Core.Domain.Repositories;
@@ -16,4 +17,7 @@ public interface IOrganizationRepository : IRepository<Organization, Guid>
     Task<bool> CheckExistsById(Guid id, CancellationToken cancellationToken);
 
     Task<bool> CheckExistsByIdForUser(Guid userId, Guid id, CancellationToken cancellationToken);
+    
+    Task<SearchResult<Organization>> SearchOrganizationsForUser(
+        Guid userId, ISearchCriteria<Organization> searchCriteria, CancellationToken cancellationToken);
 }

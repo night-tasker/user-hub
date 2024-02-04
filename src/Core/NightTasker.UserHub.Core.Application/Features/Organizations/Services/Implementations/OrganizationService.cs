@@ -29,47 +29,53 @@ internal class OrganizationService(
         UpdateOrganizationDto updateOrganizationDto,
         CancellationToken cancellationToken)
     {
-        var organization = await GetOrganizationForUser(userId, organizationId, cancellationToken);
-        await ValidateUserHasAdminRoleInOrganization(organizationId, userId, cancellationToken);
+        var organization = await GetOrganizationForUser(userId, organizationId, true, cancellationToken);
+        await ValidateUserCanUpdateOrganization(organizationId, userId, cancellationToken);
         updateOrganizationDto.MapToEntityFields(organization);
         _unitOfWork.OrganizationRepository.Update(organization);
         await _unitOfWork.SaveChanges(cancellationToken);
     }
-
+    
+    public async Task RemoveOrganizationAsUser(Guid userId, Guid organizationId, CancellationToken cancellationToken)
+    {
+        var organization = await GetOrganizationForUser(userId, organizationId, false, cancellationToken);
+        await ValidateUserCanDeleteOrganization(organizationId, userId, cancellationToken);
+        _unitOfWork.OrganizationRepository.Delete(organization);
+        await _unitOfWork.SaveChanges(cancellationToken);
+    }
+    
     private async Task<Organization> GetOrganizationForUser(
-        Guid userId, Guid organizationId, CancellationToken cancellationToken)
+        Guid userId, Guid organizationId, bool trackChanges, CancellationToken cancellationToken)
     {
         var organization = await _unitOfWork.OrganizationRepository
-            .TryGetOrganizationForUser(userId, organizationId, true, cancellationToken);
-        
+            .TryGetOrganizationForUser(userId, organizationId, trackChanges, cancellationToken);
         if (organization is null)
-        {
             throw new OrganizationUserNotFoundException(organizationId, userId);
-        }
-        
         return organization;
     }
     
-    private async Task ValidateUserHasAdminRoleInOrganization(
+    private async Task ValidateUserCanUpdateOrganization(
         Guid organizationId, Guid userId, CancellationToken cancellationToken)
     {
         var organizationUserRole = await GetOrganizationUserRole(organizationId, userId, cancellationToken);
         if (organizationUserRole != OrganizationUserRole.Admin)
-        {
             throw new UserCanNotUpdateOrganizationUnauthorizedException(organizationId, userId);
-        }
+    }
+    
+    private async Task ValidateUserCanDeleteOrganization(
+        Guid organizationId, Guid userId, CancellationToken cancellationToken)
+    {
+        var organizationUserRole = await GetOrganizationUserRole(organizationId, userId, cancellationToken);
+        if (organizationUserRole != OrganizationUserRole.Admin)
+            throw new UserCanNotDeleteOrganizationUnauthorizedException(organizationId, userId);
     }
 
     private async Task<OrganizationUserRole> GetOrganizationUserRole(Guid organizationId, Guid userId, CancellationToken cancellationToken)
     {
         var organizationUserRole = await _unitOfWork.OrganizationUserRepository
             .TryGetUserOrganizationRole(organizationId, userId, cancellationToken);
-
         if (organizationUserRole is null)
-        {
             throw new OrganizationUserNotFoundException(organizationId, userId);
-        }
-        
         return organizationUserRole.Value;
     }
 }

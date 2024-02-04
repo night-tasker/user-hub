@@ -3,12 +3,16 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NightTasker.Common.Core.Identity.Contracts;
 using NightTasker.UserHub.Core.Application.Features.Organizations.Commands.CreateOrganizationAsUser;
+using NightTasker.UserHub.Core.Application.Features.Organizations.Commands.RemoveOrganizationAsUser;
 using NightTasker.UserHub.Core.Application.Features.Organizations.Commands.UpdateOrganizationAsUser;
 using NightTasker.UserHub.Core.Application.Features.Organizations.Models;
+using NightTasker.UserHub.Core.Application.Features.Organizations.Models.Search;
 using NightTasker.UserHub.Core.Application.Features.Organizations.Queries.GetOrganizationById;
 using NightTasker.UserHub.Core.Application.Features.Organizations.Queries.GetUserOrganizations;
+using NightTasker.UserHub.Core.Application.Features.Organizations.Queries.SearchOrganizationsAsUser;
 using NightTasker.UserHub.Core.Application.Features.OrganizationUsers.Queries.GetOrganizationUserRole;
-using NightTasker.UserHub.Core.Application.Models.Organization;
+using NightTasker.UserHub.Core.Application.Models;
+using NightTasker.UserHub.Core.Domain.Common.Search;
 using NightTasker.UserHub.Core.Domain.Entities;
 using NightTasker.UserHub.Presentation.WebApi.Constants;
 using NightTasker.UserHub.Presentation.WebApi.Endpoints;
@@ -62,6 +66,12 @@ public class OrganizationController(
         return Ok(result);
     }
 
+    /// <summary>
+    /// Эндпоинт для получения роли пользователя в организации.
+    /// </summary>
+    /// <param name="organizationId">ИД организации.</param>
+    /// <param name="cancellationToken">Токен отмены.</param>
+    /// <returns>Роль пользователя в организации.</returns>
     [HttpGet(OrganizationEndpoints.GetUserOrganizationRole)]
     public async Task<IActionResult> GetOrganizationUserRole(
         [FromRoute] Guid organizationId, CancellationToken cancellationToken)
@@ -71,6 +81,24 @@ public class OrganizationController(
         var result = await _mediator.Send(query, cancellationToken);
         var response = new GetOrganizationUserRoleResponse(result);
         return Ok(response);
+    }
+    
+    /// <summary>
+    /// Эндпоинт для поиска организаций.
+    /// </summary>
+    /// <param name="request">Запрос на поиск организаций.</param>
+    /// <param name="cancellationToken">Токен отмены.</param>
+    /// <returns>Результат поиска организаций.</returns>
+    [HttpPost(OrganizationEndpoints.SearchOrganizations)]
+    public async Task<ActionResult<SearchResult<OrganizationDto>>> SearchOrganizations(
+        [FromBody] SearchOrganizationsRequest request,
+        CancellationToken cancellationToken)
+    {
+        var currentUserId = _identityService.CurrentUserId!.Value;
+        var searchCriteria = new OrganizationsSearchCriteria(request.Filter, request.Sorter, request.Paging);
+        var query = new SearchOrganizationsAsUserQuery(currentUserId, searchCriteria);
+        var result = await _mediator.Send(query, cancellationToken);
+        return Ok(result);
     }
     
     /// <summary>
@@ -106,6 +134,22 @@ public class OrganizationController(
     {
         var userId = _identityService.CurrentUserId!.Value;
         var command = new UpdateOrganizationAsUserCommand(userId, organizationId, request);
+        await _mediator.Send(command, cancellationToken);
+        return Ok();
+    }
+    
+    /// <summary>
+    /// Эндпоинт для удаления организации.
+    /// </summary>
+    /// <param name="organizationId">ИД организации.</param>
+    /// <param name="cancellationToken">Токен отмены.</param>
+    [HttpDelete(OrganizationEndpoints.DeleteOrganization)]
+    public async Task<IActionResult> DeleteOrganization(
+        [FromRoute] Guid organizationId,
+        CancellationToken cancellationToken)
+    {
+        var userId = _identityService.CurrentUserId!.Value;
+        var command = new RemoveOrganizationAsUserCommand(userId, organizationId);
         await _mediator.Send(command, cancellationToken);
         return Ok();
     }

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using NightTasker.Common.Core.Identity.Contracts;
 using NightTasker.UserHub.Core.Application.Features.Organizations.Models;
-using NightTasker.UserHub.Core.Application.Models.Organization;
+using NightTasker.UserHub.Core.Application.Models;
 using NightTasker.UserHub.Core.Domain.Entities;
 using NightTasker.UserHub.Core.Domain.Enums;
 using NightTasker.UserHub.IntegrationTests.Framework;

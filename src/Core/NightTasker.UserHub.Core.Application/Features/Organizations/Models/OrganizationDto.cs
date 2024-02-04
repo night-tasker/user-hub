@@ -2,11 +2,12 @@
 
 namespace NightTasker.UserHub.Core.Application.Features.Organizations.Models;
 
-public record OrganizationDto(Guid Id, string? Name, string? Description)
+public record OrganizationDto(Guid Id, string? Name, string? Description, DateTimeOffset CreatedAt)
 {
     public static OrganizationDto FromEntity(Organization organization)
     {
-        return new OrganizationDto(organization.Id, organization.Name, organization.Description);
+        return new OrganizationDto(
+            organization.Id, organization.Name, organization.Description, organization.CreatedDateTimeOffset);
     }
 
     public static IReadOnlyCollection<OrganizationDto> FromEntities(

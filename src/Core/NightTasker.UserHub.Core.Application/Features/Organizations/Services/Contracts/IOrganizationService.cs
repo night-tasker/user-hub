@@ -11,4 +11,6 @@ public interface IOrganizationService
         Guid organizationId,
         UpdateOrganizationDto updateOrganizationDto,
         CancellationToken cancellationToken);
+    
+    Task RemoveOrganizationAsUser(Guid userId, Guid organizationId, CancellationToken cancellationToken);
 }

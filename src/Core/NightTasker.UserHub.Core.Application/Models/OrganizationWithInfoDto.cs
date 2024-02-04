@@ -1,15 +1,17 @@
-﻿using NightTasker.UserHub.Core.Domain.Repositories;
+﻿using NightTasker.UserHub.Core.Domain.Entities;
+using NightTasker.UserHub.Core.Domain.Repositories;
 
-namespace NightTasker.UserHub.Core.Application.Models.Organization;
+namespace NightTasker.UserHub.Core.Application.Models;
 
 public record OrganizationWithInfoDto(
     Guid Id,
     string? Name,
     string? Description,
-    int UsersCount)
+    int UsersCount,
+    DateTimeOffset CreatedAt)
 {
     public static async Task<OrganizationWithInfoDto> FromEntity(
-        Domain.Entities.Organization organization, 
+        Organization organization, 
         IOrganizationUserRepository organizationUserRepository,
         CancellationToken cancellationToken)
     {
@@ -17,6 +19,7 @@ public record OrganizationWithInfoDto(
             organization.Id,
             organization.Name,
             organization.Description,
-            await organization.GetUsersCount(organizationUserRepository, cancellationToken));
+            await organization.GetUsersCount(organizationUserRepository, cancellationToken),
+            organization.CreatedDateTimeOffset);
     }
 }

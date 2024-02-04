@@ -54,6 +54,11 @@ public class OrganizationServiceTests
         // Arrange
         var userId = Guid.NewGuid();
         var organizationId = Guid.NewGuid();
+        
+        _unitOfWork.OrganizationRepository
+            .TryGetOrganizationForUser(userId, organizationId, true, _cancellationTokenSource.Token)
+            .Returns(new Organization { Id = organizationId });
+        
         _unitOfWork.OrganizationUserRepository
             .TryGetUserOrganizationRole(organizationId, userId, _cancellationTokenSource.Token)
             .ReturnsNull();
@@ -94,5 +99,69 @@ public class OrganizationServiceTests
         
         // Assert
         await func.Should().ThrowAsync<UserCanNotUpdateOrganizationUnauthorizedException>();
+    }
+    
+    [Test]
+    public async Task RemoveOrganization_OrganizationDoesNotExist_ThrowsOrganizationUserNotFoundException()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var organizationId = Guid.NewGuid();
+        _unitOfWork.OrganizationRepository
+            .TryGetOrganizationForUser(userId, organizationId, true, _cancellationTokenSource.Token)
+            .ReturnsNull();
+
+        // Act
+        var func = async () => await _sut.RemoveOrganizationAsUser(userId, organizationId, _cancellationTokenSource.Token);
+        
+        // Assert
+        await func.Should().ThrowAsync<OrganizationUserNotFoundException>();
+    }
+    
+    [Test]
+    public async Task RemoveOrganization_UserIsNotInOrganization_ThrowsOrganizationUserNotFoundException()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var organizationId = Guid.NewGuid();
+            
+        _unitOfWork.OrganizationRepository
+            .TryGetOrganizationForUser(userId, organizationId, true, _cancellationTokenSource.Token)
+            .Returns(new Organization { Id = organizationId });
+        
+        _unitOfWork.OrganizationUserRepository
+            .TryGetUserOrganizationRole(organizationId, userId, _cancellationTokenSource.Token)
+            .ReturnsNull();
+
+        // Act
+        var func = async () => await _sut.RemoveOrganizationAsUser(userId, organizationId, _cancellationTokenSource.Token);
+        
+        // Assert
+        await func.Should().ThrowAsync<OrganizationUserNotFoundException>();
+    }
+    
+    [Test]
+    public async Task RemoveOrganization_UserIsNotAdminInOrganization_ThrowsUserCanNotDeleteOrganizationUnauthorizedException()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var organizationId = Guid.NewGuid();
+        
+        _unitOfWork.OrganizationRepository
+            .TryGetOrganizationForUser(userId, organizationId, false, _cancellationTokenSource.Token)
+            .Returns(new Organization
+            {
+                Id = organizationId
+            });
+        
+        _unitOfWork.OrganizationUserRepository
+            .TryGetUserOrganizationRole(organizationId, userId, _cancellationTokenSource.Token)
+            .Returns(OrganizationUserRole.Member);
+
+        // Act
+        var func = async () => await _sut.RemoveOrganizationAsUser(userId, organizationId, _cancellationTokenSource.Token);
+        
+        // Assert
+        await func.Should().ThrowAsync<UserCanNotDeleteOrganizationUnauthorizedException>();
     }
 }

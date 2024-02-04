@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NightTasker.Common.Core.Persistence;
 using NightTasker.Common.Core.Persistence.Repository;
-using NightTasker.UserHub.Core.Application.Models.Organization;
+using NightTasker.UserHub.Core.Domain.Common.Search;
 using NightTasker.UserHub.Core.Domain.Entities;
 using NightTasker.UserHub.Core.Domain.Repositories;
 
@@ -30,26 +30,20 @@ public class OrganizationRepository(ApplicationDbSet<Organization, Guid> dbSet)
             .CountAsync(cancellationToken);
     }
 
-    public async Task<OrganizationWithInfoDto?> TryGetOrganizationWithInfoForUser(Guid id, Guid userId, CancellationToken cancellationToken)
-    {
-        var query = UserOrganizationsQuery(userId)
-            .Where(query => query.Id == id);
-
-        var organization = await query
-            .Select(x => new OrganizationWithInfoDto(
-                x.Id, x.Name, x.Description, x.OrganizationUsers.Count))
-            .SingleOrDefaultAsync(cancellationToken);
-        
-        return organization;
-    }
-
     public Task<bool> CheckExistsByIdForUser(Guid userId, Guid id, CancellationToken cancellationToken)
     {
         return Entities
             .AnyAsync(x => x.Id == id 
                            && x.OrganizationUsers.Any(y => y.UserId == userId), cancellationToken);
     }
-    
+
+    public Task<SearchResult<Organization>> SearchOrganizationsForUser(
+        Guid userId, ISearchCriteria<Organization> searchCriteria, CancellationToken cancellationToken)
+    {
+        var query = UserOrganizationsQuery(userId);
+        return searchCriteria.Apply(query, cancellationToken);
+    }
+
     public Task<bool> CheckExistsById(Guid id, CancellationToken cancellationToken)
     {
         return Entities

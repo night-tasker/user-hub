@@ -1,5 +1,6 @@
 ﻿using MediatR;
-using NightTasker.UserHub.Core.Application.Models.Organization;
+using NightTasker.UserHub.Core.Application.Features.Organizations.Models;
+using NightTasker.UserHub.Core.Application.Models;
 
 namespace NightTasker.UserHub.Core.Application.Features.Organizations.Queries.GetOrganizationById;
 
