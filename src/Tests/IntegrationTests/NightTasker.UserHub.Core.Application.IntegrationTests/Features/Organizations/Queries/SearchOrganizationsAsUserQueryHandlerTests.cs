@@ -140,12 +140,7 @@ public class SearchOrganizationsAsUserQueryHandlerTests : ApplicationIntegration
     
     private OrganizationUser SetupOrganizationUser(Guid organizationId, Guid userId, OrganizationUserRole role)
     {
-        return new OrganizationUser
-        {
-            OrganizationId = organizationId,
-            UserId = userId,
-            Role = role
-        };
+        return OrganizationUser.CreateInstance(organizationId, userId, role);
     }
 
     private User SetupUser(Guid userId)
@@ -158,11 +153,6 @@ public class SearchOrganizationsAsUserQueryHandlerTests : ApplicationIntegration
     
     private Organization SetupOrganization()
     {
-        return new Organization
-        {
-            Id = Guid.NewGuid(),
-            Name = _faker.Company.CompanyName(),
-            Description = _faker.Company.CatchPhrase()
-        };
+        return Organization.CreateInstance(_faker.Company.CompanyName(), _faker.Company.CatchPhrase());
     }
 }

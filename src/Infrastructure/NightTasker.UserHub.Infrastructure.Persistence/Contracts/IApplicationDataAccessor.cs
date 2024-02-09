@@ -12,6 +12,8 @@ public interface IApplicationDataAccessor
     ApplicationDbSet<Organization, Guid> Organizations { get; }
 
     ApplicationDbSet<OrganizationUser, Guid> OrganizationUsers { get; }
+    
+    ApplicationDbSet<OrganizationUserInvite, Guid> OrganizationUserInvites { get; }
 
     Task SaveChanges(CancellationToken cancellationToken);
 }

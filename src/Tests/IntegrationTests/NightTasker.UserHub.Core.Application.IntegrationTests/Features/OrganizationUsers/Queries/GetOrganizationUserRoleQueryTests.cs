@@ -97,20 +97,11 @@ public class GetOrganizationUserRoleQueryTests : ApplicationIntegrationTestsBase
 
     private Organization SetupOrganization()
     {
-        return new Organization
-        {
-            Id = Guid.NewGuid(),
-            Name = _faker.Random.AlphaNumeric(8)
-        };
+        return Organization.CreateInstance(_faker.Random.AlphaNumeric(8), null);
     }
 
     private static OrganizationUser SetupOrganizationUser(Guid organizationId, Guid userId, OrganizationUserRole role)
     {
-        return new OrganizationUser
-        {
-            OrganizationId = organizationId,
-            UserId = userId,
-            Role = role
-        };
+        return OrganizationUser.CreateInstance(organizationId, userId, role);
     }
 }

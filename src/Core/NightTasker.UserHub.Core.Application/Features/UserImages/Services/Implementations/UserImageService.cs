@@ -26,8 +26,6 @@ public class UserImageService(
         await _unitOfWork.UserImageRepository.Add(userImage, cancellationToken);
         await _unitOfWork.UserImageRepository.SetUnActiveImagesForUserIdExcludeOne(
             userImage.UserId, userImage.Id, cancellationToken);
-        await _unitOfWork.SaveChanges(cancellationToken);
-
         return userImage.Id;
     }
 
@@ -92,8 +90,6 @@ public class UserImageService(
 
         await _unitOfWork.UserImageRepository.SetUnActiveImagesForUserIdExcludeOne(
             userId, userImageId, cancellationToken);
-
-        await _unitOfWork.SaveChanges(cancellationToken);
     }
 
     private async Task<UserImage> GetImageByIdForUser(

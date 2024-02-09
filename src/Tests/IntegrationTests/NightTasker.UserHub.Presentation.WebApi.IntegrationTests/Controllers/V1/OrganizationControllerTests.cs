@@ -216,12 +216,9 @@ public class OrganizationControllerTest() : BaseIntegrationTests(CreateMockedSer
     
     private Organization SetupOrganization()
     {
-        return new Organization
-        {
-            Id = Guid.NewGuid(),
-            Name = _faker.Random.AlphaNumeric(8),
-            Description = _faker.Random.AlphaNumeric(32)
-        };
+        return Organization.CreateInstance(
+            _faker.Random.AlphaNumeric(8),
+            _faker.Random.AlphaNumeric(32));
     }
 
     private static User SetupUser(Guid userId)
@@ -237,12 +234,7 @@ public class OrganizationControllerTest() : BaseIntegrationTests(CreateMockedSer
         Guid organizationId, 
         OrganizationUserRole role)
     {
-        return new OrganizationUser
-        {
-            OrganizationId = organizationId,
-            UserId = userId,
-            Role = role
-        };
+        return OrganizationUser.CreateInstance(organizationId, userId, role);
     }
     
     private static async Task CreateUserInDatabase(DbContext applicationDbContext, Guid userId)

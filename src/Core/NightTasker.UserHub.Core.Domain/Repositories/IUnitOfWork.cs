@@ -9,6 +9,8 @@ public interface IUnitOfWork
     IOrganizationRepository OrganizationRepository { get; }
     
     IOrganizationUserRepository OrganizationUserRepository { get; }
+    
+    IOrganizationUserInviteRepository OrganizationUserInviteRepository { get; }
 
     Task SaveChanges(CancellationToken cancellationToken);
 }

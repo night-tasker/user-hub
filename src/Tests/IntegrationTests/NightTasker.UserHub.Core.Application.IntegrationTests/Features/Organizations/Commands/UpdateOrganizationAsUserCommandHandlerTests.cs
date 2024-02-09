@@ -63,11 +63,12 @@ public class UpdateOrganizationAsUserCommandHandlerTests : ApplicationIntegratio
     public async Task UpdateOrganization_OrganizationExistsAndUserIsAdmin_OrganizationUpdated()
     {
         // Arrange
-        var organizationId = Guid.NewGuid();
+        var organization = SetupRandomOrganization();
+        var organizationId = organization.Id;
+
         await using (var arrangeScope = CreateAsyncScope())
         {
             var dbContext = arrangeScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            var organization = SetupRandomOrganization(organizationId);
             await dbContext.Set<Organization>().AddAsync(organization, _cancellationTokenSource.Token);
             await dbContext.Set<User>().AddAsync(SetupUser(UserId), _cancellationTokenSource.Token);
             var organizationUser = SetupOrganizationUser(organization.Id, UserId, OrganizationUserRole.Admin);
@@ -104,11 +105,11 @@ public class UpdateOrganizationAsUserCommandHandlerTests : ApplicationIntegratio
     public async Task UpdateOrganization_OrganizationExistsAndUserIsNotAdmin_ThrowsUserCanNotUpdateOrganizationUnauthorizedException()
     {
         // Arrange
-        var organizationId = Guid.NewGuid();
+        var organization = SetupRandomOrganization();
+        var organizationId = organization.Id;
         await using (var arrangeScope = CreateAsyncScope())
         {
             var dbContext = arrangeScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            var organization = SetupRandomOrganization(organizationId);
             await dbContext.Set<Organization>().AddAsync(organization, _cancellationTokenSource.Token);
             await dbContext.Set<User>().AddAsync(SetupUser(UserId), _cancellationTokenSource.Token);
             var organizationUser = SetupOrganizationUser(organization.Id, UserId, OrganizationUserRole.Member);
@@ -160,10 +161,10 @@ public class UpdateOrganizationAsUserCommandHandlerTests : ApplicationIntegratio
     public async Task UpdateOrganization_OrganizationExistsButUserIsNotInOrganization_ThrowsOrganizationNotFoundException()
     {
         // Arrange
-        var organizationId = Guid.NewGuid();
+        var organization = SetupRandomOrganization();
+        var organizationId = organization.Id;
         await using (var arrangeScope = CreateAsyncScope())
         {
-            var organization = SetupRandomOrganization(organizationId);
             var dbContext = arrangeScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             await dbContext.Set<User>().AddAsync(SetupUser(UserId), _cancellationTokenSource.Token);
             await dbContext.Set<Organization>().AddAsync(organization, _cancellationTokenSource.Token);
@@ -192,23 +193,13 @@ public class UpdateOrganizationAsUserCommandHandlerTests : ApplicationIntegratio
         };
     }
 
-    private Organization SetupRandomOrganization(Guid id)
+    private Organization SetupRandomOrganization()
     {
-        return new Organization
-        {
-            Id = id,
-            Name = _faker.Random.AlphaNumeric(8),
-            Description = _faker.Random.AlphaNumeric(32),
-        };
+        return Organization.CreateInstance(_faker.Random.AlphaNumeric(8), _faker.Random.AlphaNumeric(32));
     }
 
     private static OrganizationUser SetupOrganizationUser(Guid organizationId, Guid userId, OrganizationUserRole role)
     {
-        return new OrganizationUser
-        {
-            OrganizationId = organizationId,
-            UserId = userId,
-            Role = role
-        };
+        return OrganizationUser.CreateInstance(organizationId, userId, role);
     }
 }

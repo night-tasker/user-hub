@@ -1,17 +1,20 @@
 ﻿using MediatR;
 using NightTasker.UserHub.Core.Application.Features.Organizations.Services.Contracts;
+using NightTasker.UserHub.Core.Domain.Repositories;
 
 namespace NightTasker.UserHub.Core.Application.Features.Organizations.Commands.UpdateOrganizationAsUser;
 
-public class UpdateOrganizationAsUserCommandHandler(IOrganizationService organizationService)
+public class UpdateOrganizationAsUserCommandHandler(IOrganizationService organizationService, IUnitOfWork unitOfWork)
     : IRequestHandler<UpdateOrganizationAsUserCommand>
 {
     private readonly IOrganizationService _organizationService = 
         organizationService ?? throw new ArgumentNullException(nameof(organizationService));
 
-    public Task Handle(UpdateOrganizationAsUserCommand request, CancellationToken cancellationToken)
+    private readonly IUnitOfWork _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
+    public async Task Handle(UpdateOrganizationAsUserCommand request, CancellationToken cancellationToken)
     {
-        return _organizationService.UpdateOrganizationAsUser(
+        await _organizationService.UpdateOrganizationAsUser(
             request.UserId, request.OrganizationId, request.UpdateOrganizationDto, cancellationToken);
+        await _unitOfWork.SaveChanges(cancellationToken);
     }
 }

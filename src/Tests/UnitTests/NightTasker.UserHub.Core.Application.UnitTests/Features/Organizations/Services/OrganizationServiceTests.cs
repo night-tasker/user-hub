@@ -57,7 +57,7 @@ public class OrganizationServiceTests
         
         _unitOfWork.OrganizationRepository
             .TryGetOrganizationForUser(userId, organizationId, true, _cancellationTokenSource.Token)
-            .Returns(new Organization { Id = organizationId });
+            .Returns(Organization.CreateInstance(organizationId, null, null ));
         
         _unitOfWork.OrganizationUserRepository
             .TryGetUserOrganizationRole(organizationId, userId, _cancellationTokenSource.Token)
@@ -82,10 +82,7 @@ public class OrganizationServiceTests
         
         _unitOfWork.OrganizationRepository
             .TryGetOrganizationForUser(userId, organizationId, true, _cancellationTokenSource.Token)
-            .Returns(new Organization
-            {
-                Id = organizationId
-            });
+            .Returns(Organization.CreateInstance(organizationId, null, null));
         
         _unitOfWork.OrganizationUserRepository
             .TryGetUserOrganizationRole(organizationId, userId, _cancellationTokenSource.Token)
@@ -127,7 +124,7 @@ public class OrganizationServiceTests
             
         _unitOfWork.OrganizationRepository
             .TryGetOrganizationForUser(userId, organizationId, true, _cancellationTokenSource.Token)
-            .Returns(new Organization { Id = organizationId });
+            .Returns(Organization.CreateInstance(organizationId, null, null));
         
         _unitOfWork.OrganizationUserRepository
             .TryGetUserOrganizationRole(organizationId, userId, _cancellationTokenSource.Token)
@@ -149,10 +146,7 @@ public class OrganizationServiceTests
         
         _unitOfWork.OrganizationRepository
             .TryGetOrganizationForUser(userId, organizationId, false, _cancellationTokenSource.Token)
-            .Returns(new Organization
-            {
-                Id = organizationId
-            });
+            .Returns(Organization.CreateInstance(organizationId, null, null));
         
         _unitOfWork.OrganizationUserRepository
             .TryGetUserOrganizationRole(organizationId, userId, _cancellationTokenSource.Token)

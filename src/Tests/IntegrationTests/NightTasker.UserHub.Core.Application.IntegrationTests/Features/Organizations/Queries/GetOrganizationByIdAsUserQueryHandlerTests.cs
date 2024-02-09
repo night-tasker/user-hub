@@ -123,22 +123,12 @@ public class GetOrganizationByIdAsUserQueryHandlerTests : ApplicationIntegration
     
     private static OrganizationUser SetupOrganizationUser(Guid organizationId, Guid userId, OrganizationUserRole role)
     {
-        return new OrganizationUser
-        {
-            UserId = userId,
-            OrganizationId = organizationId,
-            Role = role
-        };
+        return OrganizationUser.CreateInstance(organizationId, userId, role);
     }
     
     private Organization SetupOrganization()
     {
-        return new Organization
-        {
-            Id = Guid.NewGuid(), 
-            Name = _faker.Random.AlphaNumeric(8), 
-            Description = _faker.Random.AlphaNumeric(32)
-        };
+        return Organization.CreateInstance(_faker.Random.AlphaNumeric(8), _faker.Random.AlphaNumeric(32));
     }
 
     private static User SetupUser(Guid userId)

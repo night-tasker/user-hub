@@ -185,21 +185,11 @@ public class RemoveOrganizationAsUserCommandHandlerTests : ApplicationIntegratio
 
     private Organization SetupRandomOrganization(Guid id)
     {
-        return new Organization
-        {
-            Id = id,
-            Name = _faker.Random.AlphaNumeric(8),
-            Description = _faker.Random.AlphaNumeric(32),
-        };
+        return Organization.CreateInstance(id, _faker.Random.AlphaNumeric(8), _faker.Random.AlphaNumeric(32));
     }
 
     private static OrganizationUser SetupOrganizationUser(Guid organizationId, Guid userId, OrganizationUserRole role)
     {
-        return new OrganizationUser
-        {
-            OrganizationId = organizationId,
-            UserId = userId,
-            Role = role
-        };
+        return OrganizationUser.CreateInstance(organizationId, userId, role);
     }
 }

@@ -7,11 +7,6 @@ public record CreateOrganizationUserDto(Guid OrganizationId, Guid UserId, Organi
 {
     public OrganizationUser ToEntity()
     {
-        return new OrganizationUser
-        {
-            OrganizationId = OrganizationId,
-            UserId = UserId,
-            Role = Role
-        };
+        return OrganizationUser.CreateInstance(OrganizationId, UserId, Role);
     }
-};
+}

@@ -14,6 +14,9 @@ public class UnitOfWork(IApplicationDataAccessor applicationDataAccessor) : IUni
     public IOrganizationUserRepository OrganizationUserRepository { get; } =
         new OrganizationUserRepository(applicationDataAccessor.OrganizationUsers);
 
+    public IOrganizationUserInviteRepository OrganizationUserInviteRepository { get; } =
+        new OrganizationUserInviteRepository(applicationDataAccessor.OrganizationUserInvites);
+
     public Task SaveChanges(CancellationToken cancellationToken)
     {
         return applicationDataAccessor.SaveChanges(cancellationToken);

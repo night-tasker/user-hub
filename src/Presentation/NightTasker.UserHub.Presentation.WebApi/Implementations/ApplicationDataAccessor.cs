@@ -17,6 +17,7 @@ public class ApplicationDataAccessor : IApplicationDataAccessor
         Users = new ApplicationDbSet<User, Guid>(_dbContext, GetUsers(_dbContext.Set<User>()));
         UserImages = new ApplicationDbSet<UserImage, Guid>(_dbContext, GetUserImages(_dbContext.Set<UserImage>()));
         OrganizationUsers = new ApplicationDbSet<OrganizationUser, Guid>(_dbContext, GetOrganizationUsers(_dbContext.Set<OrganizationUser>()));
+        OrganizationUserInvites = new ApplicationDbSet<OrganizationUserInvite, Guid>(_dbContext, _dbContext.Set<OrganizationUserInvite>());
     }
 
     public ApplicationDbSet<User, Guid> Users { get; }
@@ -26,6 +27,8 @@ public class ApplicationDataAccessor : IApplicationDataAccessor
     public ApplicationDbSet<Organization, Guid> Organizations { get; }
     
     public ApplicationDbSet<OrganizationUser, Guid> OrganizationUsers { get; }
+    
+    public ApplicationDbSet<OrganizationUserInvite, Guid> OrganizationUserInvites { get; }
 
     private IQueryable<User> GetUsers(DbSet<User> query)
     {

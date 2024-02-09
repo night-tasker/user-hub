@@ -5,13 +5,32 @@ namespace NightTasker.UserHub.Core.Domain.Entities;
 
 public class OrganizationUser : IEntity
 {
-    public OrganizationUserRole Role { get; set; }
 
-    public Guid UserId { get; set; }
+    private OrganizationUser(
+        Guid organizationId,
+        Guid userId,
+        OrganizationUserRole role)
+    {
+        OrganizationId = organizationId;
+        UserId = userId;
+        Role = role;
+    }
 
-    public User User { get; set; } = null!;
+    public static OrganizationUser CreateInstance(
+        Guid organizationId,
+        Guid userId,
+        OrganizationUserRole role)
+    {
+        return new OrganizationUser(organizationId, userId, role);
+    }
+    
+    public OrganizationUserRole Role { get; private set; }
 
-    public Guid OrganizationId { get; set; }
+    public Guid UserId { get; private set; }
 
-    public Organization Organization { get; set; } = null!;
+    public User User { get; private set; } = null!;
+
+    public Guid OrganizationId { get; private set; }
+
+    public Organization Organization { get; private set; } = null!;
 }

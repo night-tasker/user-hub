@@ -13,14 +13,26 @@ internal class OrganizationService(
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
 
-    public async Task<Guid> CreateOrganization(
+    public async Task<Guid> CreateOrganizationAsUser(
         CreateOrganizationDto createOrganizationDto,
+        Guid creatorUserId,
         CancellationToken cancellationToken)
     {
+        await ValidateUserExists(creatorUserId, cancellationToken);
         var organization = createOrganizationDto.ToEntity();
+        
+        await organization.CreateAdmin(_unitOfWork.OrganizationUserRepository, creatorUserId, cancellationToken);
         await _unitOfWork.OrganizationRepository.Add(organization, cancellationToken);
-        await _unitOfWork.SaveChanges(cancellationToken);
         return organization.Id;
+    }
+    
+    private async Task ValidateUserExists(Guid userId, CancellationToken cancellationToken)
+    {
+        var userExists = await _unitOfWork.UserRepository.CheckExistsById(userId, cancellationToken);
+        if (!userExists)
+        {
+            throw new UserNotFoundException(userId);
+        }
     }
 
     public async Task UpdateOrganizationAsUser(
@@ -33,7 +45,6 @@ internal class OrganizationService(
         await ValidateUserCanUpdateOrganization(organizationId, userId, cancellationToken);
         updateOrganizationDto.MapToEntityFields(organization);
         _unitOfWork.OrganizationRepository.Update(organization);
-        await _unitOfWork.SaveChanges(cancellationToken);
     }
     
     public async Task RemoveOrganizationAsUser(Guid userId, Guid organizationId, CancellationToken cancellationToken)
@@ -41,10 +52,9 @@ internal class OrganizationService(
         var organization = await GetOrganizationForUser(userId, organizationId, false, cancellationToken);
         await ValidateUserCanDeleteOrganization(organizationId, userId, cancellationToken);
         _unitOfWork.OrganizationRepository.Delete(organization);
-        await _unitOfWork.SaveChanges(cancellationToken);
     }
     
-    private async Task<Organization> GetOrganizationForUser(
+    public async Task<Organization> GetOrganizationForUser(
         Guid userId, Guid organizationId, bool trackChanges, CancellationToken cancellationToken)
     {
         var organization = await _unitOfWork.OrganizationRepository
@@ -54,7 +64,7 @@ internal class OrganizationService(
         return organization;
     }
     
-    private async Task ValidateUserCanUpdateOrganization(
+    public async Task ValidateUserCanUpdateOrganization(
         Guid organizationId, Guid userId, CancellationToken cancellationToken)
     {
         var organizationUserRole = await GetOrganizationUserRole(organizationId, userId, cancellationToken);
