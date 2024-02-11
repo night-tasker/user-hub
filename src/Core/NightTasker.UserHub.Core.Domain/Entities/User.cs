@@ -4,21 +4,48 @@ namespace NightTasker.UserHub.Core.Domain.Entities;
 
 public class User : IEntityWithId<Guid>, IDateTimeOffsetModification
 {
-    public Guid Id { get; set; }
-
-    public string? UserName { get; set; }
-
-    public string? Email { get; set; }
-
-    public string? FirstName { get; set; }
-
-    public string? MiddleName { get; set; }
+    private User(
+        Guid id,
+        string? userName = null,
+        string? email = null,
+        string? firstName = null,
+        string? middleName = null,
+        string? lastName = null)
+    {
+        Id = id;
+        UserName = userName;
+        Email = email;
+        FirstName = firstName;
+        MiddleName = middleName;
+        LastName = lastName;
+    }
     
-    public string? LastName { get; set; }
+    public static User CreateInstance(
+        Guid id,
+        string? userName = null,
+        string? email = null,
+        string? firstName = null,
+        string? middleName = null,
+        string? lastName = null)
+    {
+        return new User(id, userName, email, firstName, middleName, lastName);
+    }
+    
+    public Guid Id { get; private set; }
 
-    public List<UserImage> UserImages { get; set; } = null!;
+    public string? UserName { get; private set; }
 
-    public List<OrganizationUser> OrganizationUsers { get; set; } = null!;
+    public string? Email { get; private set; }
+
+    public string? FirstName { get; private set; }
+
+    public string? MiddleName { get; private set; }
+    
+    public string? LastName { get; private set; }
+
+    public List<UserImage> UserImages { get; } = null!;
+
+    public List<OrganizationUser> OrganizationUsers { get; } = null!;
 
     public DateTimeOffset CreatedDateTimeOffset { get; set; }
     

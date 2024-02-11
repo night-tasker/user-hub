@@ -2,7 +2,7 @@
 using NightTasker.UserHub.Core.Application.Features.Organizations.Services.Contracts;
 using NightTasker.UserHub.Core.Application.Features.Organizations.Services.Implementations;
 using NightTasker.UserHub.Core.Application.Features.OrganizationUserInvites.Contracts;
-using NightTasker.UserHub.Core.Application.Features.OrganizationUserInvites.Services;
+using NightTasker.UserHub.Core.Application.Features.OrganizationUserInvites.Implementations;
 using NightTasker.UserHub.Core.Application.Features.OrganizationUsers.Services.Contracts;
 using NightTasker.UserHub.Core.Application.Features.OrganizationUsers.Services.Implementations;
 using NightTasker.UserHub.Core.Application.Features.UserImages.Services.Contracts;

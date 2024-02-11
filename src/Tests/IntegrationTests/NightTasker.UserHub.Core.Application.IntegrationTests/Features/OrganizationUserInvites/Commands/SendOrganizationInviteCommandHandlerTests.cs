@@ -7,9 +7,9 @@ using NightTasker.UserHub.Core.Application.Exceptions.NotFound;
 using NightTasker.UserHub.Core.Application.Exceptions.Unauthorized;
 using NightTasker.UserHub.Core.Application.Features.Organizations.Services.Contracts;
 using NightTasker.UserHub.Core.Application.Features.Organizations.Services.Implementations;
-using NightTasker.UserHub.Core.Application.Features.OrganizationUserInvites.Commands.SendOrganizationUserInvite;
+using NightTasker.UserHub.Core.Application.Features.OrganizationUserInvites.Commands.SendInvite;
 using NightTasker.UserHub.Core.Application.Features.OrganizationUserInvites.Contracts;
-using NightTasker.UserHub.Core.Application.Features.OrganizationUserInvites.Services;
+using NightTasker.UserHub.Core.Application.Features.OrganizationUserInvites.Implementations;
 using NightTasker.UserHub.Core.Domain.Entities;
 using NightTasker.UserHub.Core.Domain.Enums;
 using NightTasker.UserHub.Core.Domain.Repositories;
@@ -29,7 +29,7 @@ public sealed class SendOrganizationInviteCommandHandlerTests : ApplicationInteg
     private readonly Faker _faker;
     private readonly CancellationTokenSource _cancellationTokenSource;
 
-    public SendOrganizationInviteCommandHandlerTests()
+    public SendOrganizationInviteCommandHandlerTests(TestNpgSql testNpgSql) : base(testNpgSql)
     {
         var identityService = Substitute.For<IIdentityService>();
         RegisterService(new ServiceForRegister(typeof(IApplicationDataAccessor), serviceProvider => new ApplicationDataAccessor(
@@ -51,8 +51,8 @@ public sealed class SendOrganizationInviteCommandHandlerTests : ApplicationInteg
         identityService.CurrentUserId.Returns(UserId);
         identityService.IsAuthenticated.Returns(true);
 
-        var dbContext = GetService<ApplicationDbContext>();
-        dbContext.Database.Migrate();
+        PrepareDatabase();
+        
         _faker = new Faker();
         _cancellationTokenSource = new CancellationTokenSource();
     }
@@ -167,10 +167,7 @@ public sealed class SendOrganizationInviteCommandHandlerTests : ApplicationInteg
     
     private static User SetupUser(Guid userId)
     {
-        return new User
-        {
-            Id = userId
-        };
+        return User.CreateInstance(userId);
     }
 
     private Organization SetupRandomOrganization(Guid id)

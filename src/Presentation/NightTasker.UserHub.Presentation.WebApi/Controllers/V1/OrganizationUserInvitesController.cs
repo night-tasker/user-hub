@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NightTasker.Common.Core.Identity.Contracts;
-using NightTasker.UserHub.Core.Application.Features.OrganizationUserInvites.Commands.SendOrganizationUserInvite;
+using NightTasker.UserHub.Core.Application.Features.OrganizationUserInvites.Commands.SendInvite;
 using NightTasker.UserHub.Presentation.WebApi.Requests.OrganizationUserInvites;
 
 namespace NightTasker.UserHub.Presentation.WebApi.Controllers.V1;

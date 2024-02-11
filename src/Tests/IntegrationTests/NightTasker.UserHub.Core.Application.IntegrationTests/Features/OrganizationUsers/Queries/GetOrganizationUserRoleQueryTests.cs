@@ -22,7 +22,7 @@ public class GetOrganizationUserRoleQueryTests : ApplicationIntegrationTestsBase
     private readonly Faker _faker;
     private readonly CancellationTokenSource _cancellationTokenSource;
 
-    public GetOrganizationUserRoleQueryTests()
+    public GetOrganizationUserRoleQueryTests(TestNpgSql testNpgSql) : base(testNpgSql)
     {
         RegisterService(new ServiceForRegister(typeof(IApplicationDataAccessor), serviceProvider => new ApplicationDataAccessor(
             serviceProvider.GetRequiredService<ApplicationDbContext>()), ServiceLifetime.Scoped));
@@ -32,8 +32,8 @@ public class GetOrganizationUserRoleQueryTests : ApplicationIntegrationTestsBase
         
         BuildServiceProvider();
         
-        var dbContext = GetService<ApplicationDbContext>();
-        dbContext.Database.Migrate();
+        PrepareDatabase();
+        
         _faker = new Faker();
         _cancellationTokenSource = new CancellationTokenSource();
     }
@@ -89,10 +89,7 @@ public class GetOrganizationUserRoleQueryTests : ApplicationIntegrationTestsBase
     
     private static User SetupUser(Guid userId)
     {
-        return new User
-        {
-            Id = userId
-        };
+        return User.CreateInstance(userId);
     }
 
     private Organization SetupOrganization()

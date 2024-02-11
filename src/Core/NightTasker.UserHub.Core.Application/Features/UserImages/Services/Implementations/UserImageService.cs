@@ -21,7 +21,7 @@ public class UserImageService(
         await ValidateUserExists(createUserImageDto.UserId, cancellationToken);
             
         var userImage = createUserImageDto.ToEntity();
-        userImage.ChangeIsActive(true);
+        userImage.SetActive();
         
         await _unitOfWork.UserImageRepository.Add(userImage, cancellationToken);
         await _unitOfWork.UserImageRepository.SetUnActiveImagesForUserIdExcludeOne(
@@ -85,9 +85,7 @@ public class UserImageService(
     {
         var userImage = await GetImageByIdForUser(userId, userImageId, true, cancellationToken);
 
-        userImage.ChangeIsActive(true);
-        _unitOfWork.UserImageRepository.Update(userImage);
-
+        userImage.SetActive();
         await _unitOfWork.UserImageRepository.SetUnActiveImagesForUserIdExcludeOne(
             userId, userImageId, cancellationToken);
     }

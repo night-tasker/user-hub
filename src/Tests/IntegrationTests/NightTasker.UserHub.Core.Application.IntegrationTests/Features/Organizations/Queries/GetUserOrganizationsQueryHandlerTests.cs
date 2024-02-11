@@ -24,7 +24,7 @@ public class GetUserOrganizationsQueryHandlerTests : ApplicationIntegrationTests
     private readonly Faker _faker;
     private readonly CancellationTokenSource _cancellationTokenSource;
 
-    public GetUserOrganizationsQueryHandlerTests()
+    public GetUserOrganizationsQueryHandlerTests(TestNpgSql testNpgSql) : base(testNpgSql)
     {
         var identityService = Substitute.For<IIdentityService>();
         RegisterService(new ServiceForRegister(typeof(IApplicationDataAccessor), serviceProvider => new ApplicationDataAccessor(
@@ -37,8 +37,7 @@ public class GetUserOrganizationsQueryHandlerTests : ApplicationIntegrationTests
         identityService.CurrentUserId.Returns(UserId);
         identityService.IsAuthenticated.Returns(true);
 
-        var dbContext = GetService<ApplicationDbContext>();
-        dbContext.Database.Migrate();
+        PrepareDatabase();
         
         _faker = new Faker();
         _cancellationTokenSource = new CancellationTokenSource();
@@ -141,9 +140,6 @@ public class GetUserOrganizationsQueryHandlerTests : ApplicationIntegrationTests
 
     private static User SetupUser(Guid userId)
     {
-        return new User
-        {
-            Id = userId
-        };
+        return User.CreateInstance(userId);
     }
 }

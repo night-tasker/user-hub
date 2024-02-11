@@ -22,7 +22,7 @@ public class RemoveUserImageCommandTests : ApplicationIntegrationTestsBase
 {
     private readonly CancellationTokenSource _cancellationTokenSource;
 
-    public RemoveUserImageCommandTests()
+    public RemoveUserImageCommandTests(TestNpgSql testNpgSql) : base(testNpgSql)
     {
         RegisterService(new ServiceForRegister(typeof(IApplicationDataAccessor), serviceProvider => new ApplicationDataAccessor(
             serviceProvider.GetRequiredService<ApplicationDbContext>()), ServiceLifetime.Scoped));
@@ -38,8 +38,8 @@ public class RemoveUserImageCommandTests : ApplicationIntegrationTestsBase
         
         BuildServiceProvider();
         
-        var dbContext = GetService<ApplicationDbContext>();
-        dbContext.Database.Migrate();
+        PrepareDatabase();
+        
         _cancellationTokenSource = new CancellationTokenSource();
     }
 
@@ -83,20 +83,13 @@ public class RemoveUserImageCommandTests : ApplicationIntegrationTestsBase
     
     private static User SetupUser(Guid userId)
     {
-        var user = new User
-        {
-            Id = userId
-        };
-        
-        return user;
+        return User.CreateInstance(userId); 
     }
 
     private static UserImage SetupUserImage(Guid userId)
     {
-        var userImage = new UserImage
-        {
-            UserId = userId
-        };
+        var userImage = UserImage.CreateInstance(
+            id: Guid.NewGuid(), userId: userId, null, null, null, 0);
         
         return userImage;
     }

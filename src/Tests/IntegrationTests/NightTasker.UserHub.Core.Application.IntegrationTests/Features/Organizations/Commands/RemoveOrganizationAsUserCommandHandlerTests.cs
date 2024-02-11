@@ -29,7 +29,7 @@ public class RemoveOrganizationAsUserCommandHandlerTests : ApplicationIntegratio
     private readonly Faker _faker;
     private readonly CancellationTokenSource _cancellationTokenSource;
 
-    public RemoveOrganizationAsUserCommandHandlerTests()
+    public RemoveOrganizationAsUserCommandHandlerTests(TestNpgSql testNpgSql) : base(testNpgSql) 
     {
         var identityService = Substitute.For<IIdentityService>();
         RegisterService(new ServiceForRegister(typeof(IApplicationDataAccessor), serviceProvider => new ApplicationDataAccessor(
@@ -53,9 +53,8 @@ public class RemoveOrganizationAsUserCommandHandlerTests : ApplicationIntegratio
 
         _faker = new Faker();
         _cancellationTokenSource = new CancellationTokenSource();
-        var scope = CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        dbContext.Database.Migrate();
+        
+        PrepareDatabase();
     }
     
     [Fact]
@@ -177,10 +176,7 @@ public class RemoveOrganizationAsUserCommandHandlerTests : ApplicationIntegratio
 
     private static User SetupUser(Guid userId)
     {
-        return new User
-        {
-            Id = userId
-        };
+        return User.CreateInstance(userId);
     }
 
     private Organization SetupRandomOrganization(Guid id)

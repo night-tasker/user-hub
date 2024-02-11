@@ -5,5 +5,6 @@ namespace NightTasker.UserHub.Core.Domain.Repositories;
 
 public interface IOrganizationUserInviteRepository : IRepository<OrganizationUserInvite, Guid>
 {
-    Task<OrganizationUserInvite?> TryGetByOrganization(Guid organizationId, CancellationToken cancellationToken);
+    Task<OrganizationUserInvite?> TryGetIdForInvitedUser(
+        Guid inviteId, Guid invitedUserId, CancellationToken cancellationToken);
 }

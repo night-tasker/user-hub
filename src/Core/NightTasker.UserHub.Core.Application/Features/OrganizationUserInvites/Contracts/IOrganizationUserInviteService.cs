@@ -4,6 +4,10 @@ namespace NightTasker.UserHub.Core.Application.Features.OrganizationUserInvites.
 
 public interface IOrganizationUserInviteService
 {
-    Task<Guid> SendOrganizationUserInvite(
+    Task<Guid> SendInvite(
         SendOrganizationUserInviteDto inviteDto, CancellationToken cancellationToken);
+
+    Task AcceptInvite(AcceptOrganizationUserInviteDto dto, CancellationToken cancellationToken);
+    
+    Task RevokeInvite(RevokeOrganizationUserInviteDto dto, CancellationToken cancellationToken);
 }

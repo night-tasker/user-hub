@@ -3,7 +3,7 @@ using NightTasker.UserHub.Core.Application.Features.OrganizationUserInvites.Cont
 using NightTasker.UserHub.Core.Application.Features.OrganizationUserInvites.Models;
 using NightTasker.UserHub.Core.Domain.Repositories;
 
-namespace NightTasker.UserHub.Core.Application.Features.OrganizationUserInvites.Commands.SendOrganizationUserInvite;
+namespace NightTasker.UserHub.Core.Application.Features.OrganizationUserInvites.Commands.SendInvite;
 
 internal sealed class SendOrganizationUserInviteCommandHandler(
     IOrganizationUserInviteService organizationUserInviteService,
@@ -18,7 +18,7 @@ internal sealed class SendOrganizationUserInviteCommandHandler(
     {
         var inviteDto = MapCommandToDto(request);
         await _organizationUserInviteService
-            .SendOrganizationUserInvite(inviteDto, cancellationToken);
+            .SendInvite(inviteDto, cancellationToken);
         await _unitOfWork.SaveChanges(cancellationToken);
     }
 

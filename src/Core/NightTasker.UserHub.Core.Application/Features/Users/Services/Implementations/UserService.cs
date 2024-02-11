@@ -21,8 +21,7 @@ public class UserService(
     public async Task UpdateUser(UpdateUserDto updateUserDto, CancellationToken cancellationToken)
     {
         var user = await GetUserById(updateUserDto.Id, true, cancellationToken);
-        user = updateUserDto.MapFieldsToEntity(user);
-        _unitOfWork.UserRepository.Update(user);
+        updateUserDto.MapFieldsToEntity(user);
         await _unitOfWork.SaveChanges(cancellationToken);
     }
 

@@ -9,12 +9,10 @@ namespace NightTasker.UserHub.Infrastructure.Persistence.Repository;
 public class OrganizationUserInviteRepository(ApplicationDbSet<OrganizationUserInvite, Guid> dbSet)
     : BaseRepository<OrganizationUserInvite, Guid>(dbSet), IOrganizationUserInviteRepository
 {
-    public async Task<OrganizationUserInvite?> TryGetByOrganization(Guid organizationId, CancellationToken cancellationToken)
+    public Task<OrganizationUserInvite?> TryGetIdForInvitedUser(
+        Guid inviteId, Guid invitedUserId, CancellationToken cancellationToken)
     {
-        var organizationUserInvite = await Entities
-            .Where(x => x.OrganizationId == organizationId)
-            .SingleOrDefaultAsync(cancellationToken);
-        
-        return organizationUserInvite;
+        return Entities
+            .SingleOrDefaultAsync(x => x.Id == inviteId && x.InvitedUserId == invitedUserId, cancellationToken);
     }
 }

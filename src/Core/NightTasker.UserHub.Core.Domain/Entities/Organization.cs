@@ -60,25 +60,18 @@ public class Organization : IEntityWithId<Guid>, IDateTimeOffsetModification
         Description = description;
     }
 
-    public async Task<OrganizationUserInvite> SendInviteToUser(
-        IOrganizationUserInviteRepository organizationUserInviteRepository,
+    public OrganizationUserInvite SendInviteToUser(
         Guid inviterUserId, 
         Guid invitedUserId,
-        string? message,
-        CancellationToken cancellationToken)
+        string? message)
     {
         var invite = OrganizationUserInvite.CreateInstance(inviterUserId, invitedUserId, Id, message);
-        await organizationUserInviteRepository.Add(invite, cancellationToken);
         return invite;
     }
 
-    public async Task<OrganizationUser> CreateAdmin(
-        IOrganizationUserRepository organizationUserRepository,
-        Guid userId,
-        CancellationToken cancellationToken)
+    public OrganizationUser CreateAdmin(Guid userId)
     {
         var organizationUser = OrganizationUser.CreateInstance(Id, userId, OrganizationUserRole.Admin);
-        await organizationUserRepository.Add(organizationUser, cancellationToken);
         return organizationUser;
     }
 }

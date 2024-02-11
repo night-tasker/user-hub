@@ -6,11 +6,6 @@ public record CreateUserDto(Guid UserId, string UserName, string Email)
 {
     public User ToEntity()
     {
-        return new User
-        {
-            Id = UserId,
-            UserName = UserName,
-            Email = Email
-        };
+        return User.CreateInstance(id: UserId, userName: UserName, email: Email);
     }
 };

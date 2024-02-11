@@ -25,7 +25,7 @@ public class UploadUserImageCommandTests : ApplicationIntegrationTestsBase
     private readonly Faker _faker;
     private readonly CancellationTokenSource _cancellationTokenSource;
 
-    public UploadUserImageCommandTests()
+    public UploadUserImageCommandTests(TestNpgSql testNpgSql) : base(testNpgSql)
     {
         RegisterService(new ServiceForRegister(typeof(IApplicationDataAccessor), serviceProvider => new ApplicationDataAccessor(
             serviceProvider.GetRequiredService<ApplicationDbContext>()), ServiceLifetime.Scoped));
@@ -43,9 +43,9 @@ public class UploadUserImageCommandTests : ApplicationIntegrationTestsBase
         RegisterService(new ServiceForRegister(typeof(UploadUserImageCommandHandler)));
         
         BuildServiceProvider();
+
+        PrepareDatabase();
         
-        var dbContext = GetService<ApplicationDbContext>();
-        dbContext.Database.Migrate();
         _faker = new Faker();
         _cancellationTokenSource = new CancellationTokenSource();
     }
@@ -87,10 +87,6 @@ public class UploadUserImageCommandTests : ApplicationIntegrationTestsBase
     
     private static User SetupUser(Guid userId)
     {
-        var user = new User
-        {
-            Id = userId
-        };
-        return user;
+        return User.CreateInstance(userId);
     }
 }

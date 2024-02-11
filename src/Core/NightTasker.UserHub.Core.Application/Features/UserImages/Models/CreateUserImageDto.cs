@@ -9,13 +9,7 @@ public record CreateUserImageDto(
 {
     public Domain.Entities.UserImage ToEntity()
     {
-        return new Domain.Entities.UserImage
-        {
-            UserId = UserId,
-            FileName = FileName,
-            Extension = Extension,
-            ContentType = ContentType,
-            FileSize = FileSize
-        };
+        return Domain.Entities.UserImage.CreateInstance(
+            UserId, FileName, Extension, ContentType, FileSize);
     }
-};
+}

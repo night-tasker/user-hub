@@ -2,23 +2,23 @@
 using Microsoft.Extensions.DependencyInjection;
 using NightTasker.UserHub.Infrastructure.Persistence;
 using NightTasker.UserHub.IntegrationTests.Framework;
+using Xunit;
 
 namespace NightTasker.UserHub.Core.Application.IntegrationTests;
 
+[Collection("NpgSqlTestCollection")]
 public abstract class ApplicationIntegrationTestsBase
 {
     private readonly IServiceCollection _serviceCollection;
     private IServiceProvider _serviceProvider = null!;
+    private readonly TestNpgSql _testNpgSqlFixture;
 
-    protected ApplicationIntegrationTestsBase()
+    protected ApplicationIntegrationTestsBase(TestNpgSql testNpgSql)
     {
-        lock (this)
-        {
-            var testNpgSql = new TestNpgSql();
-            _serviceCollection = new ServiceCollection();
-            _serviceCollection.AddDbContext<ApplicationDbContext>(
-                (_, option) => option.UseNpgsql($"{testNpgSql.NpgSqlContainer.GetConnectionString()};Include Error Detail=true"));
-        }
+        _testNpgSqlFixture = testNpgSql;
+        _serviceCollection = new ServiceCollection();
+        _serviceCollection.AddDbContext<ApplicationDbContext>(
+            (_, option) => option.UseNpgsql($"{_testNpgSqlFixture.NpgSqlContainer.GetConnectionString()};Include Error Detail=true"));
     }
 
     protected void RegisterService(ServiceForRegister serviceForRegister)
@@ -71,4 +71,18 @@ public abstract class ApplicationIntegrationTestsBase
     {
         return _serviceProvider.CreateAsyncScope();
     }
+
+    protected void DropDatabase()
+    {
+        _testNpgSqlFixture.DropDatabase();
+    }
+
+    protected void PrepareDatabase()
+    {
+        _testNpgSqlFixture.DropDatabase();
+        GetService<ApplicationDbContext>().Database.Migrate();
+    }
 }
+
+[CollectionDefinition("NpgSqlTestCollection")]
+public class NpgSqlTestCollection : ICollectionFixture<TestNpgSql>;

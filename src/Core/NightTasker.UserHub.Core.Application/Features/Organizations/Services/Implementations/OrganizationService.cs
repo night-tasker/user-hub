@@ -21,8 +21,10 @@ internal class OrganizationService(
         await ValidateUserExists(creatorUserId, cancellationToken);
         var organization = createOrganizationDto.ToEntity();
         
-        await organization.CreateAdmin(_unitOfWork.OrganizationUserRepository, creatorUserId, cancellationToken);
+        var adminUser = organization.CreateAdmin(creatorUserId);
         await _unitOfWork.OrganizationRepository.Add(organization, cancellationToken);
+        await _unitOfWork.OrganizationUserRepository.Add(adminUser, cancellationToken);
+
         return organization.Id;
     }
     
@@ -44,7 +46,6 @@ internal class OrganizationService(
         var organization = await GetOrganizationForUser(userId, organizationId, true, cancellationToken);
         await ValidateUserCanUpdateOrganization(organizationId, userId, cancellationToken);
         updateOrganizationDto.MapToEntityFields(organization);
-        _unitOfWork.OrganizationRepository.Update(organization);
     }
     
     public async Task RemoveOrganizationAsUser(Guid userId, Guid organizationId, CancellationToken cancellationToken)

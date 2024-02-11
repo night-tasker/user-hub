@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using Bogus;
+using FluentAssertions;
 using MapsterMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -23,8 +24,9 @@ namespace NightTasker.UserHub.Core.Application.IntegrationTests.Features.UserIma
 public class SetActiveImageForUserCommandTests : ApplicationIntegrationTestsBase
 {
     private readonly CancellationTokenSource _cancellationTokenSource;
+    private readonly Faker _faker;
 
-    public SetActiveImageForUserCommandTests()
+    public SetActiveImageForUserCommandTests(TestNpgSql testNpgSql) : base(testNpgSql)
     {
         RegisterService(new ServiceForRegister(typeof(IApplicationDataAccessor), serviceProvider => new ApplicationDataAccessor(
             serviceProvider.GetRequiredService<ApplicationDbContext>()), ServiceLifetime.Scoped));
@@ -40,9 +42,10 @@ public class SetActiveImageForUserCommandTests : ApplicationIntegrationTestsBase
         
         BuildServiceProvider();
         
-        var dbContext = GetService<ApplicationDbContext>();
-        dbContext.Database.Migrate();
+        PrepareDatabase();
+        
         _cancellationTokenSource = new CancellationTokenSource();
+        _faker = new Faker();
     }
 
     [Fact]
@@ -91,21 +94,27 @@ public class SetActiveImageForUserCommandTests : ApplicationIntegrationTestsBase
     
     private static User SetupUser(Guid userId)
     {
-        var user = new User
-        {
-            Id = userId
-        };
-        
-        return user;
+        return User.CreateInstance(userId);
     }
 
-    private static UserImage SetupUserImage(Guid userId, bool isActive)
+    private UserImage SetupUserImage(Guid userId, bool isActive)
     {
-        var userImage = new UserImage
+        var userImage = UserImage.CreateInstance(
+            Guid.NewGuid(),
+            userId,
+            _faker.Random.AlphaNumeric(8),
+            _faker.Random.AlphaNumeric(8),
+            _faker.Random.AlphaNumeric(8),
+            32);
+        
+        if(isActive)
         {
-            UserId = userId,
-            IsActive = isActive
-        };
+            userImage.SetActive();
+        }
+        else
+        {
+            userImage.SetInactive();
+        }
         
         return userImage;
     }

@@ -26,8 +26,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NightTasker.UserHub.Core.Ap
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IntegrationTests", "IntegrationTests", "{A646AC16-6EE5-430B-B625-F72F057978A3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NightTasker.UserHub.Presentation.WebApi.IntegrationTests", "Tests\IntegrationTests\NightTasker.UserHub.Presentation.WebApi.IntegrationTests\NightTasker.UserHub.Presentation.WebApi.IntegrationTests.csproj", "{F12A6C08-331E-4F93-B27B-FCAE7748027D}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NightTasker.UserHub.Core.Application.IntegrationTests", "Tests\IntegrationTests\NightTasker.UserHub.Core.Application.IntegrationTests\NightTasker.UserHub.Core.Application.IntegrationTests.csproj", "{BF300037-8C88-4143-B481-956625C087BD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NightTasker.UserHub.IntegrationTests.Framework", "Tests\IntegrationTests\NightTasker.UserHub.IntegrationTests.Framework\NightTasker.UserHub.IntegrationTests.Framework.csproj", "{9111D817-0A05-4D30-BA3F-7244810C4B1F}"
@@ -66,10 +64,6 @@ Global
 		{DA320342-F679-414D-8F22-6FBCE070616A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DA320342-F679-414D-8F22-6FBCE070616A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DA320342-F679-414D-8F22-6FBCE070616A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F12A6C08-331E-4F93-B27B-FCAE7748027D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F12A6C08-331E-4F93-B27B-FCAE7748027D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F12A6C08-331E-4F93-B27B-FCAE7748027D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F12A6C08-331E-4F93-B27B-FCAE7748027D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BF300037-8C88-4143-B481-956625C087BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BF300037-8C88-4143-B481-956625C087BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BF300037-8C88-4143-B481-956625C087BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -89,7 +83,6 @@ Global
 		{E4E7681D-0544-4E94-9B36-BB8B169442B2} = {BD44D663-882F-4D4E-A6A6-AE843F61A296}
 		{DA320342-F679-414D-8F22-6FBCE070616A} = {E4E7681D-0544-4E94-9B36-BB8B169442B2}
 		{A646AC16-6EE5-430B-B625-F72F057978A3} = {BD44D663-882F-4D4E-A6A6-AE843F61A296}
-		{F12A6C08-331E-4F93-B27B-FCAE7748027D} = {A646AC16-6EE5-430B-B625-F72F057978A3}
 		{BF300037-8C88-4143-B481-956625C087BD} = {A646AC16-6EE5-430B-B625-F72F057978A3}
 		{9111D817-0A05-4D30-BA3F-7244810C4B1F} = {A646AC16-6EE5-430B-B625-F72F057978A3}
 	EndGlobalSection

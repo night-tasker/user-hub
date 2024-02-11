@@ -1,4 +1,5 @@
 ﻿using NightTasker.Common.Core.Abstractions;
+using NightTasker.UserHub.Core.Domain.Enums;
 
 namespace NightTasker.UserHub.Core.Domain.Entities;
 
@@ -26,6 +27,16 @@ public class OrganizationUserInvite : IEntityWithId<Guid>, IDateTimeOffsetModifi
     {
         return new OrganizationUserInvite(Guid.NewGuid(), inviterUserId, invitedUserId, organizationId, message);
     }
+    
+    public static OrganizationUserInvite CreateInstance(
+        Guid id,
+        Guid inviterUserId, 
+        Guid invitedUserId, 
+        Guid organizationId, 
+        string? message)
+    {
+        return new OrganizationUserInvite(id, inviterUserId, invitedUserId, organizationId, message);
+    }
 
     public Guid Id { get; private set; }
 
@@ -50,4 +61,15 @@ public class OrganizationUserInvite : IEntityWithId<Guid>, IDateTimeOffsetModifi
     public DateTimeOffset CreatedDateTimeOffset { get; set; }
     
     public DateTimeOffset? UpdatedDateTimeOffset { get; set; }
+
+    public OrganizationUser Accept()
+    {
+        IsAccepted = true;
+        return OrganizationUser.CreateInstance(OrganizationId, InvitedUserId, OrganizationUserRole.Member);
+    }
+
+    public void Revoke()
+    {
+        IsRevoked = true;
+    }
 }
