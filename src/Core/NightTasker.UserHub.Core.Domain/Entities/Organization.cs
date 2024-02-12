@@ -1,10 +1,12 @@
 ﻿using NightTasker.Common.Core.Abstractions;
 using NightTasker.UserHub.Core.Domain.Enums;
+using NightTasker.UserHub.Core.Domain.Events.Organization;
+using NightTasker.UserHub.Core.Domain.Primitives;
 using NightTasker.UserHub.Core.Domain.Repositories;
 
 namespace NightTasker.UserHub.Core.Domain.Entities;
 
-public class Organization : IEntityWithId<Guid>, IDateTimeOffsetModification
+public class Organization : AggregateRoot, IEntityWithId<Guid>, IDateTimeOffsetModification
 {
     private Organization(
         Guid id,
@@ -17,18 +19,20 @@ public class Organization : IEntityWithId<Guid>, IDateTimeOffsetModification
     }
     
     public static Organization CreateInstance(
-        string? name,
-        string? description)
-    {
-        return new Organization(Guid.NewGuid(), name, description);
-    }
-    
-    public static Organization CreateInstance(
         Guid id,
         string? name,
         string? description)
     {
-        return new Organization(id, name, description);
+        var created = new Organization(id, name, description);
+        created.RaiseDomainEvent(new OrganizationCreatedDomainEvent(created.Id));
+        return created;
+    }
+    
+    public static Organization CreateInstance(
+        string? name,
+        string? description)
+    {
+        return CreateInstance(Guid.NewGuid(), name, description);
     }
     
     public Guid Id { get; private set; }

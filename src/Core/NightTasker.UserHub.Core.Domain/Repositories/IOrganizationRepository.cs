@@ -14,6 +14,9 @@ public interface IOrganizationRepository : IRepository<Organization, Guid>
     Task<Organization?> TryGetOrganizationForUser(
         Guid userId, Guid organizationId, bool trackChanges, CancellationToken cancellationToken);
 
+    Task<Organization?> TryGetOrganizationById(
+        Guid organizationId, bool trackChanges, CancellationToken cancellationToken);
+
     Task<bool> CheckExistsById(Guid id, CancellationToken cancellationToken);
 
     Task<bool> CheckExistsByIdForUser(Guid userId, Guid id, CancellationToken cancellationToken);

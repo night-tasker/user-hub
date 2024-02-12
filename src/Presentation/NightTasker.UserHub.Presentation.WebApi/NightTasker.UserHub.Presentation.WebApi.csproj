@@ -24,6 +24,7 @@
       <ProjectReference Include="..\..\Infrastructure\NightTasker.UserHub.Infrastructure.Grpc\NightTasker.UserHub.Infrastructure.Grpc.csproj" />
       <ProjectReference Include="..\..\Infrastructure\NightTasker.UserHub.Infrastructure.Messaging\NightTasker.UserHub.Infrastructure.Messaging.csproj" />
       <ProjectReference Include="..\..\Infrastructure\NightTasker.UserHub.Infrastructure.Persistence\NightTasker.UserHub.Infrastructure.Persistence.csproj" />
+      <ProjectReference Include="..\..\Infrastructure\NightTasker.UserHub.Infrastructure.Scheduling\NightTasker.UserHub.Infrastructure.Scheduling.csproj" />
     </ItemGroup>
 
 

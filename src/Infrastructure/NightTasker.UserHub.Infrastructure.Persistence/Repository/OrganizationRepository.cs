@@ -66,6 +66,18 @@ public class OrganizationRepository(ApplicationDbSet<Organization, Guid> dbSet)
             .SingleOrDefaultAsync(cancellationToken);
     }
 
+    public Task<Organization?> TryGetOrganizationById(
+        Guid organizationId, bool trackChanges, CancellationToken cancellationToken)
+    {
+        var query = Entities;
+        if (!trackChanges)
+        {
+            query = query.AsNoTracking();
+        }
+
+        return query.SingleOrDefaultAsync(x => x.Id == organizationId, cancellationToken);
+    }
+
     private IQueryable<Organization> UserOrganizationsQuery(Guid userId)
     {
         return Entities

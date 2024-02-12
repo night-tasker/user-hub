@@ -3,6 +3,7 @@ using NightTasker.UserHub.Core.Application.Configuration;
 using NightTasker.UserHub.Infrastructure.Grpc.Configuration;
 using NightTasker.UserHub.Infrastructure.Messaging.Configuration;
 using NightTasker.UserHub.Infrastructure.Persistence.Configuration;
+using NightTasker.UserHub.Infrastructure.Scheduling.Configuration;
 using NightTasker.UserHub.Presentation.WebApi.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +15,7 @@ builder.Services
     .RegisterPersistenceServices(builder.Configuration)
     .RegisterMessagingServices(builder.Configuration)
     .RegisterGrpcServices(builder.Configuration)
+    .RegisterSchedulingServices(builder.Configuration)
     .RegisterApiServices(builder.Configuration);
 
 builder.Services.ConfigureControllers();

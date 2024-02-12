@@ -1,8 +1,9 @@
 ﻿using NightTasker.Common.Core.Abstractions;
+using NightTasker.UserHub.Core.Domain.Primitives;
 
 namespace NightTasker.UserHub.Core.Domain.Entities;
 
-public class User : IEntityWithId<Guid>, IDateTimeOffsetModification
+public class User : AggregateRoot, IEntityWithId<Guid>, IDateTimeOffsetModification
 {
     private User(
         Guid id,

@@ -1,9 +1,10 @@
 ﻿using NightTasker.Common.Core.Abstractions;
 using NightTasker.UserHub.Core.Domain.Enums;
+using NightTasker.UserHub.Core.Domain.Primitives;
 
 namespace NightTasker.UserHub.Core.Domain.Entities;
 
-public class OrganizationUserInvite : IEntityWithId<Guid>, IDateTimeOffsetModification
+public class OrganizationUserInvite : AggregateRoot, IEntityWithId<Guid>, IDateTimeOffsetModification
 {
     private OrganizationUserInvite(
         Guid id,

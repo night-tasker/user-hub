@@ -1,11 +1,11 @@
 ﻿using NightTasker.Common.Core.Abstractions;
 using NightTasker.UserHub.Core.Domain.Enums;
+using NightTasker.UserHub.Core.Domain.Primitives;
 
 namespace NightTasker.UserHub.Core.Domain.Entities;
 
-public class OrganizationUser : IEntity
+public class OrganizationUser : AggregateRoot, IEntity
 {
-
     private OrganizationUser(
         Guid organizationId,
         Guid userId,
