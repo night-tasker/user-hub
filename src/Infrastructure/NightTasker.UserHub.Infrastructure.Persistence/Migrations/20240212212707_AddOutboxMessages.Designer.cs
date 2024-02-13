@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace NightTasker.UserHub.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240211173549_AddOutboxMessages")]
+    [Migration("20240212212707_AddOutboxMessages")]
     partial class AddOutboxMessages
     {
         /// <inheritdoc />
@@ -247,11 +247,11 @@ namespace NightTasker.UserHub.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Content")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasColumnType("jsonb")
                         .HasColumnName("content");
 
                     b.Property<string>("Error")
-                        .HasColumnType("text")
+                        .HasColumnType("jsonb")
                         .HasColumnName("error");
 
                     b.Property<bool>("IsProcessed")

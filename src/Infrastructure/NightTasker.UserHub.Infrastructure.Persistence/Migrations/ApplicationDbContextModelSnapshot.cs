@@ -244,11 +244,11 @@ namespace NightTasker.UserHub.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Content")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasColumnType("jsonb")
                         .HasColumnName("content");
 
                     b.Property<string>("Error")
-                        .HasColumnType("text")
+                        .HasColumnType("jsonb")
                         .HasColumnName("error");
 
                     b.Property<bool>("IsProcessed")

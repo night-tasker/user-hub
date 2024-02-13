@@ -23,8 +23,8 @@ public sealed class OutboxMessage
     public Guid Id { get; private set; }
 
     public string Type { get; private set; }
-    
-    public string Content { get; set; }
+
+    public string Content { get; private set; }
     
     public DateTimeOffset OccurredOn { get; private set; }
     
@@ -38,5 +38,14 @@ public sealed class OutboxMessage
     {
         IsProcessed = true;
         ProcessedOn = DateTimeOffset.Now;
+        if (!string.IsNullOrEmpty(Error))
+        {
+            Error = null;
+        }
+    }
+
+    public void MarkAsFailed(string error)
+    {
+        Error = error;
     }
 }

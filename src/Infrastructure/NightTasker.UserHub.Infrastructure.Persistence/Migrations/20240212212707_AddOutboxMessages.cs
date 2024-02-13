@@ -17,11 +17,11 @@ namespace NightTasker.UserHub.Infrastructure.Persistence.Migrations
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     type = table.Column<string>(type: "character varying(254)", maxLength: 254, nullable: false),
-                    content = table.Column<string>(type: "text", nullable: false),
+                    content = table.Column<string>(type: "jsonb", nullable: false),
                     occurred_on = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     processed_on = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     is_processed = table.Column<bool>(type: "boolean", nullable: false),
-                    error = table.Column<string>(type: "text", nullable: true)
+                    error = table.Column<string>(type: "jsonb", nullable: true)
                 },
                 constraints: table =>
                 {

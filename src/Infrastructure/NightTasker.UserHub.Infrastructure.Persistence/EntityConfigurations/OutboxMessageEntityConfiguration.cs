@@ -17,7 +17,8 @@ public class OutboxMessageEntityConfiguration : IEntityTypeConfiguration<OutboxM
             .IsRequired();
 
         builder.Property(x => x.Content)
-            .IsRequired();
+            .IsRequired()
+            .HasColumnType("jsonb");
 
         builder.Property(x => x.OccurredOn)
             .IsRequired();
@@ -28,6 +29,7 @@ public class OutboxMessageEntityConfiguration : IEntityTypeConfiguration<OutboxM
         builder.Property(x => x.IsProcessed);
         
         builder.Property(x => x.Error)
-            .IsRequired(false);
+            .IsRequired(false)
+            .HasColumnType("jsonb");
     }
 }

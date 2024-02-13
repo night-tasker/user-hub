@@ -33,26 +33,31 @@ public class ProcessOutboxMessagesJob(
             try
             {
                 await ProcessOutboxMessage(outboxMessage, context.CancellationToken);
+                outboxMessage.MarkAsProcessed();
             }
             catch (Exception exception)
             {
                 _logger.LogError(exception, "Failed to process outbox message {OutboxMessageId}", outboxMessage.Id);
+                outboxMessage.MarkAsFailed(JsonConvert.SerializeObject(exception));
             }
+            _applicationDbContext.Update(outboxMessage);
         }
-        _applicationDbContext.Update(outboxMessages);
         await _applicationDbContext.SaveChangesAsync(context.CancellationToken);
     }
     
     private async Task ProcessOutboxMessage(OutboxMessage outboxMessage, CancellationToken cancellationToken)
     {
-        var domainEvent = JsonConvert.DeserializeObject<IDomainEvent>(outboxMessage.Content);
+        var domainEvent = JsonConvert.DeserializeObject<IDomainEvent>(outboxMessage.Content, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.All
+        });
+        
         if (domainEvent is null)
         {
             return;
         }
         
         await _publisher.Publish(domainEvent, cancellationToken);
-        outboxMessage.MarkAsProcessed();
     }
 
     private async Task<IReadOnlyCollection<OutboxMessage>> GetOutboxMessages(CancellationToken cancellationToken)

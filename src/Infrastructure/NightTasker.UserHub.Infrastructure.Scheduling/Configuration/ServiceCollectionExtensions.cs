@@ -18,6 +18,8 @@ public static class ServiceCollectionExtensions
             quartzConfig.AddOutboxMessagesJobs(outboxMessagesSettings);
             quartzConfig.UseJobFactory<MicrosoftDependencyInjectionJobFactory>();
         });
+
+        services.AddQuartzHostedService();
         
         return services;
     }
