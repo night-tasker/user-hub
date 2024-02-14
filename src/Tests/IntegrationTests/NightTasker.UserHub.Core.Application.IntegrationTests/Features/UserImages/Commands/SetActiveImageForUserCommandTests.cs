@@ -1,7 +1,5 @@
 ﻿using Bogus;
 using FluentAssertions;
-using MapsterMapper;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using NightTasker.UserHub.Core.Application.ApplicationContracts.Services;

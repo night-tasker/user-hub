@@ -10,7 +10,6 @@
 
     <ItemGroup>
         <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
-        <PackageReference Include="Mapster" Version="7.4.0" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.0"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0">
@@ -27,12 +26,10 @@
       <ProjectReference Include="..\..\Infrastructure\NightTasker.UserHub.Infrastructure.Scheduling\NightTasker.UserHub.Infrastructure.Scheduling.csproj" />
     </ItemGroup>
 
-
     <ItemGroup>
       <Content Include="..\..\.dockerignore">
         <Link>.dockerignore</Link>
       </Content>
     </ItemGroup>
-
 
 </Project>

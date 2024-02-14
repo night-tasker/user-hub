@@ -2,8 +2,6 @@
 using System.Text.Json.Serialization;
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using Mapster;
-using MapsterMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using NightTasker.Common.Core.Identity.Contracts;
@@ -32,24 +30,12 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddMapper();
         services.ConfigureAuthentication(configuration);
         services.AddHttpContextAccessor();
         services.AddScoped<IIdentityService, IdentityService>();
         services.AddScoped<IApplicationDataAccessor, ApplicationDataAccessor>();
         services.AddValidation();
         return services;
-    }
-    
-    public static void AddMapper(this IServiceCollection services)
-    {
-        var typeAdapterConfig = TypeAdapterConfig.GlobalSettings.Clone();
-        typeAdapterConfig.Scan(
-            typeof(ServiceCollectionExtensions).Assembly,
-            typeof(Core.Application.Configuration.ServiceCollectionExtensions).Assembly);
-        typeAdapterConfig.RequireExplicitMapping = true;
-        var mapperConfig = new Mapper(typeAdapterConfig);
-        services.AddSingleton<IMapper>(mapperConfig);
     }
 
     private static void ConfigureAuthentication(this IServiceCollection services,
