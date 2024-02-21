@@ -66,14 +66,19 @@ public class OrganizationRepository(ApplicationDbSet<Organization, Guid> dbSet)
             .SingleOrDefaultAsync(cancellationToken);
     }
 
-    public Task<Organization?> TryGetOrganizationById(
+    public Task<Organization?> TryGetOrganizationByIdWithUser(
         Guid organizationId, bool trackChanges, CancellationToken cancellationToken)
     {
         var query = Entities;
+        
         if (!trackChanges)
         {
             query = query.AsNoTracking();
         }
+        
+        query = query
+            .Include(x => x.OrganizationUsers)
+            .ThenInclude(x => x.User);
 
         return query.SingleOrDefaultAsync(x => x.Id == organizationId, cancellationToken);
     }

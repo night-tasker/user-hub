@@ -1,6 +1,8 @@
 ﻿using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using NightTasker.Common.Messaging.Events.Contracts;
+using NightTasker.UserHub.Infrastructure.Messaging.Consumers.Events.User;
 using NightTasker.UserHub.Infrastructure.Messaging.Settings;
 
 namespace NightTasker.UserHub.Infrastructure.Messaging.Configuration;
@@ -24,6 +26,11 @@ public static class ServiceCollectionExtensions
                 {
                     hostConfig.Username(rabbitMqSettings.Username);
                     hostConfig.Password(rabbitMqSettings.Password);
+                });
+                
+                rabbitMqConfig.ReceiveEndpoint("user.hub.user.registered", ep =>
+                {
+                    ep.ConfigureConsumer<UserRegisteredConsumer>(context);
                 });
 
                 rabbitMqConfig.ConfigureEndpoints(context);

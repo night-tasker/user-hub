@@ -25,4 +25,11 @@ public class OrganizationUserRepository(ApplicationDbSet<OrganizationUser, Guid>
         return await Entities
             .CountAsync(x => x.OrganizationId == organizationId, cancellationToken);
     }
+
+    public Task<OrganizationUser?> TryGetByOrganizationAndUserIds(Guid organizationId, Guid userId, CancellationToken cancellationToken)
+    {
+        return Entities
+            .Where(x => x.OrganizationId == organizationId && x.UserId == userId)
+            .SingleOrDefaultAsync(cancellationToken);
+    }
 }

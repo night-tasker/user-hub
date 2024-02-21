@@ -1,5 +1,6 @@
 ﻿using NightTasker.Common.Core.Abstractions;
 using NightTasker.UserHub.Core.Domain.Enums;
+using NightTasker.UserHub.Core.Domain.Events.OrganizationUsers;
 using NightTasker.UserHub.Core.Domain.Primitives;
 
 namespace NightTasker.UserHub.Core.Domain.Entities;
@@ -21,7 +22,10 @@ public class OrganizationUser : AggregateRoot, IEntity
         Guid userId,
         OrganizationUserRole role)
     {
-        return new OrganizationUser(organizationId, userId, role);
+        var instance = new OrganizationUser(organizationId, userId, role);
+        var domainEvent = new OrganizationUserCreatedDomainEvent(organizationId, userId);
+        instance.RaiseDomainEvent(domainEvent);
+        return instance;
     }
     
     public OrganizationUserRole Role { get; private set; }

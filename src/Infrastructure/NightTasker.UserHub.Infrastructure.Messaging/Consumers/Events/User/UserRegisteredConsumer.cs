@@ -1,11 +1,11 @@
 ﻿using MassTransit;
 using MediatR;
-using NightTasker.Common.Messaging.Events.Contracts;
+using NightTasker.Common.Messaging.Events.Contracts.Users;
 using NightTasker.UserHub.Core.Application.Features.Users.Commands.CreateUser;
 
 namespace NightTasker.UserHub.Infrastructure.Messaging.Consumers.Events.User;
 
-public class UserRegisteredConsumer(
+public sealed class UserRegisteredConsumer(
     ISender sender) : IConsumer<IUserRegistered>
 {
     private readonly ISender _sender = sender ?? throw new ArgumentNullException(nameof(sender));

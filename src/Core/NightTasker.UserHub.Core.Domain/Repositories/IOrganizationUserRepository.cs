@@ -10,4 +10,7 @@ public interface IOrganizationUserRepository : IRepository<OrganizationUser, Gui
         Guid organizationId, Guid userId, CancellationToken cancellationToken);
 
     Task<int> GetUsersCountInOrganization(Guid organizationId, CancellationToken cancellationToken);
+    
+    Task<OrganizationUser?> TryGetByOrganizationAndUserIds(
+        Guid organizationId, Guid userId, CancellationToken cancellationToken);
 }
